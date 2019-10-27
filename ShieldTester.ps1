@@ -26,7 +26,7 @@ If(Test-path $ShieldBoosterPath){
     Throw $('File [{0}] not found' -f $ShieldBoosterPath)
 }
 
-write-host 'Generating list of booster loudouts'
+write-host 'Generating list of booster loadouts'
 $ShieldBoosterVariants = $ShieldBoosterVariantList.count
 write-host $('Shield Booster Count: {0}' -f $ShieldBoosterCount)
 write-host $('Shield Booster Variants: {0}' -f $ShieldBoosterVariants)
