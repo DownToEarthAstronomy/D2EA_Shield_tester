@@ -44,11 +44,11 @@ Function Get-LoadoutStats{
     $HitPoints = (1 + $HitPointBonus) * $ShieldGenratorVariant.ShieldStrength
 
     $LoadoutStat = New-Object PSCustomObject -Property @{
-        HitPoints = $HitPoints
-        RegenRate = $ShieldGenratorVariant.RegenRate
-        ExplosiveResistance = $ExpRes
-        KineticResistance = $KinRes
-        ThermalResistance = $ThermRes
+        HitPoints = [Double]$HitPoints
+        RegenRate = [Double]$ShieldGenratorVariant.RegenRate
+        ExplosiveResistance = [Double]$ExpRes
+        KineticResistance = [Double]$KinRes
+        ThermalResistance = [Double]$ThermRes
     }
 
     Return $LoadoutStat
