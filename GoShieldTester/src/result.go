@@ -4,7 +4,7 @@ import "fmt"
 
 type resultT struct {
 	shieldGenerator      generatorT
-	shieldBoosterLoadout []int
+	shieldBoosterLoadout loadOutT
 	loadOutStats         loadOutStatT
 	survivalTime         float32
 }
@@ -26,7 +26,7 @@ func showResults(bestResult resultT, boosters []boosterT) {
 	var bestLoadOutStats = bestResult.loadOutStats
 	var bestBoosterLoadout = bestResult.shieldBoosterLoadout
 
-	for _, booster := range bestBoosterLoadout {
+	for _, booster := range bestBoosterLoadout.utilitySlots {
 		var oBooster = boosters[booster]
 		var ShieldBoosterEngineering = oBooster.Engineering
 		var ShieldBoosterExperimental = oBooster.Experimental

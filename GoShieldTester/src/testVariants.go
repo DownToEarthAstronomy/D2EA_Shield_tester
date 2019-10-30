@@ -2,12 +2,13 @@ package main
 
 import "fmt"
 
-func testCase(ShieldGenerator generatorT, boosters []boosterT, ShieldBoosterLoadoutList []int, config configT) resultT {
+func testCase(ShieldGenerator generatorT, boosters []boosterT, ShieldBoosterLoadoutList []loadOutT, config configT) resultT {
 	bestResult := resultT{survivalTime: 0.0}
 
 	for _, ShieldBoosterLoadout := range ShieldBoosterLoadoutList {
 		// Calculate the resistance, regen-rate and hitpoints of the current loadout
-		var LoadoutStats = getLoadoutStats(ShieldGenerator, ShieldBoosterLoadout, boosters)
+		var sbLoadout = setLoadout(config.ShieldBoosterCount, ShieldBoosterLoadout.utilitySlots)
+		var LoadoutStats = getLoadoutStats(ShieldGenerator, sbLoadout, boosters)
 
 		var ActualDPS float32 = config.DamageEffectiveness*(config.ExplosiveDPS*(1-LoadoutStats.ExplosiveResistance)+
 			config.KineticDPS*(1-LoadoutStats.KineticResistance)+
@@ -26,7 +27,7 @@ func testCase(ShieldGenerator generatorT, boosters []boosterT, ShieldBoosterLoad
 	return bestResult
 }
 
-func testGenerators(config configT, generators []generatorT, boosters []boosterT, boosterList []int) resultT {
+func testGenerators(config configT, generators []generatorT, boosters []boosterT, boosterList []loadOutT) resultT {
 	var result resultT
 	bestResult := resultT{survivalTime: 0.0}
 

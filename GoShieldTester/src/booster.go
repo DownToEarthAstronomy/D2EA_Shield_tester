@@ -121,45 +121,47 @@ func loadBoosters(shortList bool) []boosterT {
 
 	if shortList {
 		return shortBoosterVariants
-	} else {
-		return fullBoosterVariants
 	}
+	return fullBoosterVariants
 }
 
-func oneUp(currentLoadOut []int, ShieldBoosterCount int, ShieldBoosterVariants int, CurrentShieldBooster int) []int {
+func oneUp(currentLoadOut loadOutT, ShieldBoosterCount int, ShieldBoosterVariants int, CurrentShieldBooster int) loadOutT {
 
 	var NextLoadout = currentLoadOut
 
-	if NextLoadout[CurrentShieldBooster] < (ShieldBoosterVariants - 1) {
-		NextLoadout[CurrentShieldBooster]++
+	if NextLoadout.utilitySlots[CurrentShieldBooster] < (ShieldBoosterVariants - 1) {
+		NextLoadout.utilitySlots[CurrentShieldBooster]++
 	} else {
 		if CurrentShieldBooster != (ShieldBoosterCount - 1) {
 			NextLoadout = oneUp(NextLoadout, ShieldBoosterCount, ShieldBoosterVariants, CurrentShieldBooster+1)
-			NextLoadout[CurrentShieldBooster] = NextLoadout[CurrentShieldBooster+1]
+			NextLoadout.utilitySlots[CurrentShieldBooster] = NextLoadout.utilitySlots[CurrentShieldBooster+1]
 		}
 	}
 
 	return NextLoadout
 }
 
-func getBoosterLoadoutList(config configT, boosters []boosterT) []int {
+func getBoosterLoadoutList(config configT, boosters []boosterT) []loadOutT {
 
-	var Loadout []int = make([]int, config.ShieldBoosterCount)
-	var LoadoutList []int = make([]int, config.ShieldBoosterCount)
+	var Loadout = loadOutT{
+		slots:        config.ShieldBoosterCount,
+		utilitySlots: make([]int, config.ShieldBoosterCount),
+	}
+
+	var LoadoutList []loadOutT
 
 	var ShieldBoosterVariants = len(boosters)
 
-	for run := true; run; run = !(Loadout[config.ShieldBoosterCount-1] == (ShieldBoosterVariants - 1)) {
+	for run := true; run; run = !(Loadout.utilitySlots[config.ShieldBoosterCount-1] == (ShieldBoosterVariants - 1)) {
 		Loadout = oneUp(Loadout, config.ShieldBoosterCount, ShieldBoosterVariants, 0)
-		m := len(LoadoutList)
-		n := m + len(Loadout)
-		if n > cap(LoadoutList) {
-			newSlice := make([]int, (n+1)*2)
-			copy(newSlice, LoadoutList)
-			LoadoutList = newSlice
-		}
-		LoadoutList = LoadoutList[0:n]
-		copy(LoadoutList[m:n], Loadout)
+		// m := len(LoadoutList)
+		// n := m + len(Loadout.utilitySlots)
+		// if n > cap(LoadoutList) {
+		// 	newSlice := make([]loadOutT, (n+1)*2)
+		// 	copy(newSlice, LoadoutList)
+		// 	LoadoutList = newSlice
+		// }
+		LoadoutList = append(LoadoutList, Loadout)
 	}
 
 	return LoadoutList

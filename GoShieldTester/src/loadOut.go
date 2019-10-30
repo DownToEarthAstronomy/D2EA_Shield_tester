@@ -1,7 +1,7 @@
 package main
 
 type loadOutT struct {
-	ID           int
+	slots        int
 	utilitySlots []int
 }
 
@@ -13,16 +13,28 @@ type loadOutStatT struct {
 	ThermalResistance   float32
 }
 
-func getLoadoutStats(ShieldGeneratorVariant generatorT, ShieldBoosterLoadout []int, boosters []boosterT) loadOutStatT {
+// Packs a set of booster IDs as an slice (array) of ints
+func setLoadout(slots int, loadOutArray []int) loadOutT {
+
+	newLoadOut := loadOutT{
+		slots:        slots,
+		utilitySlots: loadOutArray,
+	}
+
+	return newLoadOut
+}
+
+func getLoadoutStats(ShieldGeneratorVariant generatorT, ShieldBoosterLoadout loadOutT, boosters []boosterT) loadOutStatT {
 
 	var ExpModifier float32 = 1.0
 	var KinModifier float32 = 1.0
 	var ThermModifier float32 = 1.0
 	var HitPointBonus float32 = 0.0
 
-	// Compute non diminishing returns modifiers
+	var finalExpRes, finalKinRes, finalThermRes, finalHitPoints float32
 
-	for _, booster := range ShieldBoosterLoadout {
+	// Compute non diminishing returns modifiers
+	for _, booster := range ShieldBoosterLoadout.utilitySlots {
 
 		var boosterStats = boosters[booster]
 
@@ -46,12 +58,12 @@ func getLoadoutStats(ShieldGeneratorVariant generatorT, ShieldBoosterLoadout []i
 	}
 
 	// Compute final Resistance
-	var finalExpRes = 1 - ((1 - ShieldGeneratorVariant.ExpRes) * ExpModifier)
-	var finalKinRes = 1 - ((1 - ShieldGeneratorVariant.KinRes) * KinModifier)
-	var finalThermRes = 1 - ((1 - ShieldGeneratorVariant.ThermRes) * ThermModifier)
+	finalExpRes = 1 - ((1 - ShieldGeneratorVariant.ExpRes) * ExpModifier)
+	finalKinRes = 1 - ((1 - ShieldGeneratorVariant.KinRes) * KinModifier)
+	finalThermRes = 1 - ((1 - ShieldGeneratorVariant.ThermRes) * ThermModifier)
 
 	// Compute final Hitpoints
-	var finalHitPoints = (1 + HitPointBonus) * ShieldGeneratorVariant.ShieldStrength
+	finalHitPoints = (1 + HitPointBonus) * ShieldGeneratorVariant.ShieldStrength
 
 	var LoadoutStat = loadOutStatT{
 		HitPoints:           finalHitPoints,
