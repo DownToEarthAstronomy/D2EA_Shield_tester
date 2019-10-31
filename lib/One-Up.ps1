@@ -9,7 +9,7 @@ Function One-up{
     $NextLoadout = @()
     $CurrentLoadout | ForEach-Object{$NextLoadout += $_}
 
-    If($NextLoadout[$CurrentShieldBooster] -lt ($ShieldBoosterVariants -1)){
+    If($NextLoadout[$CurrentShieldBooster] -lt ($ShieldBoosterVariants)){
         $NextLoadout[$CurrentShieldBooster] += 1
     }Else{
         If($CurrentShieldBooster -ne $($ShieldBoosterCount -1)){
