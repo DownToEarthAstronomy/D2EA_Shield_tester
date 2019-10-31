@@ -142,7 +142,6 @@ func oneUp(currentLoadOut loadOutT, ShieldBoosterCount int, ShieldBoosterVariant
 }
 
 func getBoosterLoadoutList(config configT, boosters []boosterT) []loadOutT {
-
 	var Loadout = loadOutT{
 		slots:        config.ShieldBoosterCount,
 		utilitySlots: make([]int, config.ShieldBoosterCount),
@@ -150,18 +149,37 @@ func getBoosterLoadoutList(config configT, boosters []boosterT) []loadOutT {
 
 	var LoadoutList []loadOutT
 
-	var ShieldBoosterVariants = len(boosters)
+	// a = loadout
+	// n = booster count
+	// r = booster variants
 
-	for run := true; run; run = !(Loadout.utilitySlots[config.ShieldBoosterCount-1] == (ShieldBoosterVariants - 1)) {
-		Loadout = oneUp(Loadout, config.ShieldBoosterCount, ShieldBoosterVariants, 0)
-		// m := len(LoadoutList)
-		// n := m + len(Loadout.utilitySlots)
-		// if n > cap(LoadoutList) {
-		// 	newSlice := make([]loadOutT, (n+1)*2)
-		// 	copy(newSlice, LoadoutList)
-		// 	LoadoutList = newSlice
-		// }
+	// initialize first combination
+	var i, n, r int
+
+	n = config.ShieldBoosterCount
+	r = len(boosters)
+
+	for i < r {
+		Loadout.utilitySlots[i] = i
+		i++
+	}
+
+	i = r - 1 // Index to keep track of maximum unsaturated element in array
+	// a[0] can only be n-r+1 exactly once - our termination condition!
+	for Loadout.utilitySlots[0] < (n - r + 1) {
+		// If outer elements are saturated, keep decrementing i till you find unsaturated element
+		for i > 0 && Loadout.utilitySlots[i] == n-r+i {
+			i--
+		}
+
 		LoadoutList = append(LoadoutList, Loadout)
+		Loadout.utilitySlots[i]++
+
+		// Reset each outer element to prev element + 1
+		for i < (r - 1) {
+			Loadout.utilitySlots[i+1] = Loadout.utilitySlots[i] + 1
+			i++
+		}
 	}
 
 	return LoadoutList
