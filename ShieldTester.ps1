@@ -110,7 +110,7 @@ Foreach($ShieldBooster in $ShieldBoosterLoadoutList[$BestResult.BestShieldBooste
 }
 
 Write-host ''
-Write-host $('Shield Hitpoints: [{0}]' -f $BestResult.BestLoadoutStats.HitPoints)
+Write-host $('Shield Hitpoints: [{0}]' -f $($BestResult.BestLoadoutStats.HitPoints - $SCBHitPoint)) # We do not include SCB hip point in the shield health (only when testing)
 Write-host $('Shield Regen: [{0} hp/s]' -f $BestResult.BestLoadoutStats.RegenRate)
 Write-host $('ExplosivecResistance: [{0}]' -f $($BestResult.BestLoadoutStats.ExplosiveResistance * 100))
 Write-host $('Kinetic Resistance: [{0}]' -f $($BestResult.BestLoadoutStats.KineticResistance * 100))
