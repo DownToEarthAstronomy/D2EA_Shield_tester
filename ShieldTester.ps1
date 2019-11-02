@@ -1,3 +1,11 @@
+$LogfolderPath = $('{0}\Logs' -f $PSScriptRoot)
+If(!(Test-path $LogfolderPath)){
+    mkdir $LogfolderPath
+}
+$LogFilePath = $('{0}\ShieldTestResults_{1}.txt' -f $LogfolderPath, $(Get-date -format 'yyyMMddHHmmss'))
+Start-Transcript $LogFilePath
+Write-host $('Test Started at: [{0}]' -f $(Get-date -format 'yyy-MM-dd HH:mm:ss'))
+
 $ShieldGeneratorPath = $('{0}\ShieldGeneratorVariants.csv' -f $PSScriptRoot)
 #$ShieldBoosterPath = $('{0}\ShieldBoosterVariants.csv' -f $PSScriptRoot)
 $ShieldBoosterPath = $('{0}\ShieldBoosterVariants_short.csv' -f $PSScriptRoot)
@@ -81,6 +89,16 @@ $ShieldGeneratorEngineering = $($ShieldGeneratorVariantList | Where-Object{$_.ID
 $ShieldGeneratorExperimental = $($ShieldGeneratorVariantList | Where-Object{$_.ID -eq $BestResult.BestShieldGenerator}).Experimental
 
 Write-host ''
+Write-host '---- TEST SETUP ----'
+Write-host $('Shield Booster Count: [{0}]' -f $ShieldBoosterCount)
+Write-host $('Shield Cell Bank Hit Point Pool: [{0}]' -f $SCBHitPoint)
+Write-host $('Guardian Shield Reinforcement Hit Point Pool: [{0}]' -f $GuardianShieldHitPoint)
+Write-host $('Explosive DPS: [{0}]' -f $ExplosiveDPS)
+Write-host $('Kinetic DPS: [{0}]' -f $KineticDPS)
+Write-host $('Thermal DPS: [{0}]' -f $ThermalDPS)
+Write-host $('Absolute DPS: [{0}]' -f $AbsoluteDPS)
+Write-host $('Damage Effectiveness: [{0}]' -f $DamageEffectiveness)
+Write-host ''
 Write-host '---- TEST RESULTS ----'
 Write-host $('Survival Time [s]: [{0}]' -f $BestResult.BestSurvivalTime)
 Write-host $('Shield Generator: [{0}] - [{1}] - [{2}]' -f $ShieldGenerator, $ShieldGeneratorEngineering, $ShieldGeneratorExperimental)
@@ -92,8 +110,12 @@ Foreach($ShieldBooster in $ShieldBoosterLoadoutList[$BestResult.BestShieldBooste
 }
 
 Write-host ''
-Write-host $('Shield Hitpoints: [{0}]' -f $BestResult.BestLoadoutStats.HitPoints)
+Write-host $('Shield Hitpoints: [{0}]' -f $($BestResult.BestLoadoutStats.HitPoints - $SCBHitPoint)) # We do not include SCB hip point in the shield health (only when testing)
 Write-host $('Shield Regen: [{0} hp/s]' -f $BestResult.BestLoadoutStats.RegenRate)
 Write-host $('ExplosivecResistance: [{0}]' -f $($BestResult.BestLoadoutStats.ExplosiveResistance * 100))
 Write-host $('Kinetic Resistance: [{0}]' -f $($BestResult.BestLoadoutStats.KineticResistance * 100))
 Write-host $('Thermal Resistance: [{0}]' -f $($BestResult.BestLoadoutStats.ThermalResistance * 100))
+Write-host ''
+
+Write-host $('Test Ended at: [{0}]' -f $(Get-date -format 'yyy-MM-dd HH:mm:ss'))
+Stop-Transcript

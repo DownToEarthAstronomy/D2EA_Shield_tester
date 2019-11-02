@@ -5,7 +5,7 @@ Function Get-LoadoutList{
     )
     
     $i = 1
-    $Loadout = $(@(0) * $ShieldBoosterCount)
+    $Loadout = $(@(1) * $ShieldBoosterCount)
     $LoadoutList = @{}
     $LoadoutList[$i] = $Loadout
 
