@@ -1,15 +1,17 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type resultT struct {
 	shieldGenerator      generatorT
 	shieldBoosterLoadout loadOutT
 	loadOutStats         loadOutStatT
-	survivalTime         float32
+	survivalTime         float64
 }
 
-func showResults(bestResult resultT, boosters []boosterT) {
+func showResults(bestResult resultT, boosterVariants []boosterT) {
 
 	var ShieldGenerator = bestResult.shieldGenerator
 
@@ -18,16 +20,27 @@ func showResults(bestResult resultT, boosters []boosterT) {
 	var ShieldGeneratorExperimental = ShieldGenerator.Experimental
 
 	fmt.Println()
+	fmt.Println("---- TEST SETUP ----")
+	fmt.Println("Shield Booster Count: [", config.ShieldBoosterCount, "]")
+	fmt.Println("Shield Cell Bank Hit Point Pool: [", config.SCBHitPoint, "]")
+	fmt.Println("Guardian Shield Reinforcement Hit Point Pool: [", config.GuardianShieldHitPoint, "]")
+	fmt.Println("Explosive DPS: [", config.ExplosiveDPS, "]")
+	fmt.Println("Kinetic DPS: [", config.KineticDPS, "]")
+	fmt.Println("Thermal DPS: [", config.ThermalDPS, "]")
+	fmt.Println("Absolute DPS: [", config.AbsoluteDPS, "]")
+	fmt.Println("Damage Effectiveness:", config.DamageEffectiveness, "]")
+
+	fmt.Println()
 	fmt.Println("---- TEST RESULTS ----")
 	fmt.Println("Survival Time [s]: [", bestResult.survivalTime, "]")
 	fmt.Println("Shield Generator: [", ShieldName, "] - [", ShieldGeneratorEngineering, "] - [", ShieldGeneratorExperimental, "]")
-	fmt.Println("Shield Boosters:")
+	fmt.Println("Shield boosters:")
 
 	var bestLoadOutStats = bestResult.loadOutStats
 	var bestBoosterLoadout = bestResult.shieldBoosterLoadout
 
 	for _, booster := range bestBoosterLoadout.utilitySlots {
-		var oBooster = boosters[booster]
+		var oBooster = boosterVariants[booster-1]
 		var ShieldBoosterEngineering = oBooster.Engineering
 		var ShieldBoosterExperimental = oBooster.Experimental
 		fmt.Println("[", ShieldBoosterEngineering, "] - [", ShieldBoosterExperimental, "]")
@@ -35,9 +48,9 @@ func showResults(bestResult resultT, boosters []boosterT) {
 
 	fmt.Println()
 
-	fmt.Println("Shield Hitpoints: [", bestLoadOutStats.HitPoints, "]")
-	fmt.Println("Shield Regen: [", bestLoadOutStats.RegenRate, " hp/s]")
-	fmt.Println("ExplosivecResistance: [", bestLoadOutStats.ExplosiveResistance*100, "]")
-	fmt.Println("Kinetic Resistance: [", bestLoadOutStats.KineticResistance*100, "]")
-	fmt.Println("Thermal Resistance: [", bestLoadOutStats.ThermalResistance*100, "]")
+	fmt.Printf("Shield Hitpoints:     %.1f hp\n", bestLoadOutStats.HitPoints)
+	fmt.Printf("Shield Regen:         %.2f hp/s\n", bestLoadOutStats.RegenRate)
+	fmt.Printf("Explosive Resistance: %.2f%%\n", bestLoadOutStats.ExplosiveResistance*100)
+	fmt.Printf("Kinetic Resistance:   %.2f%%\n", bestLoadOutStats.KineticResistance*100)
+	fmt.Printf("Thermal Resistance:   %.2f%%\n", bestLoadOutStats.ThermalResistance*100)
 }

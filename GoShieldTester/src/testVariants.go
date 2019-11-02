@@ -2,23 +2,22 @@ package main
 
 import "fmt"
 
-func testCase(ShieldGenerator generatorT, boosters []boosterT, ShieldBoosterLoadoutList []loadOutT, config configT) resultT {
+func testCase(ShieldGenerator generatorT, boosterVariants []boosterT, ShieldBoosterLoadoutList [][]int, config configT) resultT {
 	bestResult := resultT{survivalTime: 0.0}
 
 	for _, ShieldBoosterLoadout := range ShieldBoosterLoadoutList {
 		// Calculate the resistance, regen-rate and hitpoints of the current loadout
-		var sbLoadout = setLoadout(config.ShieldBoosterCount, ShieldBoosterLoadout.utilitySlots)
-		var LoadoutStats = getLoadoutStats(ShieldGenerator, sbLoadout, boosters)
+		var LoadoutStats = getLoadoutStats(ShieldGenerator, ShieldBoosterLoadout, boosterVariants)
 
-		var ActualDPS float32 = config.DamageEffectiveness*(config.ExplosiveDPS*(1-LoadoutStats.ExplosiveResistance)+
+		var ActualDPS float64 = config.DamageEffectiveness*(config.ExplosiveDPS*(1-LoadoutStats.ExplosiveResistance)+
 			config.KineticDPS*(1-LoadoutStats.KineticResistance)+
 			config.ThermalDPS*(1-LoadoutStats.ThermalResistance)+config.AbsoluteDPS) -
 			LoadoutStats.RegenRate*(1-config.DamageEffectiveness)
-		var SurvivalTime float32 = LoadoutStats.HitPoints / ActualDPS
+		var SurvivalTime float64 = LoadoutStats.HitPoints / ActualDPS
 
 		if SurvivalTime > bestResult.survivalTime {
 			bestResult.shieldGenerator = ShieldGenerator
-			bestResult.shieldBoosterLoadout = ShieldBoosterLoadout
+			bestResult.shieldBoosterLoadout = setLoadout(config.ShieldBoosterCount, ShieldBoosterLoadout)
 			bestResult.loadOutStats = LoadoutStats
 			bestResult.survivalTime = SurvivalTime
 		}
@@ -27,7 +26,7 @@ func testCase(ShieldGenerator generatorT, boosters []boosterT, ShieldBoosterLoad
 	return bestResult
 }
 
-func testGenerators(config configT, generators []generatorT, boosters []boosterT, boosterList []loadOutT) resultT {
+func testGenerators(generators []generatorT, boosterVariants []boosterT, boosterList [][]int) resultT {
 	var result resultT
 	bestResult := resultT{survivalTime: 0.0}
 
@@ -38,7 +37,7 @@ func testGenerators(config configT, generators []generatorT, boosters []boosterT
 	for _, generator := range generators {
 		fmt.Print("#")
 
-		result = testCase(generator, boosters, boosterList, config)
+		result = testCase(generator, boosterVariants, boosterList, config)
 		if result.survivalTime > bestResult.survivalTime {
 			bestResult = result
 		}

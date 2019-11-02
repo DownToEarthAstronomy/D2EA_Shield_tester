@@ -6,11 +6,11 @@ type loadOutT struct {
 }
 
 type loadOutStatT struct {
-	HitPoints           float32
-	RegenRate           float32
-	ExplosiveResistance float32
-	KineticResistance   float32
-	ThermalResistance   float32
+	HitPoints           float64
+	RegenRate           float64
+	ExplosiveResistance float64
+	KineticResistance   float64
+	ThermalResistance   float64
 }
 
 // Packs a set of booster IDs as an slice (array) of ints
@@ -24,24 +24,24 @@ func setLoadout(slots int, loadOutArray []int) loadOutT {
 	return newLoadOut
 }
 
-func getLoadoutStats(ShieldGeneratorVariant generatorT, ShieldBoosterLoadout loadOutT, boosters []boosterT) loadOutStatT {
+func getLoadoutStats(ShieldGeneratorVariant generatorT, ShieldBoosterLoadout []int, boosterVariants []boosterT) loadOutStatT {
 
-	var ExpModifier float32 = 1.0
-	var KinModifier float32 = 1.0
-	var ThermModifier float32 = 1.0
-	var HitPointBonus float32 = 0.0
+	var ExpModifier float64 = 1.0
+	var KinModifier float64 = 1.0
+	var ThermModifier float64 = 1.0
+	var HitPointBonus float64 = 0.0
 
-	var finalExpRes, finalKinRes, finalThermRes, finalHitPoints float32
+	var finalExpRes, finalKinRes, finalThermRes, finalHitPoints float64
 
 	// Compute non diminishing returns modifiers
-	for _, booster := range ShieldBoosterLoadout.utilitySlots {
+	for _, booster := range ShieldBoosterLoadout {
 
-		var boosterStats = boosters[booster]
+		var boosterVariantstats = boosterVariants[booster-1]
 
-		ExpModifier = ExpModifier * (1 - boosterStats.ExpResBonus)
-		KinModifier = KinModifier * (1 - boosterStats.KinResBonus)
-		ThermModifier = ThermModifier * (1 - boosterStats.ThermResBonus)
-		HitPointBonus = HitPointBonus + boosterStats.ShieldStrengthBonus
+		ExpModifier = ExpModifier * (1 - boosterVariantstats.ExpResBonus)
+		KinModifier = KinModifier * (1 - boosterVariantstats.KinResBonus)
+		ThermModifier = ThermModifier * (1 - boosterVariantstats.ThermResBonus)
+		HitPointBonus = HitPointBonus + boosterVariantstats.ShieldStrengthBonus
 	}
 
 	// Compensate for diminishing returns
@@ -66,7 +66,7 @@ func getLoadoutStats(ShieldGeneratorVariant generatorT, ShieldBoosterLoadout loa
 	finalHitPoints = (1 + HitPointBonus) * ShieldGeneratorVariant.ShieldStrength
 
 	var LoadoutStat = loadOutStatT{
-		HitPoints:           finalHitPoints,
+		HitPoints:           finalHitPoints + config.SCBHitPoint + config.GuardianShieldHitPoint,
 		RegenRate:           ShieldGeneratorVariant.RegenRate,
 		ExplosiveResistance: finalExpRes,
 		KineticResistance:   finalKinRes,
