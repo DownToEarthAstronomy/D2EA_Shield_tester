@@ -5,7 +5,7 @@ ID,Engineering,Experimental,ShieldStrengthBonus,ExpResBonus,KinResBonus,ThermRes
 4,Kinetic Resistance,Super Capacitors,0.26,-0.0608,0.2554,-0.0608
 5,Thermal Resistance,Thermo Block,0.188,-0.04,-0.04,0.2846
 6,Thermal Resistance,Force Block,0.188,-0.04,-0.0129,0.27
-7,Thermal Resistance,Blast Block,0.188,-0.0129,-0.04,0.27
+7,Thermal Resistance,Blast Block,0.188,-0.0192,-0.04,0.27
 8,Thermal Resistance,Super Capacitors,0.26,-0.0608,-0.0608,0.2554
 9,Blast Resistance,Thermo Block,0.188,0.27,-0.04,-0.0192
 10,Blast Resistance,Force Block,0.188,0.27,-0.0192,-0.04
