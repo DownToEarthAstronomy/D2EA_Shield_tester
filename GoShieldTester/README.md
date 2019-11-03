@@ -26,7 +26,7 @@ take less than a second.
 
 ## Improvements to these tools
 
-In a comment to the original D2EA video, Kaethena listed a few limitations and scenarios that you should read to understand
+In a comment to the original D2EA video, Cmdr Kaethena listed a few limitations and scenarios that you should read to understand
 that these tools are a good starting point, but possibly not the ending point for your shield loadouts. There are a lot of situations where
 a more generalist loadout might help you more than a max survivability loadout from this tool. YMMV. 
 
