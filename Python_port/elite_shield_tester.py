@@ -13,6 +13,7 @@ Don't forget to copy csv files into the exe's directory afterward.
 import csv
 import os
 import locale
+import time
 import multiprocessing
 import threading
 import queue
@@ -24,6 +25,7 @@ from typing import List, Dict
 # Configuration
 FILE_SHIELD_BOOSTER_VARIANTS = os.path.join(os.getcwd(), "ShieldBoosterVariants_short.csv")
 FILE_SHIELD_GENERATOR_VARIANTS = os.path.join(os.getcwd(), "ShieldGeneratorVariants.csv")
+LOG_DIRECTORY = os.path.join(os.getcwd(), "Logs")
 
 
 class IntegerEntry(tk.Entry):
@@ -111,6 +113,7 @@ class ShieldTester(tk.Tk):
     EVENT_COMPUTE_OUTPUT = "<<EventComputeOutput>>"
     EVENT_COMPUTE_COMPLETE = "<<EventComputeComplete>>"
     EVENT_PROGRESS_BAR_STEP = "<<EventProgressBarStep>>"
+    EVENT_WARNING_WRITE_LOGFILE = "<<EventShowWarningWriteLogfile>>"
 
     def __init__(self):
         super().__init__()
@@ -119,6 +122,7 @@ class ShieldTester(tk.Tk):
         self.bind(self.EVENT_COMPUTE_OUTPUT, lambda e: self._event_process_output(e))
         self.bind(self.EVENT_COMPUTE_COMPLETE, lambda e: self._event_compute_complete(e))
         self.bind(self.EVENT_PROGRESS_BAR_STEP, lambda e: self._event_progress_bar_step(e))
+        self.bind(self.EVENT_WARNING_WRITE_LOGFILE, lambda e: self._event_show_warning_logfile(e))
         self.message_queue = queue.SimpleQueue()
         self._shield_booster_variants = None
         self._shield_generator_variants = None
@@ -267,6 +271,9 @@ class ShieldTester(tk.Tk):
     def _event_compute_complete(self, event):
         self._unlock_ui_elements()
 
+    def _event_show_warning_logfile(self, event):
+        messagebox.showwarning("Could not write logfile.", "Could not write logfile.")
+
     def _generate_booster_variations(self, number_of_boosters: int, variations_list: List[List[int]],
                                      current_booster: int = 1, current_variation: int = 1, variations: List[int] = list()):
         # Generate all possible booster combinations recursively and append them to the given variationsList.
@@ -345,9 +352,16 @@ class ShieldTester(tk.Tk):
         else:
             output.append("Didn't take enough damage. Please increase DPS and/or damage effectiveness.")
 
-        self.message_queue.put((tk.END, "\n".join(output)))
+        output_string = "\n".join(output)
+        self.message_queue.put((tk.END, output_string))
         self.event_generate(self.EVENT_COMPUTE_OUTPUT)  # thread safe communication
         self.event_generate(self.EVENT_COMPUTE_COMPLETE)
+        try:
+            self._write_log(test_data, output_string)
+        except Exception as e:
+            print("Error writing logfile")
+            print(e)
+            self.event_generate(self.EVENT_WARNING_WRITE_LOGFILE)
 
     def compute(self):
         self._lock_ui_elements()
@@ -373,6 +387,24 @@ class ShieldTester(tk.Tk):
 
         t = threading.Thread(target=self._compute_background, args=(ui_data,))
         t.start()
+
+    @staticmethod
+    def _write_log(data: ShieldTesterData, result: str):
+        os.makedirs(LOG_DIRECTORY, exist_ok=True)
+        with open(os.path.join(LOG_DIRECTORY, time.strftime("%Y-%m-%d %H.%M.%S") + ".txt"), "a+") as logfile:
+            logfile.write("Test run at: {}\n".format(time.strftime("%Y-%m-%d %H:%M:%S")))
+            logfile.write("\n")
+            logfile.write("---- TEST SETUP ----\n")
+            logfile.write("Shield Booster Count: [{}]\n".format(data.number_of_boosters))
+            logfile.write("Shield Cell Bank Hit Point Pool: [{}]\n".format(data.scb_hitpoints))
+            logfile.write("Guardian Shield Reinforcement Hit Point Pool: [{}]\n".format(data.guardian_hitpoints))
+            logfile.write("Explosive DPS: [{}]\n".format(data.explosive_dps))
+            logfile.write("Kinetic DPS: [{}]\n".format(data.kinetic_dps))
+            logfile.write("Thermal DPS: [{}]\n".format(data.thermal_dps))
+            logfile.write("Absolute DPS: [{}]\n".format(data.absolute_dps))
+            logfile.write("Damage Effectiveness: [{:.0f}%]\n".format(data.damage_effectiveness * 100))
+            logfile.write(result)
+            logfile.flush()
 
 
 def test_case(data: ShieldTesterData, shield_generator_variant: ShieldGeneratorVariant) -> Dict:
