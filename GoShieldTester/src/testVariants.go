@@ -2,42 +2,43 @@ package main
 
 import "fmt"
 
-func testCase(ShieldGenerator generatorT, boosterVariants []boosterT, ShieldBoosterLoadoutList [][]int, config configT) resultT {
-	bestResult := resultT{survivalTime: 0.0}
+func testCase(shieldGenerator generatorT, boosterVariants []boosterT, shieldBoosterLoadoutList [][]int) resultT {
+	var bestTestCase resultT
+	var bestSurvivalTime float64 = 0.0
 
-	for _, ShieldBoosterLoadout := range ShieldBoosterLoadoutList {
+	for _, shieldBoosterLoadout := range shieldBoosterLoadoutList {
 		// Calculate the resistance, regen-rate and hitpoints of the current loadout
-		var LoadoutStats = getLoadoutStats(ShieldGenerator, ShieldBoosterLoadout, boosterVariants)
+		var loadoutStats = getLoadoutStats(shieldGenerator, shieldBoosterLoadout, boosterVariants)
 
-		var ActualDPS float64 = config.DamageEffectiveness*(config.ExplosiveDPS*(1-LoadoutStats.ExplosiveResistance)+
-			config.KineticDPS*(1-LoadoutStats.KineticResistance)+
-			config.ThermalDPS*(1-LoadoutStats.ThermalResistance)+config.AbsoluteDPS) -
-			LoadoutStats.RegenRate*(1-config.DamageEffectiveness)
-		var SurvivalTime float64 = LoadoutStats.HitPoints / ActualDPS
+		var actualDPS float64 = config.damageEffectiveness*
+			(config.explosiveDPS*(1-loadoutStats.explosiveResistance)+
+				config.kineticDPS*(1-loadoutStats.kineticResistance)+
+				config.thermalDPS*(1-loadoutStats.thermalResistance)+
+				config.absoluteDPS) - loadoutStats.regenRate*(1-config.damageEffectiveness)
 
-		if SurvivalTime > bestResult.survivalTime {
-			bestResult.shieldGenerator = ShieldGenerator
-			bestResult.shieldBoosterLoadout = setLoadout(config.ShieldBoosterCount, ShieldBoosterLoadout)
-			bestResult.loadOutStats = LoadoutStats
-			bestResult.survivalTime = SurvivalTime
+		var survivalTime float64 = loadoutStats.hitPoints / actualDPS
+
+		if survivalTime > bestSurvivalTime {
+			bestTestCase.shieldGenerator = shieldGenerator
+			bestTestCase.shieldBoosterLoadout = shieldBoosterLoadout
+			bestTestCase.loadOutStats = loadoutStats
+			bestTestCase.survivalTime = survivalTime
 		}
 	}
 
-	return bestResult
+	return bestTestCase
 }
 
 func testGenerators(generators []generatorT, boosterVariants []boosterT, boosterList [][]int) resultT {
 	var result resultT
 	bestResult := resultT{survivalTime: 0.0}
 
-	fmt.Println("Total tests [", len(generators), "]")
-
-	fmt.Print("[")
+	fmt.Print("Tests [")
 
 	for _, generator := range generators {
 		fmt.Print("#")
 
-		result = testCase(generator, boosterVariants, boosterList, config)
+		result = testCase(generator, boosterVariants, boosterList)
 		if result.survivalTime > bestResult.survivalTime {
 			bestResult = result
 		}
