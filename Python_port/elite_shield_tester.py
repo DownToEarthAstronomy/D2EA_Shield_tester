@@ -12,6 +12,8 @@ Don't forget to copy csv files into the exe's directory afterward.
 
 import csv
 import os
+import sys
+import re
 import locale
 import time
 import multiprocessing
@@ -24,8 +26,12 @@ from typing import List, Dict
 
 # Configuration
 VERSION = 0.3
-FILE_SHIELD_BOOSTER_VARIANTS = os.path.join(os.getcwd(), "ShieldBoosterVariants_short.csv")
-FILE_SHIELD_GENERATOR_VARIANTS = os.path.join(os.getcwd(), "ShieldGeneratorVariants.csv")
+
+path = os.pardir
+if re.match(".*elite_shield_tester\.exe", sys.executable):
+    path = os.getcwd()
+FILE_SHIELD_BOOSTER_VARIANTS = os.path.join(path, "ShieldBoosterVariants_short.csv")
+FILE_SHIELD_GENERATOR_VARIANTS = os.path.join(path, "ShieldGeneratorVariants.csv")
 LOG_DIRECTORY = os.path.join(os.getcwd(), "Logs")
 
 
