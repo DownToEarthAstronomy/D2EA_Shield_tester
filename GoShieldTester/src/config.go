@@ -21,7 +21,7 @@ func loadConfig() configT {
 		damageEffectiveness:    0.65, // 1 = always taking damage; 0.5 = Taking damage 50% of the time
 		scbHitPoint:            0,
 		guardianShieldHitPoint: 0,
-		boosterFile:            "../../ShieldBoosterVariants.csv",
+		boosterFile:            "../../ShieldBoosterVariants_short.csv",
 		generatorFile:          "../../shieldGeneratorVariants.csv",
 	}
 

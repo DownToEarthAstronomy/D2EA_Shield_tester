@@ -27,10 +27,21 @@ func processFlags() {
 
 	thargoid := flag.Bool("thargoid", false, "Useful Thargoid defaults")
 	cucumber := flag.Bool("cucumber", false, "Useful Cucumber defaults")
+	allboosters := flag.Bool("fullboost", false, "Load the full booster list")
 
 	flag.Parse()
 
-	if *cucumber && *thargoid == false {
+	if *thargoid && *cucumber {
+		fmt.Println("D2EA is not a Thargoid, loading only Cucumber")
+		*thargoid = false
+	}
+
+	if *allboosters {
+		fmt.Println("Loading all boosters")
+		config.boosterFile = "../../ShieldBoosterVariants.csv"
+	}
+
+	if *cucumber {
 		fmt.Println("Loading Cucumber defenses")
 		config.explosiveDPS = 0
 		config.kineticDPS = 83
@@ -39,13 +50,13 @@ func processFlags() {
 		config.damageEffectiveness = 0.25
 		config.shieldBoosterCount = 7
 	}
-	if *thargoid && *cucumber == false {
+	if *thargoid {
 		fmt.Println("Loading Thargoid defenses")
 		config.explosiveDPS = 0
 		config.kineticDPS = 0
 		config.thermalDPS = 0
-		config.absoluteDPS = 200
-		config.damageEffectiveness = 0.25
+		config.absoluteDPS = 100
+		config.damageEffectiveness = 0.10
 		config.shieldBoosterCount = 7
 	}
 }
