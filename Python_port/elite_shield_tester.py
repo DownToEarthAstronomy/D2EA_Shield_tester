@@ -23,6 +23,7 @@ from tkinter import ttk
 from typing import List, Dict
 
 # Configuration
+VERSION = 0.3
 FILE_SHIELD_BOOSTER_VARIANTS = os.path.join(os.getcwd(), "ShieldBoosterVariants_short.csv")
 FILE_SHIELD_GENERATOR_VARIANTS = os.path.join(os.getcwd(), "ShieldGeneratorVariants.csv")
 LOG_DIRECTORY = os.path.join(os.getcwd(), "Logs")
@@ -117,7 +118,7 @@ class ShieldTester(tk.Tk):
 
     def __init__(self):
         super().__init__()
-        self.title("Shield Tester")
+        self.title("Shield Tester v{}".format(VERSION))
 
         self.bind(self.EVENT_COMPUTE_OUTPUT, lambda e: self._event_process_output(e))
         self.bind(self.EVENT_COMPUTE_COMPLETE, lambda e: self._event_compute_complete(e))
