@@ -93,17 +93,18 @@ class LoadOutStat:
 
 
 class ShieldTesterData:
-    def __init__(self, number_of_boosters: int, damage_effectiveness: float, explosive_dps: int, kinetic_dps: int, thermal_dps: int, absolute_dps: int, cpu_cores: int,
-                 shield_booster_variants: Dict[int, ShieldBoosterVariant], booster_variations_list: List[List[int]] = None):
-        self.number_of_boosters = number_of_boosters
-        self.damage_effectiveness = damage_effectiveness
-        self.explosive_dps = explosive_dps
-        self.kinetic_dps = kinetic_dps
-        self.thermal_dps = thermal_dps
-        self.absolute_dps = absolute_dps
-        self.cpu_cores = cpu_cores
-        self.shield_booster_variants = shield_booster_variants
-        self.booster_variations_list = booster_variations_list
+    def __init__(self):
+        self.number_of_boosters = 0
+        self.damage_effectiveness = 0
+        self.explosive_dps = 0
+        self.kinetic_dps = 0
+        self.thermal_dps = 0
+        self.absolute_dps = 0
+        self.cpu_cores = 0
+        self.scb_hitpoints = 0
+        self.guardian_hitpoints = 0
+        self.shield_booster_variants = None
+        self.booster_combinations = None
 
 
 class ShieldTester(tk.Tk):
@@ -132,17 +133,29 @@ class ShieldTester(tk.Tk):
         self._left_frame = tk.Frame(self, borderwidth=1, relief=tk.RIDGE)
         self._left_frame.grid(row=1, column=1, sticky=tk.NS)
         tk.Label(self._left_frame, text="Number of boosters").grid(row=0, column=0, sticky=tk.SW, padx=padding, pady=padding)
-        self._booster_slider = tk.Scale(self._left_frame, from_=0, to=8, orient=tk.HORIZONTAL, length=150)
+        self._booster_slider = tk.Scale(self._left_frame, from_=0, to=8, orient=tk.HORIZONTAL, length=175, takefocus=True)
         self._booster_slider.set(2)
         self._booster_slider.grid(row=0, column=1, sticky=tk.E, padx=padding, pady=padding)
         self._lockable_ui_elements.append(self._booster_slider)
 
         row = 1
-        tk.Label(self._left_frame, text="Damage Effectiveness in %").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
-        self._effectiveness_slider = tk.Scale(self._left_frame, from_=1, to=100, orient=tk.HORIZONTAL, length=150)
+        tk.Label(self._left_frame, text="Damage effectiveness in %").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._effectiveness_slider = tk.Scale(self._left_frame, from_=1, to=100, orient=tk.HORIZONTAL, length=175, takefocus=True)
         self._effectiveness_slider.set(25)
         self._effectiveness_slider.grid(row=row, column=1, sticky=tk.E, padx=padding, pady=padding)
         self._lockable_ui_elements.append(self._effectiveness_slider)
+
+        row += 1
+        tk.Label(self._left_frame, text="Shield cell bank hit point pool").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._scb_hitpoints = IntegerEntry(self._left_frame)
+        self._scb_hitpoints.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
+        self._lockable_ui_elements.append(self._scb_hitpoints)
+
+        row += 1
+        tk.Label(self._left_frame, text="Guardian shield reinforcement hit point pool").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._guardian_hitpoints = IntegerEntry(self._left_frame)
+        self._guardian_hitpoints.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
+        self._lockable_ui_elements.append(self._guardian_hitpoints)
 
         row += 1
         tk.Label(self._left_frame, text="Explosive DPS").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
@@ -176,14 +189,14 @@ class ShieldTester(tk.Tk):
 
         row += 1
         tk.Label(self._left_frame, text="CPU cores to use").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
-        self._cores_slider = tk.Scale(self._left_frame, from_=1, to=os.cpu_count(), orient=tk.HORIZONTAL, length=150)
+        self._cores_slider = tk.Scale(self._left_frame, from_=1, to=os.cpu_count(), orient=tk.HORIZONTAL, length=175, takefocus=True)
         self._cores_slider.set(os.cpu_count())
         self._cores_slider.grid(row=row, column=1, sticky=tk.E, padx=padding, pady=padding)
         self._lockable_ui_elements.append(self._cores_slider)
 
         self._right_frame = tk.Frame(self, borderwidth=1, relief=tk.RIDGE)
         self._right_frame.grid(row=1, column=2, sticky=tk.NS)
-        self._text_widget = tk.Text(self._right_frame, height=25, width=75)
+        self._text_widget = tk.Text(self._right_frame, height=27, width=75)
         self._text_widget.pack(padx=padding, pady=padding)
         self._text_widget.config(state=tk.DISABLED)
 
@@ -279,7 +292,7 @@ class ShieldTester(tk.Tk):
 
         variations_list = list()  # list of all possible booster variations
         self._generate_booster_variations(test_data.number_of_boosters, variations_list)
-        test_data.booster_variations_list = variations_list
+        test_data.booster_combinations = variations_list
         output.append("Shield loadouts to be tested: [{0:n}]".format(len(variations_list) * len(self._shield_generator_variants)))
         output.append("Running calculations. Please wait...")
         output.append("")
@@ -345,16 +358,18 @@ class ShieldTester(tk.Tk):
         self._text_widget.config(state=tk.DISABLED)
 
         # get data from UI
-        number_of_boosters = self._booster_slider.get()
-        damage_effectiveness = self._effectiveness_slider.get() / 100.0
-        explosive_dps = int(self._explosive_dps_entry.get()) if self._explosive_dps_entry.get() else 0
-        kinetic_dps = int(self._kinetic_dps_entry.get()) if self._kinetic_dps_entry.get() else 0
-        thermal_dps = int(self._thermal_dps_entry.get()) if self._thermal_dps_entry.get() else 0
-        absolute_dps = int(self._absolute_dps_entry.get()) if self._absolute_dps_entry.get() else 0
-        cpu_cores = self._cores_slider.get()
+        ui_data = ShieldTesterData()
+        ui_data.number_of_boosters = self._booster_slider.get()
+        ui_data.damage_effectiveness = self._effectiveness_slider.get() / 100.0
+        ui_data.scb_hitpoints = int(self._scb_hitpoints.get()) if self._scb_hitpoints.get() else 0
+        ui_data.guardian_hitpoints = int(self._guardian_hitpoints.get()) if self._guardian_hitpoints.get() else 0
+        ui_data.explosive_dps = int(self._explosive_dps_entry.get()) if self._explosive_dps_entry.get() else 0
+        ui_data.kinetic_dps = int(self._kinetic_dps_entry.get()) if self._kinetic_dps_entry.get() else 0
+        ui_data.thermal_dps = int(self._thermal_dps_entry.get()) if self._thermal_dps_entry.get() else 0
+        ui_data.absolute_dps = int(self._absolute_dps_entry.get()) if self._absolute_dps_entry.get() else 0
+        ui_data.cpu_cores = self._cores_slider.get()
 
-        ui_data = ShieldTesterData(number_of_boosters, damage_effectiveness, explosive_dps, kinetic_dps,
-                                   thermal_dps, absolute_dps, cpu_cores, self._shield_booster_variants)
+        ui_data.shield_booster_variants = self._shield_booster_variants
 
         t = threading.Thread(target=self._compute_background, args=(ui_data,))
         t.start()
@@ -366,7 +381,7 @@ def test_case(data: ShieldTesterData, shield_generator_variant: ShieldGeneratorV
     best_shield_booster_loadout = None
     best_loadout_stats = 0
 
-    for booster_variation in data.booster_variations_list:
+    for booster_variation in data.booster_combinations:
         # Calculate the resistance, regen-rate and hitpoints of the current loadout
         loadout_stats = calculate_loadout_stats(data, shield_generator_variant, booster_variation)
 
@@ -376,7 +391,7 @@ def test_case(data: ShieldTesterData, shield_generator_variant: ShieldGeneratorV
                 data.thermal_dps * (1 - loadout_stats.thermalResistance) +
                 data.absolute_dps) - loadout_stats.regenRate * (1 - data.damage_effectiveness)
 
-        survival_time = loadout_stats.hitPoints / actual_dps
+        survival_time = (loadout_stats.hitPoints + data.scb_hitpoints) / actual_dps
 
         if survival_time > best_survival_time:
             best_shield_generator = shield_generator_variant.id
@@ -418,7 +433,7 @@ def calculate_loadout_stats(data: ShieldTesterData, shield_generator_variant: Sh
     therm_res = 1 - ((1 - shield_generator_variant.thermRes) * therm_modifier)
 
     # Compute final hitpoints
-    hitpoints = (1 + hitpoint_bonus) * shield_generator_variant.shieldStrength
+    hitpoints = (1 + hitpoint_bonus) * shield_generator_variant.shieldStrength + data.guardian_hitpoints
 
     return LoadOutStat(hitpoints, shield_generator_variant.regenRate, exp_res, kin_res, therm_res)
 
