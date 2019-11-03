@@ -32,6 +32,16 @@ func processFlags() {
 
 	flag.Parse()
 
+	if config.shieldBoosterCount < 0 {
+		fmt.Println("Can't have negative shield boosters, setting to 0")
+		config.shieldBoosterCount = 0
+	}
+
+	if config.shieldBoosterCount > 8 {
+		fmt.Println("No current ship has more than 8 shield boosters, setting to 8")
+		config.shieldBoosterCount = 8
+	}
+
 	if *prismatics {
 		fmt.Println("Disabling Prismatics")
 		config.prismatics = false
