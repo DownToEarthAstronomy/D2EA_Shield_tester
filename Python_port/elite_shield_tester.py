@@ -127,6 +127,8 @@ class ShieldTester(tk.Tk):
         tk.Frame(self, width=10, height=10).grid(row=0, column=0, sticky=tk.N)
         tk.Frame(self, width=10, height=10).grid(row=2, column=3, sticky=tk.N)
 
+        self._lockable_ui_elements = list()
+
         padding = 5
         self._left_frame = tk.Frame(self, borderwidth=1, relief=tk.RIDGE)
         self._left_frame.grid(row=1, column=1, sticky=tk.NS)
@@ -134,34 +136,40 @@ class ShieldTester(tk.Tk):
         self._booster_slider = tk.Scale(self._left_frame, from_=0, to=8, orient=tk.HORIZONTAL, length=150)
         self._booster_slider.set(2)
         self._booster_slider.grid(row=0, column=1, sticky=tk.E, padx=padding, pady=padding)
+        self._lockable_ui_elements.append(self._booster_slider)
 
         row = 1
         tk.Label(self._left_frame, text="Damage Effectiveness in %").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
         self._effectiveness_slider = tk.Scale(self._left_frame, from_=1, to=100, orient=tk.HORIZONTAL, length=150)
         self._effectiveness_slider.set(25)
         self._effectiveness_slider.grid(row=row, column=1, sticky=tk.E, padx=padding, pady=padding)
+        self._lockable_ui_elements.append(self._effectiveness_slider)
 
         row += 1
         tk.Label(self._left_frame, text="Explosive DPS").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
         self._explosive_dps_entry = IntegerEntry(self._left_frame)
         self._explosive_dps_entry.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
+        self._lockable_ui_elements.append(self._explosive_dps_entry)
 
         row += 1
         tk.Label(self._left_frame, text="Kinetic DPS").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
         self._kinetic_dps_entry = IntegerEntry(self._left_frame)
         self._kinetic_dps_entry.insert(0, 50)
         self._kinetic_dps_entry.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
+        self._lockable_ui_elements.append(self._kinetic_dps_entry)
 
         row += 1
         tk.Label(self._left_frame, text="Thermal DPS").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
         self._thermal_dps_entry = IntegerEntry(self._left_frame)
         self._thermal_dps_entry.insert(0, 50)
         self._thermal_dps_entry.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
+        self._lockable_ui_elements.append(self._thermal_dps_entry)
 
         row += 1
         tk.Label(self._left_frame, text="Absolute DPS (Thargoids)").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
         self._absolute_dps_entry = IntegerEntry(self._left_frame)
         self._absolute_dps_entry.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
+        self._lockable_ui_elements.append(self._absolute_dps_entry)
 
         # empty row
         row += 1
@@ -172,6 +180,7 @@ class ShieldTester(tk.Tk):
         self._cores_slider = tk.Scale(self._left_frame, from_=1, to=os.cpu_count(), orient=tk.HORIZONTAL, length=150)
         self._cores_slider.set(os.cpu_count())
         self._cores_slider.grid(row=row, column=1, sticky=tk.E, padx=padding, pady=padding)
+        self._lockable_ui_elements.append(self._cores_slider)
 
         self._right_frame = tk.Frame(self, borderwidth=1, relief=tk.RIDGE)
         self._right_frame.grid(row=1, column=2, sticky=tk.NS)
@@ -182,11 +191,20 @@ class ShieldTester(tk.Tk):
         row += 1
         self._compute_button = tk.Button(self._left_frame, text="Compute best loadout", command=self.compute)
         self._compute_button.grid(row=row, columnspan=2, sticky=tk.S, padx=padding, pady=padding)
+        self._lockable_ui_elements.append(self._compute_button)
 
         row += 1
         self._progress_bar = ttk.Progressbar(self._left_frame, orient="horizontal", mode="determinate")
         self._progress_bar.grid(row=row, columnspan=2, sticky=tk.EW, padx=padding, pady=padding)
         self._progress_bar.config(value=0, maximum=len(shield_generator_variants))
+
+    def _lock_ui_elements(self):
+        for element in self._lockable_ui_elements:
+            element.config(state=tk.DISABLED)
+
+    def _unlock_ui_elements(self):
+        for element in self._lockable_ui_elements:
+            element.config(state=tk.NORMAL)
 
     def event_process_output(self, event):
         self._text_widget.config(state=tk.NORMAL)
@@ -199,7 +217,7 @@ class ShieldTester(tk.Tk):
             self._progress_bar.step()
 
     def event_compute_complete(self, event):
-        self._compute_button.config(state=tk.ACTIVE)
+        self._unlock_ui_elements()
 
     def generate_booster_variations(self, number_of_boosters: int, variations_list: List[List[int]],
                                     current_booster: int=1, current_variation: int=1, variations: List[int]=list()):
@@ -284,7 +302,7 @@ class ShieldTester(tk.Tk):
         self.event_generate(self.EVENT_COMPUTE_COMPLETE)
 
     def compute(self):
-        self._compute_button.config(state=tk.DISABLED)
+        self._lock_ui_elements()
 
         # clear text widget
         self._text_widget.config(state=tk.NORMAL)
