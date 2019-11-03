@@ -110,7 +110,7 @@ Go version, but for compatibility's sake, it is the default choice. If you want 
 
 ## Number of boosters
 
-Choose between 1 and 8 boosters to fill up those utility slots. 
+Choose between 0 and 8 boosters to fill up those utility slots. 
 
 ```
   -boosters int
