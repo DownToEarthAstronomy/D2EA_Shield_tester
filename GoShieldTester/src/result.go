@@ -41,7 +41,7 @@ func showResults(bestResult resultT, boosterVariants []boosterT) {
 
 	fmt.Println()
 
-	fmt.Printf("Shield Hitpoints:     %.1f hp\n", bestLoadOutStats.hitPoints)
+	fmt.Printf("Shield Hitpoints:     %.1f hp\n", bestLoadOutStats.hitPoints-config.scbHitPoint)
 	fmt.Printf("Shield Regen:         %.2f hp/s\n", bestLoadOutStats.regenRate)
 	fmt.Printf("Explosive Resistance: %.2f%%\n", bestLoadOutStats.explosiveResistance*100)
 	fmt.Printf("Kinetic Resistance:   %.2f%%\n", bestLoadOutStats.kineticResistance*100)
