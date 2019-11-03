@@ -64,7 +64,7 @@ func loadGenerators() []generatorT {
 		generators = append(generators, generator)
 	}
 
-	fmt.Println("Loaded", len(generators), "boosters")
+	fmt.Println("Loaded", len(generators), "generators")
 
 	return generators
 }
