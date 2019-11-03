@@ -73,10 +73,15 @@ func main() {
 	fmt.Println("Test started at: ", time.Now().Format(time.RFC1123))
 
 	var generators = loadGenerators()
+	fmt.Println("Loaded", len(generators), "generator variants")
+
 	var boosterVariants = loadboosterVariants()
+	fmt.Println("Loaded", len(boosterVariants), "shield booster variants")
+
 	var shieldBoosterLoadoutList = getBoosterLoadoutList(len(boosterVariants))
 
-	fmt.Println("Shield loadouts to be tested: ", len(shieldBoosterLoadoutList)*len(generators))
+	fmt.Println("Loadout shield booster variations to be tested per generator: ", len(shieldBoosterLoadoutList))
+	fmt.Println("Total loadouts to be tested: ", len(shieldBoosterLoadoutList)*len(generators))
 
 	startTime := time.Now()
 

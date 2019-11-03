@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/csv"
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -62,31 +61,35 @@ func loadboosterVariants() []boosterT {
 		boosterVariants = append(boosterVariants, booster)
 	}
 
-	fmt.Println("Loaded", len(boosterVariants), "boosters")
 	return boosterVariants
 }
 
-func generateBoosterVariations(numberBoosterVariations int, variationsList [][]int, currentBooster int, currentVariation int, variations []int) [][]int {
+// Combinations with repetition code from
+// https://rosettacode.org/wiki/Combinations_with_repetitions#Concise_recursive
 
-	if currentBooster <= config.shieldBoosterCount {
-		for currentVariation <= numberBoosterVariations {
-			currentVariationList := variations
-			currentVariationList = append(currentVariationList, currentVariation)
-			variationsList = generateBoosterVariations(numberBoosterVariations, variationsList, currentBooster+1, currentVariation, currentVariationList)
-			currentVariation++
-		}
-	} else {
-		variationsList = append(variationsList, variations)
+func combrep(n int, lst []int) [][]int {
+	if n == 0 {
+		return [][]int{nil}
 	}
-
-	return variationsList
+	if len(lst) == 0 {
+		return nil
+	}
+	r := combrep(n, lst[1:])
+	for _, x := range combrep(n-1, lst) {
+		r = append(r, append(x, lst[0]))
+	}
+	return r
 }
 
 func getBoosterLoadoutList(numBoosterVariants int) [][]int {
-	var variationsList [][]int
-	var currentVariationList []int
 
-	variationsList = generateBoosterVariations(numBoosterVariants, variationsList, 1, 1, currentVariationList)
+	input := make([]int, numBoosterVariants)
+	var i int
+	for i < numBoosterVariants {
+		input[i] = i + 1
+		i++
+	}
+	variationsList := combrep(config.shieldBoosterCount, input)
 
 	return variationsList
 }

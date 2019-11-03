@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/csv"
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -63,8 +62,6 @@ func loadGenerators() []generatorT {
 
 		generators = append(generators, generator)
 	}
-
-	fmt.Println("Loaded", len(generators), "generators")
 
 	return generators
 }
