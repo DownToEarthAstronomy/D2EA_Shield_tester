@@ -7,22 +7,24 @@ https://github.com/DownToEarthAstronomy/D2EA_Shield_tester
 
 # Abstract
 
-Many of us run many different ships, with many stored shield generators and modules with the different engineering. 
+Many of us run many different ships, with many stored shield generators and modules with many forms of engineering. It might be tempting to just put on Heavy Duty / Deep plating, but is that really the best alternative? How do you choose the best loadout? 
 
-How do you choose the best loadout? Before this tool, it was the usual metas, which undeniably work. However, there's 
+Before D2EA's shield tester tool, it was the usual metas, which undeniably work. However, there's 
 so many combinations, it's hard to say for sure if the meta for your ship and combat or defence scenario is the best 
 alternative. 
 
 We need a way of figuring out the best combination of generator and shield boosters for situational
-scenarios. The original Powershell version is groundbreaking research, but is fairly slow, and thus might discourage some from 
-running the tool when they change ships or combat scenarios. 
-
-For example, you might want to change between mining to fighting Thargoid Interceptors or NPCs in combat zones. All of three scenarios require slightly different
-loadouts. 
+scenarios. For example, you might want to change between mining to fighting Thargoid Interceptors or NPCs in combat zones. All of three scenarios require slightly different loadouts. 
 
 This tool helps you quickly find the best starting loadout for your scenario. Even the lengthiest run of the Go port with
 8 boosters and all booster variants takes less than 5 seconds on a modern i7 processor, and most common ship loadouts
 take less than a second. 
+
+## Why a Go version? 
+
+The original Powershell version is groundbreaking research, but is fairly slow, and thus might discourage some from running the tool when they change ships or combat scenarios. 
+
+The Go version is about 15,000 times per CPU faster. This Go version is not multi-threaded, as it takes less than 5 seconds to run on a modern i7 on the most complicated loadout possible. The PowerShell version on the same system can take up to 9m15s with 12 threads. It could be multi-threaded if you want to contribute a patch, but it's not necessary. 
 
 ## Improvements to these tools
 
