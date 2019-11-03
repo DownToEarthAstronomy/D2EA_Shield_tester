@@ -47,15 +47,13 @@ func getLoadoutStats(shieldGeneratorVariant generatorT, shieldBoosterLoadout []i
 	thermRes = 1 - ((1 - shieldGeneratorVariant.thermRes) * thermModifier)
 
 	// Compute final Hitpoints
-	hitPoints = (1 + hitPointBonus) * shieldGeneratorVariant.shieldStrength
+	hitPoints = (1+hitPointBonus)*shieldGeneratorVariant.shieldStrength + config.scbHitPoint + config.guardianShieldHitPoint
 
-	var LoadoutStat = loadOutStatT{
-		hitPoints:           hitPoints + config.scbHitPoint + config.guardianShieldHitPoint,
+	return loadOutStatT{
+		hitPoints:           hitPoints,
 		regenRate:           shieldGeneratorVariant.regenRate,
 		explosiveResistance: expRes,
 		kineticResistance:   kinRes,
 		thermalResistance:   thermRes,
 	}
-
-	return LoadoutStat
 }

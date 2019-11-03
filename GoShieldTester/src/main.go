@@ -55,7 +55,7 @@ func processFlags() {
 		config.explosiveDPS = 0
 		config.kineticDPS = 0
 		config.thermalDPS = 0
-		config.absoluteDPS = 100
+		config.absoluteDPS = 200
 		config.damageEffectiveness = 0.10
 		config.shieldBoosterCount = 7
 	}

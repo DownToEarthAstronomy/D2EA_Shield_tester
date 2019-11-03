@@ -3,8 +3,9 @@ package main
 import "fmt"
 
 func testCase(shieldGenerator generatorT, boosterVariants []boosterT, shieldBoosterLoadoutList [][]int) resultT {
-	var bestTestCase resultT
-	var bestSurvivalTime float64 = 0.0
+	bestTestCase := resultT{
+		survivalTime: 0.0,
+	}
 
 	for _, shieldBoosterLoadout := range shieldBoosterLoadoutList {
 		// Calculate the resistance, regen-rate and hitpoints of the current loadout
@@ -18,7 +19,7 @@ func testCase(shieldGenerator generatorT, boosterVariants []boosterT, shieldBoos
 
 		var survivalTime float64 = loadoutStats.hitPoints / actualDPS
 
-		if survivalTime > bestSurvivalTime {
+		if survivalTime > bestTestCase.survivalTime {
 			bestTestCase.shieldGenerator = shieldGenerator
 			bestTestCase.shieldBoosterLoadout = shieldBoosterLoadout
 			bestTestCase.loadOutStats = loadoutStats
@@ -30,7 +31,6 @@ func testCase(shieldGenerator generatorT, boosterVariants []boosterT, shieldBoos
 }
 
 func testGenerators(generators []generatorT, boosterVariants []boosterT, boosterList [][]int) resultT {
-	var result resultT
 	bestResult := resultT{survivalTime: 0.0}
 
 	fmt.Print("Tests [")
@@ -38,7 +38,7 @@ func testGenerators(generators []generatorT, boosterVariants []boosterT, booster
 	for _, generator := range generators {
 		fmt.Print("#")
 
-		result = testCase(generator, boosterVariants, boosterList)
+		result := testCase(generator, boosterVariants, boosterList)
 		if result.survivalTime > bestResult.survivalTime {
 			bestResult = result
 		}
