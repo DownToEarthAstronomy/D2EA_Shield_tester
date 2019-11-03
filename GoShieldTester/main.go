@@ -38,7 +38,7 @@ func processFlags() {
 
 	if *allboosters {
 		fmt.Println("Loading all boosters")
-		config.boosterFile = "../../ShieldBoosterVariants.csv"
+		config.boosterFile = "../ShieldBoosterVariants.csv"
 	}
 
 	if *cucumber {
