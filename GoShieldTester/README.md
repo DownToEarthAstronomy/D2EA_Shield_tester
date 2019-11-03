@@ -44,16 +44,11 @@ go build .
 go run . 
 ```
 
-After building, you can also invoke it like any other command line tool. 
+After building, you can also invoke it like any other command line tool. If you invoke it with the -h flag, you'll get the following:
 
 ```
-> .\GoShieldTester -h
-Down to Earth Astronomy's ShieldTester (https://github.com/DownToEarthAstronomy/D2EA_Shield_tester)
-Go port by Andrew van der Stock, vanderaj@gmail.com
-
-Usage of C:\Users\vande\GitHub\D2EA_Shield_tester\GoShieldTester\GoShieldTester.exe:
   -adps float
-        Absolute DPS percentage (use 100 for Thargoids)
+        Absolute DPS percentage (use 100 for Thargoids) (default 200)
   -boosters int
         Number of Shield Boosters (default 2)
   -cucumber
@@ -61,17 +56,19 @@ Usage of C:\Users\vande\GitHub\D2EA_Shield_tester\GoShieldTester\GoShieldTester.
   -dmg float
         Damage effectiveness (use 0.1 for PvE, 0.5 for PvP, and 0.65 for Thargoids) (default 0.65)
   -edps float
-        Explosive DPS percentage (use 0 for Thargoids) (default 33)
+        Explosive DPS percentage (use 0 for Thargoids)
   -fullboost
         Load the full booster list
   -gshp float
         Guardian HitPoints (default 0)
   -kdps float
-        Kinetic DPS percentage (use 0 for Thargoids) (default 33)
+        Kinetic DPS percentage (use 0 for Thargoids)
+  -noprismatics
+        Disable Prismatic shields
   -scb float
         SCB HitPoints (default 0)
   -tdps float
-        Thermal DPS percentage (use 0 for Thargoids) (default 33)
+        Thermal DPS percentage (use 0 for Thargoids)
   -thargoid
         Useful Thargoid defaults
 ```
