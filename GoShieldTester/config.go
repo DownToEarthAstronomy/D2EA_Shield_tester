@@ -2,6 +2,7 @@ package main
 
 type configT struct {
 	shieldBoosterCount                                int
+	prismatics                                        bool
 	explosiveDPS, kineticDPS, thermalDPS, absoluteDPS float64
 	damageEffectiveness                               float64
 	scbHitPoint, guardianShieldHitPoint               float64
@@ -14,6 +15,7 @@ func loadConfig() configT {
 
 	config = configT{
 		shieldBoosterCount:     2,
+		prismatics:             true,
 		explosiveDPS:           0,
 		kineticDPS:             0,
 		thermalDPS:             0,

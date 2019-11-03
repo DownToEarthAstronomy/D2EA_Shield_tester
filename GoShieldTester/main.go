@@ -25,11 +25,17 @@ func processFlags() {
 	flag.Float64Var(&config.scbHitPoint, "scb", config.scbHitPoint, "SCB HitPoints (default 0)")
 	flag.Float64Var(&config.guardianShieldHitPoint, "gshp", config.guardianShieldHitPoint, "Guardian HitPoints (default 0)")
 
+	prismatics := flag.Bool("noprismatics", false, "Disable Prismatic shields")
 	thargoid := flag.Bool("thargoid", false, "Useful Thargoid defaults")
 	cucumber := flag.Bool("cucumber", false, "Useful Cucumber defaults")
 	allboosters := flag.Bool("fullboost", false, "Load the full booster list")
 
 	flag.Parse()
+
+	if *prismatics {
+		fmt.Println("Disabling Prismatics")
+		config.prismatics = false
+	}
 
 	if *thargoid && *cucumber {
 		fmt.Println("D2EA is not a Thargoid, loading only Cucumber")

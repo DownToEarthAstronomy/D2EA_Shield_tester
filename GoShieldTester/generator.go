@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 )
 
 type generatorT struct {
@@ -46,6 +47,11 @@ func loadGenerators() []generatorT {
 
 		if err != nil {
 			log.Fatal(err)
+		}
+
+		// if prismatics are disabled, skip those entries
+		if !config.prismatics && strings.Contains(record[1], "Prismatic") {
+			continue
 		}
 
 		// ID,Type,Engineering,Experimental,shieldStrength,regenRate,ExpRes,KinRes,ThermRes

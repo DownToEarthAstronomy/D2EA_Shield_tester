@@ -80,11 +80,15 @@ The Go port has a number of command line flags to override the default configura
 Included are two scenarios loadout configurations to aid in testing the tool, but also generate useful loadouts for the discerning
 Commander who might be fighting Thargoids or D2EA. 
 
+Disabling prismatic shields allows for users who have yet to unlock prismatics to see what their next best alternative might be. 
+
 ```
   -cucumber
         Useful Cucumber defaults
   -thargoid
         Useful Thargoid defaults
+  -noprismatics
+        Disable prismatic shields 
 ```
 
 Those who have watched the video will recognize the defaults in use. As these override the defaults, using the other DPS flags 
