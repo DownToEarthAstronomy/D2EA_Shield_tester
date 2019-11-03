@@ -28,15 +28,16 @@ func showResults(bestResult resultT, boosterVariants []boosterT) {
 
 	fmt.Println()
 	fmt.Println("---- TEST RESULTS ----")
-	fmt.Println("Survival Time [s]: [", bestResult.survivalTime, "]")
-	fmt.Println("Shield Generator: [", shieldGenerator.name, "] - [", shieldGenerator.engineering, "] - [", shieldGenerator.experimental, "]")
-	fmt.Println("Shield boosters:")
+	fmt.Printf("Survival Time:        %.2f s\n", bestResult.survivalTime)
+	fmt.Println("Shield Generator:    ", shieldGenerator.name, "with", shieldGenerator.engineering, "engineering,", shieldGenerator.experimental, "experimental")
 
 	var bestLoadOutStats = bestResult.loadOutStats
 
+	i := 1
 	for _, booster := range bestResult.shieldBoosterLoadout {
 		var oBooster = boosterVariants[booster-1]
-		fmt.Println("[", oBooster.engineering, "] - [", oBooster.experimental, "]")
+		fmt.Println("Shield Booster", i, "    ", oBooster.engineering, "engineering,", oBooster.experimental, "experimental")
+		i++
 	}
 
 	fmt.Println()
