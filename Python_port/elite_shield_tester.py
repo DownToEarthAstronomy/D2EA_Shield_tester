@@ -115,9 +115,9 @@ class ShieldTester(tk.Tk):
         super().__init__()
         self.title("Shield Tester")
 
-        self.bind(self.EVENT_COMPUTE_OUTPUT, lambda e: self.event_process_output(e))
-        self.bind(self.EVENT_COMPUTE_COMPLETE, lambda e: self.event_compute_complete(e))
-        self.bind(self.EVENT_PROGRESS_BAR_STEP, lambda e: self.event_progress_bar_step(e))
+        self.bind(self.EVENT_COMPUTE_OUTPUT, lambda e: self._event_process_output(e))
+        self.bind(self.EVENT_COMPUTE_COMPLETE, lambda e: self._event_compute_complete(e))
+        self.bind(self.EVENT_PROGRESS_BAR_STEP, lambda e: self._event_progress_bar_step(e))
         self.message_queue = queue.SimpleQueue()
         self._shield_booster_variants = None
         self._shield_generator_variants = None
@@ -233,7 +233,6 @@ class ShieldTester(tk.Tk):
                                                                                                   booster=os.path.basename(FILE_SHIELD_BOOSTER_VARIANTS))):
                 self._read_csv_files()
 
-
     def _lock_ui_elements(self):
         for element in self._lockable_ui_elements:
             element.config(state=tk.DISABLED)
@@ -242,33 +241,33 @@ class ShieldTester(tk.Tk):
         for element in self._lockable_ui_elements:
             element.config(state=tk.NORMAL)
 
-    def event_process_output(self, event):
+    def _event_process_output(self, event):
         self._text_widget.config(state=tk.NORMAL)
         position, message = self.message_queue.get_nowait()
         self._text_widget.insert(position, message)
         self._text_widget.config(state=tk.DISABLED)
 
-    def event_progress_bar_step(self, event):
+    def _event_progress_bar_step(self, event):
         if self._progress_bar:
             self._progress_bar.step()
 
-    def event_compute_complete(self, event):
+    def _event_compute_complete(self, event):
         self._unlock_ui_elements()
 
-    def generate_booster_variations(self, number_of_boosters: int, variations_list: List[List[int]],
-                                    current_booster: int = 1, current_variation: int = 1, variations: List[int] = list()):
+    def _generate_booster_variations(self, number_of_boosters: int, variations_list: List[List[int]],
+                                     current_booster: int = 1, current_variation: int = 1, variations: List[int] = list()):
         # Generate all possible booster combinations recursively and append them to the given variationsList.
         if current_booster <= number_of_boosters:
             while current_variation <= len(self._shield_booster_variants):
                 current_variation_list = variations.copy()
                 current_variation_list.append(current_variation)
-                self.generate_booster_variations(number_of_boosters, variations_list, current_booster + 1, current_variation, current_variation_list)
+                self._generate_booster_variations(number_of_boosters, variations_list, current_booster + 1, current_variation, current_variation_list)
                 current_variation += 1
         else:
             # Append to list. Variable is a reference and lives in main function. Therefore it is safe to append lists of booster IDs to it.
             variations_list.append(variations)
 
-    def compute_background(self, test_data: ShieldTesterData):
+    def _compute_background(self, test_data: ShieldTesterData):
         output = list()
         output.append("Shield Booster Count: {0}".format(test_data.number_of_boosters))
         output.append("Shield Booster Variants: {0}".format(len(self._shield_booster_variants)))
@@ -279,7 +278,7 @@ class ShieldTester(tk.Tk):
         self.event_generate(self.EVENT_COMPUTE_OUTPUT)  # thread safe communication
 
         variations_list = list()  # list of all possible booster variations
-        self.generate_booster_variations(test_data.number_of_boosters, variations_list)
+        self._generate_booster_variations(test_data.number_of_boosters, variations_list)
         test_data.booster_variations_list = variations_list
         output.append("Shield loadouts to be tested: [{0:n}]".format(len(variations_list) * len(self._shield_generator_variants)))
         output.append("Running calculations. Please wait...")
@@ -357,7 +356,7 @@ class ShieldTester(tk.Tk):
         ui_data = ShieldTesterData(number_of_boosters, damage_effectiveness, explosive_dps, kinetic_dps,
                                    thermal_dps, absolute_dps, cpu_cores, self._shield_booster_variants)
 
-        t = threading.Thread(target=self.compute_background, args=(ui_data,))
+        t = threading.Thread(target=self._compute_background, args=(ui_data,))
         t.start()
 
 
