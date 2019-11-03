@@ -17,10 +17,9 @@ import multiprocessing
 import threading
 import queue
 import tkinter as tk
+from tkinter import messagebox
 from tkinter import ttk
-from functools import partial
 from typing import List, Dict
-
 
 # Configuration
 FILE_SHIELD_BOOSTER_VARIANTS = os.path.join(os.getcwd(), "ShieldBoosterVariants_short.csv")
@@ -95,7 +94,7 @@ class LoadOutStat:
 
 class ShieldTesterData:
     def __init__(self, number_of_boosters: int, damage_effectiveness: float, explosive_dps: int, kinetic_dps: int, thermal_dps: int, absolute_dps: int, cpu_cores: int,
-                 shield_booster_variants: Dict[int, ShieldBoosterVariant], booster_variations_list: List[List[int]]=None):
+                 shield_booster_variants: Dict[int, ShieldBoosterVariant], booster_variations_list: List[List[int]] = None):
         self.number_of_boosters = number_of_boosters
         self.damage_effectiveness = damage_effectiveness
         self.explosive_dps = explosive_dps
@@ -112,7 +111,7 @@ class ShieldTester(tk.Tk):
     EVENT_COMPUTE_COMPLETE = "<<EventComputeComplete>>"
     EVENT_PROGRESS_BAR_STEP = "<<EventProgressBarStep>>"
 
-    def __init__(self, shield_booster_variants: Dict[int, ShieldBoosterVariant], shield_generator_variants: Dict[int, ShieldGeneratorVariant]):
+    def __init__(self):
         super().__init__()
         self.title("Shield Tester")
 
@@ -120,8 +119,8 @@ class ShieldTester(tk.Tk):
         self.bind(self.EVENT_COMPUTE_COMPLETE, lambda e: self.event_compute_complete(e))
         self.bind(self.EVENT_PROGRESS_BAR_STEP, lambda e: self.event_progress_bar_step(e))
         self.message_queue = queue.SimpleQueue()
-        self._shield_booster_variants = shield_booster_variants
-        self._shield_generator_variants = shield_generator_variants
+        self._shield_booster_variants = None
+        self._shield_generator_variants = None
 
         # add some padding
         tk.Frame(self, width=10, height=10).grid(row=0, column=0, sticky=tk.N)
@@ -196,7 +195,44 @@ class ShieldTester(tk.Tk):
         row += 1
         self._progress_bar = ttk.Progressbar(self._left_frame, orient="horizontal", mode="determinate")
         self._progress_bar.grid(row=row, columnspan=2, sticky=tk.EW, padx=padding, pady=padding)
-        self._progress_bar.config(value=0, maximum=len(shield_generator_variants))
+        self._progress_bar.config(value=0)
+
+        self._lock_ui_elements()
+        self.after(100, self._read_csv_files())
+
+    def _read_csv_files(self):
+        error_occurred = False
+        if os.path.exists(FILE_SHIELD_BOOSTER_VARIANTS) and os.path.exists(FILE_SHIELD_GENERATOR_VARIANTS):
+            try:
+                self._shield_booster_variants = dict()
+                with open(FILE_SHIELD_BOOSTER_VARIANTS, "r") as csv_file:
+                    reader = csv.DictReader(csv_file)
+                    for row in reader:
+                        variant = ShieldBoosterVariant(row)
+                        self._shield_booster_variants.setdefault(variant.id, variant)
+
+                self._shield_generator_variants = dict()
+                with open(FILE_SHIELD_GENERATOR_VARIANTS, "r") as csv_file:
+                    reader = csv.DictReader(csv_file)
+                    for row in reader:
+                        variant = ShieldGeneratorVariant(row)
+                        self._shield_generator_variants.setdefault(variant.id, variant)
+            except Exception as e:
+                print("Exception while reading/parsing CSV files: ")  # in case we have a console window
+                print(e)
+                error_occurred = True
+        else:
+            error_occurred = True
+
+        if not error_occurred:
+            self._progress_bar.config(maximum=len(self._shield_generator_variants))
+            self._unlock_ui_elements()
+        else:
+            if tk.messagebox.askretrycancel("No data", "Could not read CSV files.\nPlease place them in the same directory as this program.\n"
+                                                       "Required:\n{generator}\n{booster}".format(generator=os.path.basename(FILE_SHIELD_GENERATOR_VARIANTS),
+                                                                                                  booster=os.path.basename(FILE_SHIELD_BOOSTER_VARIANTS))):
+                self._read_csv_files()
+
 
     def _lock_ui_elements(self):
         for element in self._lockable_ui_elements:
@@ -220,7 +256,7 @@ class ShieldTester(tk.Tk):
         self._unlock_ui_elements()
 
     def generate_booster_variations(self, number_of_boosters: int, variations_list: List[List[int]],
-                                    current_booster: int=1, current_variation: int=1, variations: List[int]=list()):
+                                    current_booster: int = 1, current_variation: int = 1, variations: List[int] = list()):
         # Generate all possible booster combinations recursively and append them to the given variationsList.
         if current_booster <= number_of_boosters:
             while current_variation <= len(self._shield_booster_variants):
@@ -390,21 +426,7 @@ def calculate_loadout_stats(data: ShieldTesterData, shield_generator_variant: Sh
 
 def main():
     locale.setlocale(locale.LC_ALL, '')  # Use '' for auto, or force e.g. to 'en_US.UTF-8'
-    shield_booster_variants = dict()
-    with open(FILE_SHIELD_BOOSTER_VARIANTS, "r") as csv_file:
-        reader = csv.DictReader(csv_file)
-        for row in reader:
-            variant = ShieldBoosterVariant(row)
-            shield_booster_variants.setdefault(variant.id, variant)
-
-    shield_generator_variants = dict()
-    with open(FILE_SHIELD_GENERATOR_VARIANTS, "r") as csv_file:
-        reader = csv.DictReader(csv_file)
-        for row in reader:
-            variant = ShieldGeneratorVariant(row)
-            shield_generator_variants.setdefault(variant.id, variant)
-
-    shield_tester = ShieldTester(shield_booster_variants, shield_generator_variants)
+    shield_tester = ShieldTester()
     shield_tester.mainloop()
 
 
