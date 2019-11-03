@@ -4,10 +4,10 @@
 All credit for the calculations goes to DownToEarthAstronomy and his PowerShell program
 which can be found at https://github.com/DownToEarthAstronomy/D2EA_Shield_tester
 
-This is just an implementation in Python of his program featuring a user interface. Python adaptation and UI by Sebastian Bauer
+This is just an implementation in Python of his program featuring a user interface. Python adaptation and UI by Sebastian Bauer (https://github.com/Thurion)
 
 Build to exe using the command: "pyinstaller --noconsole elite_shield_tester.py"
-Don't forget to copy csv files into the exe's directory afterward.
+Don't forget to copy csv files into the exe's directory afterwards.
 """
 
 import csv
@@ -20,8 +20,7 @@ import multiprocessing
 import threading
 import queue
 import tkinter as tk
-from tkinter import messagebox
-from tkinter import ttk
+from tkinter import ttk, messagebox, scrolledtext
 from typing import List, Dict
 
 # Configuration
@@ -141,8 +140,10 @@ class ShieldTester(tk.Tk):
         self._lockable_ui_elements = list()
 
         padding = 5
-        self._left_frame = tk.Frame(self, borderwidth=1, relief=tk.RIDGE)
-        self._left_frame.grid(row=1, column=1, sticky=tk.NS)
+        # ---------------------------------------------------------------------------------------------------
+        # left frame
+        self._left_frame = tk.LabelFrame(self, borderwidth=1, relief=tk.RIDGE, text="Config")
+        self._left_frame.grid(row=1, column=1, sticky=tk.NSEW)
         tk.Label(self._left_frame, text="Number of boosters").grid(row=0, column=0, sticky=tk.SW, padx=padding, pady=padding)
         self._booster_slider = tk.Scale(self._left_frame, from_=0, to=8, orient=tk.HORIZONTAL, length=175, takefocus=True)
         self._booster_slider.set(2)
@@ -205,12 +206,6 @@ class ShieldTester(tk.Tk):
         self._cores_slider.grid(row=row, column=1, sticky=tk.E, padx=padding, pady=padding)
         self._lockable_ui_elements.append(self._cores_slider)
 
-        self._right_frame = tk.Frame(self, borderwidth=1, relief=tk.RIDGE)
-        self._right_frame.grid(row=1, column=2, sticky=tk.NS)
-        self._text_widget = tk.Text(self._right_frame, height=27, width=75)
-        self._text_widget.pack(padx=padding, pady=padding)
-        self._text_widget.config(state=tk.DISABLED)
-
         row += 1
         self._compute_button = tk.Button(self._left_frame, text="Compute best loadout", command=self.compute)
         self._compute_button.grid(row=row, columnspan=2, sticky=tk.S, padx=padding, pady=padding)
@@ -221,8 +216,26 @@ class ShieldTester(tk.Tk):
         self._progress_bar.grid(row=row, columnspan=2, sticky=tk.EW, padx=padding, pady=padding)
         self._progress_bar.config(value=0)
 
+        # ---------------------------------------------------------------------------------------------------
+        # right frame
+        self._right_frame = tk.LabelFrame(self, borderwidth=1, relief=tk.RIDGE, text="Output")
+        self._right_frame.grid(row=1, column=2, sticky=tk.NSEW)
+        self._text_widget = scrolledtext.ScrolledText(self._right_frame, height=27, width=75)
+        self._text_widget.grid(row=0, column=0, padx=padding, pady=padding, sticky=tk.NSEW)
+        self._text_widget.config(state=tk.DISABLED)
+
+        # set behaviour for resizing
+        self.rowconfigure(1, weight=1)
+        self.columnconfigure(2, weight=1)
+        self._right_frame.rowconfigure(0, weight=1)
+        self._right_frame.columnconfigure(0, weight=1)
+
         self._lock_ui_elements()
-        self.after(100, self._read_csv_files())
+        self.after(100, self._read_csv_files)
+
+        def set_window_size():
+            self.minsize(self.winfo_reqwidth(), self.winfo_reqheight())
+        self.after(200, set_window_size)
 
     def _read_csv_files(self):
         error_occurred = False
