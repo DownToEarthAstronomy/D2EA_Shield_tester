@@ -14,16 +14,21 @@ so many combinations, it's hard to say for sure if the meta for your ship and co
 alternative. 
 
 We need a way of figuring out the best combination of generator and shield boosters for situational
-scenarios. The original Powershell version is fairly slow, and thus might discourage someone from 
+scenarios. The original Powershell version is groundbreaking research, but is fairly slow, and thus might discourage some from 
 running the tool when they change ships or combat scenarios. 
 
-For example, you're mining and looking for maximum survivability, or you're fighting Thargoid Interceptors, and looking
-for maximum absolute damage protection. Or you're fighting NPCs in combat zones. All of these require slightly different
+For example, you might want to change between mining to fighting Thargoid Interceptors or NPCs in combat zones. All of three scenarios require slightly different
 loadouts. 
 
-This tool helps you quickly find the best loadout for your scenario. Even the lengthiest run of the Go port with
+This tool helps you quickly find the best starting loadout for your scenario. Even the lengthiest run of the Go port with
 8 boosters and all booster variants takes less than 5 seconds on a modern i7 processor, and most common ship loadouts
 take less than a second. 
+
+## Improvements to these tools
+
+In a comment to the original D2EA video, Kaethena listed a few limitations and scenarios that you should read to understand
+that these tools are a good starting point, but possibly not the ending point for your shield loadouts. There are a lot of situations where
+a more generalist loadout might help you more than a max survivability loadout from this tool. YMMV. 
 
 # Building
 
@@ -157,4 +162,51 @@ If you have Guardian Shield Boosters, include their combined hitpoints here.
 ```
   -gshp float
         Guardian HitPoints (default 0)
+```
+
+# Example run
+
+```
+> .\GoShieldTester.exe -fullboost -boosters 8 -adps 200 -kdps 0 -edps 0 -tdps 0 -noprismatics      
+Down to Earth Astronomy's ShieldTester (https://github.com/DownToEarthAstronomy/D2EA_Shield_tester)
+Go port by Andrew van der Stock, vanderaj@gmail.com
+
+Disabling Prismatics
+Loading all boosters
+Test started at:  Sun, 03 Nov 2019 14:07:51 MST
+Loaded 30 generator variants
+Loaded 20 shield booster variants
+Loadout shield booster variations to be tested per generator:  2220075
+Total loadouts to be tested:  66602250
+Tests [##############################]
+Time elapsed: [ 3.3351075s ]
+
+
+---- TEST SETUP ----
+Shield Booster Count: [ 8 ]
+SCB Hit Point Pool:   [ 0 ]
+Guardian HP  Pool:    [ 0 ]
+Explosive DPS:        [ 0 ]
+Kinetic DPS:          [ 0 ]
+Thermal DPS:          [ 0 ]
+Absolute DPS:         [ 200 ]
+Damage Effectiveness: [ 0.65 ]
+
+---- TEST RESULTS ----
+Survival Time:        46.47 s
+Shield Generator:     Normal with Reinforced engineering, Hi-Cap experimental
+Shield Booster 1      Heavy Duty engineering, Super Capacitors experimental
+Shield Booster 2      Heavy Duty engineering, Super Capacitors experimental
+Shield Booster 3      Heavy Duty engineering, Super Capacitors experimental
+Shield Booster 4      Heavy Duty engineering, Super Capacitors experimental
+Shield Booster 5      Heavy Duty engineering, Super Capacitors experimental
+Shield Booster 6      Heavy Duty engineering, Super Capacitors experimental
+Shield Booster 7      Heavy Duty engineering, Super Capacitors experimental
+Shield Booster 8      Heavy Duty engineering, Super Capacitors experimental
+
+Shield Hitpoints:     6012.0 hp
+Shield Regen:         1.80 hp/s
+Explosive Resistance: 51.08%
+Kinetic Resistance:   41.30%
+Thermal Resistance:   -17.40%
 ```
