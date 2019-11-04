@@ -54,6 +54,11 @@ For some reason multi-core computation might be slower when using the executable
 This has an impact on the time it takes to run a simulation, therefore it might be better to run tests with up to 4 shield boosters on just 1 core.
 The difference isn't huge but noticeable. Just test it and choose whatever works best for you.
 
+### Name of Test
+
+It is possible to give the test run a name. This will determine the name of the log file and all tests with the same name will be written into the same file. If no name is specified, the current time stamp will be used.\
+Because this affects the file name and not every character is allowed for a file name, only letters, numbers, and `,`, `.`, `_`, `-` including spaces are permitted. 
+
 ### Access to Prismatic Shields
 
 There is a checkbox you can uncheck if you don't want prismatic shields to be taken into consideration when running tests.

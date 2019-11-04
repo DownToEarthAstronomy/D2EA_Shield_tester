@@ -34,7 +34,7 @@ FILE_SHIELD_GENERATOR_VARIANTS = os.path.join(path, "ShieldGeneratorVariants.csv
 LOG_DIRECTORY = os.path.join(os.getcwd(), "Logs")
 
 
-class IntegerEntry(tk.Entry):
+class CustomEntry(tk.Entry):
     # base class for validating entry widgets
     def __init__(self, master, value="", **kw):
         super().__init__(master, **kw)
@@ -51,12 +51,16 @@ class IntegerEntry(tk.Entry):
             self.__variable.set(self.__value)
         elif newvalue != value:
             self.__value = newvalue
-            self.__variable.set(self.newvalue)
+            self.__variable.set(newvalue)
         else:
             self.__value = value
 
-    @staticmethod
-    def validate(value):
+    def validate(self, value):
+        return True
+
+
+class IntegerEntry(CustomEntry):
+    def validate(self, value):
         try:
             if value:
                 v = int(value)
@@ -65,6 +69,21 @@ class IntegerEntry(tk.Entry):
                 return ""
         except ValueError:
             return None
+
+
+class TextEntry(CustomEntry):
+    def __init__(self, master, **kw):
+        super().__init__(master, **kw)
+        self._regex = re.compile("^([A-Za-z0-9,._-]*|[A-Za-z0-9,.-_]+[A-Za-z0-9,._ -]*)$")
+
+    def validate(self, value):
+        if value:
+            if self._regex.match(value):
+                return value
+            else:
+                return None
+        else:
+            return ""
 
 
 class ShieldBoosterVariant:
@@ -146,13 +165,21 @@ class ShieldTester(tk.Tk):
         # left frame
         self._left_frame = tk.LabelFrame(self, borderwidth=1, relief=tk.RIDGE, text="Config")
         self._left_frame.grid(row=1, column=1, sticky=tk.NSEW)
-        tk.Label(self._left_frame, text="Number of boosters").grid(row=0, column=0, sticky=tk.SW, padx=padding, pady=padding)
+
+        row = 0
+        tk.Label(self._left_frame, text="Name of test (optional)").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._test_name = TextEntry(self._left_frame)
+        self._test_name.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
+        self._lockable_ui_elements.append(self._test_name)
+
+        row += 1
+        tk.Label(self._left_frame, text="Number of boosters").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
         self._booster_slider = tk.Scale(self._left_frame, from_=0, to=8, orient=tk.HORIZONTAL, length=175, takefocus=True)
         self._booster_slider.set(2)
-        self._booster_slider.grid(row=0, column=1, sticky=tk.E, padx=padding, pady=padding)
+        self._booster_slider.grid(row=row, column=1, sticky=tk.E, padx=padding, pady=padding)
         self._lockable_ui_elements.append(self._booster_slider)
 
-        row = 1
+        row += 1
         tk.Label(self._left_frame, text="Damage effectiveness in %").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
         self._effectiveness_slider = tk.Scale(self._left_frame, from_=1, to=100, orient=tk.HORIZONTAL, length=175, takefocus=True)
         self._effectiveness_slider.set(25)
@@ -387,7 +414,7 @@ class ShieldTester(tk.Tk):
         self.event_generate(self.EVENT_COMPUTE_OUTPUT)  # thread safe communication
         self.event_generate(self.EVENT_COMPUTE_COMPLETE)
         try:
-            self._write_log(test_data, output_string)
+            self._write_log(test_data, output_string, self._test_name.get())
         except Exception as e:
             print("Error writing logfile")
             print(e)
@@ -426,11 +453,12 @@ class ShieldTester(tk.Tk):
         t.start()
 
     @staticmethod
-    def _write_log(data: ShieldTesterData, result: str):
+    def _write_log(data: ShieldTesterData, result: str, filename=None):
         os.makedirs(LOG_DIRECTORY, exist_ok=True)
-        with open(os.path.join(LOG_DIRECTORY, time.strftime("%Y-%m-%d %H.%M.%S") + ".txt"), "a+") as logfile:
+        if not filename:
+            filename = time.strftime("%Y-%m-%d %H.%M.%S")
+        with open(os.path.join(LOG_DIRECTORY, filename + ".txt"), "a+") as logfile:
             logfile.write("Test run at: {}\n".format(time.strftime("%Y-%m-%d %H:%M:%S")))
-            logfile.write("\n")
             logfile.write("---- TEST SETUP ----\n")
             logfile.write("Shield Booster Count: [{}]\n".format(data.number_of_boosters))
             logfile.write("Shield Cell Bank Hit Point Pool: [{}]\n".format(data.scb_hitpoints))
@@ -442,6 +470,7 @@ class ShieldTester(tk.Tk):
             logfile.write("Absolute DPS: [{}]\n".format(data.absolute_dps))
             logfile.write("Damage Effectiveness: [{:.0f}%]\n".format(data.damage_effectiveness * 100))
             logfile.write(result)
+            logfile.write("\n\n\n")
             logfile.flush()
 
 
