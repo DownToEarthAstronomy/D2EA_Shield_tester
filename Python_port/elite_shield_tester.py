@@ -136,6 +136,15 @@ class ShieldTesterData:
         self.usePrismatic = False
 
 
+class TestResult:
+    def __init__(self, best_shield_generator: int=0, best_shield_booster_loadout: List[int]=None,
+                 best_loadout_stats: LoadOutStat=None, best_survival_time: int=0):
+        self.best_shield_generator = best_shield_generator
+        self.best_shield_booster_loadout = best_shield_booster_loadout
+        self.best_loadout_stats = best_loadout_stats
+        self.best_survival_time = best_survival_time  # if negative, the ship didn't die
+
+
 class ShieldTester(tk.Tk):
     EVENT_COMPUTE_OUTPUT = "<<EventComputeOutput>>"
     EVENT_COMPUTE_COMPLETE = "<<EventComputeComplete>>"
@@ -364,12 +373,18 @@ class ShieldTester(tk.Tk):
         output = list()
         self.event_generate(self.EVENT_COMPUTE_OUTPUT)  # thread safe communication
 
-        best_result = {"bestSurvivalTime": -1}
+        best_result = TestResult(best_survival_time=0)
 
-        def apply_async_callback(r: Dict[str, object]):
+        def apply_async_callback(r: TestResult):
             nonlocal best_result
-            if r["bestSurvivalTime"] > best_result["bestSurvivalTime"]:
-                best_result = r
+            if best_result.best_survival_time < 0:
+                if r.best_survival_time < best_result.best_survival_time:
+                    best_result = r
+            else:
+                if r.best_survival_time < 0:
+                    best_result = r
+                elif r.best_survival_time > best_result.best_survival_time:
+                    best_result = r
             self.event_generate(self.EVENT_PROGRESS_BAR_STEP)
 
         if test_data.cpu_cores > 1 and (len(variations_list) * len(test_data.shield_generator_variants)) > 1000:
@@ -382,32 +397,32 @@ class ShieldTester(tk.Tk):
         else:
             for shield_generator_variant in test_data.shield_generator_variants.values():
                 result = test_case(test_data, shield_generator_variant)
-                if result["bestSurvivalTime"] > best_result["bestSurvivalTime"]:
-                    best_result = result
-                self.event_generate(self.EVENT_PROGRESS_BAR_STEP)
+                apply_async_callback(result)  # can use the same function here as mp.Pool would
 
         output.append("")
         output.append("---- TEST RESULTS ----")
-        if best_result["bestSurvivalTime"] > 0:
+        if best_result.best_survival_time != 0:
             # sort by survival time and put highest value to start of the list
-            output.append("Survival Time [s]: [{0:.3f}]".format(best_result["bestSurvivalTime"]))
-
-            shield_generator = self._shield_generator_variants.get(best_result["bestShieldGenerator"])
+            if best_result.best_survival_time > 0:
+                output.append("Survival Time [s]: [{0:.3f}]".format(best_result.best_survival_time))
+            else:
+                output.append("Survival Time [s]: [Didn't die]")
+            shield_generator = self._shield_generator_variants.get(best_result.best_shield_generator)
             output.append("Shield Generator: [{type}] - [{eng}] - [{exp}]"
                           .format(type=shield_generator.type, eng=shield_generator.engineering, exp=shield_generator.experimental))
             output.append("Shield Boosters:")
-            for bestShieldBoosterLoadout in best_result["bestShieldBoosterLoadout"]:
+            for bestShieldBoosterLoadout in best_result.best_shield_booster_loadout:
                 shield_booster_variant = self._shield_booster_variants.get(bestShieldBoosterLoadout)
                 output.append("  [{eng}] - [{exp}]".format(eng=shield_booster_variant.engineering, exp=shield_booster_variant.experimental))
 
             output.append("")
-            output.append("Shield Hitpoints: [{0:.3f}]".format(best_result["bestLoadoutStats"].hitPoints))
-            output.append("Shield Regen: [{0} hp/s]".format(best_result["bestLoadoutStats"].regenRate))
-            output.append("Explosive Resistance: [{0:.3f}]".format(best_result["bestLoadoutStats"].explosiveResistance * 100))
-            output.append("Kinetic Resistance: [{0:.3f}]".format(best_result["bestLoadoutStats"].kineticResistance * 100))
-            output.append("Thermal Resistance: [{0:.3f}]".format(best_result["bestLoadoutStats"].thermalResistance * 100))
+            output.append("Shield Hitpoints: [{0:.3f}]".format(best_result.best_loadout_stats.hitPoints))
+            output.append("Shield Regen: [{0} hp/s]".format(best_result.best_loadout_stats.regenRate))
+            output.append("Explosive Resistance: [{0:.3f}]".format(best_result.best_loadout_stats.explosiveResistance * 100))
+            output.append("Kinetic Resistance: [{0:.3f}]".format(best_result.best_loadout_stats.kineticResistance * 100))
+            output.append("Thermal Resistance: [{0:.3f}]".format(best_result.best_loadout_stats.thermalResistance * 100))
         else:
-            output.append("Didn't take enough damage. Please increase DPS and/or damage effectiveness.")
+            output.append("No test results. Please change DPS and/or damage effectiveness.")
 
         output_string = "\n".join(output)
         self.message_queue.put((tk.END, output_string))
@@ -474,7 +489,7 @@ class ShieldTester(tk.Tk):
             logfile.flush()
 
 
-def test_case(data: ShieldTesterData, shield_generator_variant: ShieldGeneratorVariant) -> Dict:
+def test_case(data: ShieldTesterData, shield_generator_variant: ShieldGeneratorVariant) -> TestResult:
     best_survival_time = 0
     best_shield_generator = 0
     best_shield_booster_loadout = None
@@ -492,16 +507,21 @@ def test_case(data: ShieldTesterData, shield_generator_variant: ShieldGeneratorV
 
         survival_time = (loadout_stats.hitPoints + data.scb_hitpoints) / actual_dps
 
-        if survival_time > best_survival_time:
-            best_shield_generator = shield_generator_variant.id
-            best_shield_booster_loadout = booster_variation
-            best_loadout_stats = loadout_stats
-            best_survival_time = survival_time
+        if actual_dps > 0 and best_survival_time >= 0:
+            # if another run set best_survival_time to a negative value, then the ship didn't die, therefore the other result is better
+            if survival_time > best_survival_time:
+                best_shield_generator = shield_generator_variant.id
+                best_shield_booster_loadout = booster_variation
+                best_loadout_stats = loadout_stats
+                best_survival_time = survival_time
+        elif actual_dps < 0:
+            if survival_time < best_survival_time:
+                best_shield_generator = shield_generator_variant.id
+                best_shield_booster_loadout = booster_variation
+                best_loadout_stats = loadout_stats
+                best_survival_time = survival_time
 
-    return {"bestShieldGenerator": best_shield_generator,
-            "bestShieldBoosterLoadout": best_shield_booster_loadout,
-            "bestLoadoutStats": best_loadout_stats,
-            "bestSurvivalTime": best_survival_time}
+    return TestResult(best_shield_generator, best_shield_booster_loadout, best_loadout_stats, best_survival_time)
 
 
 def calculate_loadout_stats(data: ShieldTesterData, shield_generator_variant: ShieldGeneratorVariant, shield_booster_loadout: List[int]) -> LoadOutStat:
