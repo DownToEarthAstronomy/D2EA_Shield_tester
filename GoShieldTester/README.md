@@ -7,24 +7,33 @@ https://github.com/DownToEarthAstronomy/D2EA_Shield_tester
 
 # Abstract
 
-Many of us run many different ships, with many stored shield generators and modules with many forms of engineering. It might be tempting to just put on Heavy Duty / Deep plating, but is that really the best alternative? How do you choose the best loadout? 
+Many of us run many different ships, with many stored shield generators and 
+modules with many forms of engineering. It might be tempting to just put on 
+Heavy Duty / Deep plating, but is that really the best alternative? How do 
+you choose the best loadout? 
 
 Before D2EA's shield tester tool, it was the usual metas, which undeniably work. However, there's 
-so many combinations, it's hard to say for sure if the meta for your ship and combat or defence scenario is the best 
-alternative. 
+so many combinations, it's hard to say for sure if the meta for your ship and combat or defence 
+scenario is the best alternative. 
 
 We need a way of figuring out the best combination of generator and shield boosters for situational
-scenarios. For example, you might want to change between mining to fighting Thargoid Interceptors or NPCs in combat zones. All of three scenarios require slightly different loadouts. 
+scenarios. For example, you might want to change between mining to fighting Thargoid Interceptors 
+or NPCs in combat zones. All of three scenarios require slightly different loadouts. 
 
-This tool helps you quickly find the best starting loadout for your scenario. Even the lengthiest run of the Go port with
-8 boosters and all booster variants takes less than 5 seconds on a modern i7 processor, and most common ship loadouts
-take less than a second. 
+The Go port helps you quickly find the best starting loadout for your scenario.
 
 ## Why a Go version? 
 
-The original Powershell version is groundbreaking research, but is fairly slow, and thus might discourage some from running the tool when they change ships or combat scenarios. 
+tl;dr: Speed. Nothing else. The other versions work just fine. 
 
-The Go version is about 15,000 times per CPU faster. This Go version is not multi-threaded, as it takes less than 5 seconds to run on a modern i7 on the most complicated loadout possible. The PowerShell version on the same system can take up to 9m15s with 12 threads. It could be multi-threaded if you want to contribute a patch, but it's not necessary. 
+The original Powershell version is groundbreaking research, but is fairly slow,
+and thus might discourage some from running the tool when they change ships or
+combat scenarios. 
+
+The multi-threaded Go port is about 10-15,000 times faster per CPU thread. 
+There are no loadout combinations that take more than 2 seconds on a modern
+ i7, whereas the same configuration using the PowerShell version on the 
+ same system can take around 10 minutes, and the Python version takes ~10 seconds.
 
 ## Improvements to these tools
 
@@ -166,46 +175,45 @@ If you have Guardian Shield Boosters, include their combined hitpoints here.
 # Example run
 
 ```
-> .\GoShieldTester.exe -fullboost -boosters 8 -adps 200 -kdps 0 -edps 0 -tdps 0 -noprismatics      
+> .\GoShieldTester.exe -boosters 8 -fullboost -kdps 33 -tdps 33 -edps 33 -adps 0 -dmg 0.50     
 Down to Earth Astronomy's ShieldTester (https://github.com/DownToEarthAstronomy/D2EA_Shield_tester)
 Go port by Andrew van der Stock, vanderaj@gmail.com
 
-Disabling Prismatics
 Loading all boosters
-Test started at:  Sun, 03 Nov 2019 14:07:51 MST
-Loaded 30 generator variants
+Test started at:  Sun, 03 Nov 2019 17:08:40 MST
+Loaded 45 generator variants
 Loaded 20 shield booster variants
 Loadout shield booster variations to be tested per generator:  2220075
-Total loadouts to be tested:  66602250
-Tests [##############################]
-Time elapsed: [ 3.3351075s ]
+Total loadouts to be tested:  99903375
+Tests [#############################################]
+Time elapsed: [ 827.7854ms ]
 
 
 ---- TEST SETUP ----
 Shield Booster Count: [ 8 ]
 SCB Hit Point Pool:   [ 0 ]
 Guardian HP  Pool:    [ 0 ]
-Explosive DPS:        [ 0 ]
-Kinetic DPS:          [ 0 ]
-Thermal DPS:          [ 0 ]
-Absolute DPS:         [ 200 ]
-Damage Effectiveness: [ 0.65 ]
+Explosive DPS:        [ 33 ]
+Kinetic DPS:          [ 33 ]
+Thermal DPS:          [ 33 ]
+Absolute DPS:         [ 0 ]
+Damage Effectiveness: [ 0.5 ]
 
 ---- TEST RESULTS ----
-Survival Time:        46.47 s
-Shield Generator:     Normal with Reinforced engineering, Hi-Cap experimental
-Shield Booster 1      Heavy Duty engineering, Super Capacitors experimental
-Shield Booster 2      Heavy Duty engineering, Super Capacitors experimental
-Shield Booster 3      Heavy Duty engineering, Super Capacitors experimental
+Survival Time:        266.07 s
+Shield Generator:     Prismatic with Reinforced engineering, Hi-Cap experimental
+Shield Booster 1      Resistance Augmented engineering, Thermo Block experimental
+Shield Booster 2      Resistance Augmented engineering, Thermo Block experimental
+Shield Booster 3      Resistance Augmented engineering, Thermo Block experimental
 Shield Booster 4      Heavy Duty engineering, Super Capacitors experimental
 Shield Booster 5      Heavy Duty engineering, Super Capacitors experimental
 Shield Booster 6      Heavy Duty engineering, Super Capacitors experimental
 Shield Booster 7      Heavy Duty engineering, Super Capacitors experimental
 Shield Booster 8      Heavy Duty engineering, Super Capacitors experimental
 
-Shield Hitpoints:     6012.0 hp
-Shield Regen:         1.80 hp/s
-Explosive Resistance: 51.08%
-Kinetic Resistance:   41.30%
-Thermal Resistance:   -17.40%
+Shield Hitpoints:     5384.2 hp
+Shield Regen:         1.10 hp/s
+Explosive Resistance: 72.21%
+Kinetic Resistance:   66.65%
+Thermal Resistance:   35.16%
 ```

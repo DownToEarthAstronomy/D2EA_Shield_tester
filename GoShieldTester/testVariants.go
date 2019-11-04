@@ -1,8 +1,11 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"sync"
+)
 
-func testCase(shieldGenerator generatorT, boosterVariants []boosterT, shieldBoosterLoadoutList [][]int) resultT {
+func testCase(ch chan resultT, wg *sync.WaitGroup, shieldGenerator generatorT, boosterVariants []boosterT, shieldBoosterLoadoutList [][]int) {
 	bestTestCase := resultT{
 		survivalTime: 0.0,
 	}
@@ -27,24 +30,35 @@ func testCase(shieldGenerator generatorT, boosterVariants []boosterT, shieldBoos
 		}
 	}
 
-	return bestTestCase
+	ch <- bestTestCase
+	wg.Done()
 }
 
 func testGenerators(generators []generatorT, boosterVariants []boosterT, boosterList [][]int) resultT {
 	bestResult := resultT{survivalTime: 0.0}
 
+	ch := make(chan resultT, len(generators))
+	wg := sync.WaitGroup{}
+
 	fmt.Print("Tests [")
 
 	for _, generator := range generators {
 		fmt.Print("#")
+		wg.Add(1)
 
-		result := testCase(generator, boosterVariants, boosterList)
+		go testCase(ch, &wg, generator, boosterVariants, boosterList)
+	}
+
+	wg.Wait()
+	close(ch)
+
+	fmt.Println("]")
+
+	for result := range ch {
 		if result.survivalTime > bestResult.survivalTime {
 			bestResult = result
 		}
 	}
-
-	fmt.Println("]")
 
 	return bestResult
 }
