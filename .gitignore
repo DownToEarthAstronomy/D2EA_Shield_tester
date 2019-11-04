@@ -1,5 +1,6 @@
 Auto_test_run.ps1
 Logs/*
+*.exe
 
 Python_port/*.csv
 Python_port/Logs/*

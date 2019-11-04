@@ -25,11 +25,27 @@ func processFlags() {
 	flag.Float64Var(&config.scbHitPoint, "scb", config.scbHitPoint, "SCB HitPoints (default 0)")
 	flag.Float64Var(&config.guardianShieldHitPoint, "gshp", config.guardianShieldHitPoint, "Guardian HitPoints (default 0)")
 
+	prismatics := flag.Bool("noprismatics", false, "Disable Prismatic shields")
 	thargoid := flag.Bool("thargoid", false, "Useful Thargoid defaults")
 	cucumber := flag.Bool("cucumber", false, "Useful Cucumber defaults")
 	allboosters := flag.Bool("fullboost", false, "Load the full booster list")
 
 	flag.Parse()
+
+	if config.shieldBoosterCount < 0 {
+		fmt.Println("Can't have negative shield boosters, setting to 0")
+		config.shieldBoosterCount = 0
+	}
+
+	if config.shieldBoosterCount > 8 {
+		fmt.Println("No current ship has more than 8 shield boosters, setting to 8")
+		config.shieldBoosterCount = 8
+	}
+
+	if *prismatics {
+		fmt.Println("Disabling Prismatics")
+		config.prismatics = false
+	}
 
 	if *thargoid && *cucumber {
 		fmt.Println("D2EA is not a Thargoid, loading only Cucumber")
@@ -38,7 +54,7 @@ func processFlags() {
 
 	if *allboosters {
 		fmt.Println("Loading all boosters")
-		config.boosterFile = "../../ShieldBoosterVariants.csv"
+		config.boosterFile = "../ShieldBoosterVariants.csv"
 	}
 
 	if *cucumber {
@@ -73,10 +89,15 @@ func main() {
 	fmt.Println("Test started at: ", time.Now().Format(time.RFC1123))
 
 	var generators = loadGenerators()
+	fmt.Println("Loaded", len(generators), "generator variants")
+
 	var boosterVariants = loadboosterVariants()
+	fmt.Println("Loaded", len(boosterVariants), "shield booster variants")
+
 	var shieldBoosterLoadoutList = getBoosterLoadoutList(len(boosterVariants))
 
-	fmt.Println("Shield loadouts to be tested: ", len(shieldBoosterLoadoutList)*len(generators))
+	fmt.Println("Loadout shield booster variations to be tested per generator: ", len(shieldBoosterLoadoutList))
+	fmt.Println("Total loadouts to be tested: ", len(shieldBoosterLoadoutList)*len(generators))
 
 	startTime := time.Now()
 

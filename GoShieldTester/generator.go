@@ -2,11 +2,11 @@ package main
 
 import (
 	"encoding/csv"
-	"fmt"
 	"io"
 	"log"
 	"os"
 	"strconv"
+	"strings"
 )
 
 type generatorT struct {
@@ -49,6 +49,11 @@ func loadGenerators() []generatorT {
 			log.Fatal(err)
 		}
 
+		// if prismatics are disabled, skip those entries
+		if !config.prismatics && strings.Contains(record[1], "Prismatic") {
+			continue
+		}
+
 		// ID,Type,Engineering,Experimental,shieldStrength,regenRate,ExpRes,KinRes,ThermRes
 
 		generator.ID, err = strconv.Atoi(record[0])
@@ -63,8 +68,6 @@ func loadGenerators() []generatorT {
 
 		generators = append(generators, generator)
 	}
-
-	fmt.Println("Loaded", len(generators), "generators")
 
 	return generators
 }

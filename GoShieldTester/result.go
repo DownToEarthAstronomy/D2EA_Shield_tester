@@ -18,25 +18,26 @@ func showResults(bestResult resultT, boosterVariants []boosterT) {
 	fmt.Println()
 	fmt.Println("---- TEST SETUP ----")
 	fmt.Println("Shield Booster Count: [", config.shieldBoosterCount, "]")
-	fmt.Println("Shield Cell Bank Hit Point Pool: [", config.scbHitPoint, "]")
-	fmt.Println("Guardian Shield Reinforcement Hit Point Pool: [", config.guardianShieldHitPoint, "]")
-	fmt.Println("Explosive DPS: [", config.explosiveDPS, "]")
-	fmt.Println("Kinetic DPS: [", config.kineticDPS, "]")
-	fmt.Println("Thermal DPS: [", config.thermalDPS, "]")
-	fmt.Println("Absolute DPS: [", config.absoluteDPS, "]")
-	fmt.Println("Damage Effectiveness:", config.damageEffectiveness, "]")
+	fmt.Println("SCB Hit Point Pool:   [", config.scbHitPoint, "]")
+	fmt.Println("Guardian HP  Pool:    [", config.guardianShieldHitPoint, "]")
+	fmt.Println("Explosive DPS:        [", config.explosiveDPS, "]")
+	fmt.Println("Kinetic DPS:          [", config.kineticDPS, "]")
+	fmt.Println("Thermal DPS:          [", config.thermalDPS, "]")
+	fmt.Println("Absolute DPS:         [", config.absoluteDPS, "]")
+	fmt.Println("Damage Effectiveness: [", config.damageEffectiveness, "]")
 
 	fmt.Println()
 	fmt.Println("---- TEST RESULTS ----")
-	fmt.Println("Survival Time [s]: [", bestResult.survivalTime, "]")
-	fmt.Println("Shield Generator: [", shieldGenerator.name, "] - [", shieldGenerator.engineering, "] - [", shieldGenerator.experimental, "]")
-	fmt.Println("Shield boosters:")
+	fmt.Printf("Survival Time:        %.2f s\n", bestResult.survivalTime)
+	fmt.Println("Shield Generator:    ", shieldGenerator.name, "with", shieldGenerator.engineering, "engineering,", shieldGenerator.experimental, "experimental")
 
 	var bestLoadOutStats = bestResult.loadOutStats
 
+	i := 1
 	for _, booster := range bestResult.shieldBoosterLoadout {
 		var oBooster = boosterVariants[booster-1]
-		fmt.Println("[", oBooster.engineering, "] - [", oBooster.experimental, "]")
+		fmt.Println("Shield Booster", i, "    ", oBooster.engineering, "engineering,", oBooster.experimental, "experimental")
+		i++
 	}
 
 	fmt.Println()
