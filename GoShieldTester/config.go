@@ -24,7 +24,7 @@ func loadConfig() configT {
 		scbHitPoint:            0,
 		guardianShieldHitPoint: 0,
 		boosterFile:            "../ShieldBoosterVariants_short.csv",
-		generatorFile:          "../shieldGeneratorVariants.csv",
+		generatorFile:          "../ShieldGeneratorVariants.csv",
 	}
 
 	return config
