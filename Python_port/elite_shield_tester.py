@@ -24,7 +24,7 @@ from tkinter import ttk, messagebox, scrolledtext
 from typing import List, Dict
 
 # Configuration
-VERSION = 0.3
+VERSION = "0.4 beta"
 
 path = os.pardir
 if re.match(".*elite_shield_tester\.exe", sys.executable):
