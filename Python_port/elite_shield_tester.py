@@ -112,7 +112,9 @@ class ShieldTesterData:
         self.scb_hitpoints = 0
         self.guardian_hitpoints = 0
         self.shield_booster_variants = None
+        self.shield_generator_variants = None
         self.booster_combinations = None
+        self.usePrismatic = False
 
 
 class ShieldTester(tk.Tk):
@@ -195,6 +197,14 @@ class ShieldTester(tk.Tk):
         self._absolute_dps_entry.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
         self._lockable_ui_elements.append(self._absolute_dps_entry)
 
+        row += 1
+        tk.Label(self._left_frame, text="Access to prismatic shields").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._usePrismatic = tk.IntVar()
+        self._usePrismatic.set(1)
+        self._prismatic_check_button = tk.Checkbutton(self._left_frame, variable=self._usePrismatic)
+        self._prismatic_check_button.grid(row=row, column=1, sticky=tk.W, pady=padding)
+        self._lockable_ui_elements.append(self._prismatic_check_button)
+
         # empty row
         row += 1
         tk.Label(self._left_frame, text="").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
@@ -262,7 +272,6 @@ class ShieldTester(tk.Tk):
             error_occurred = True
 
         if not error_occurred:
-            self._progress_bar.config(maximum=len(self._shield_generator_variants))
             self._unlock_ui_elements()
         else:
             if tk.messagebox.askretrycancel("No data", "Could not read CSV files.\nPlease place them in the same directory as this program.\n"
@@ -320,7 +329,8 @@ class ShieldTester(tk.Tk):
         variations_list = list()  # list of all possible booster variations
         self._generate_booster_variations(test_data.number_of_boosters, variations_list)
         test_data.booster_combinations = variations_list
-        output.append("Shield loadouts to be tested: [{0:n}]".format(len(variations_list) * len(self._shield_generator_variants)))
+
+        output.append("Shield loadouts to be tested: [{0:n}]".format(len(variations_list) * len(test_data.shield_generator_variants)))
         output.append("Running calculations. Please wait...")
         output.append("")
         self.message_queue.put((tk.END, "\n".join(output)))
@@ -335,15 +345,15 @@ class ShieldTester(tk.Tk):
                 best_result = r
             self.event_generate(self.EVENT_PROGRESS_BAR_STEP)
 
-        if test_data.cpu_cores > 1 and (len(variations_list) * len(self._shield_generator_variants)) > 1000:
+        if test_data.cpu_cores > 1 and (len(variations_list) * len(test_data.shield_generator_variants)) > 1000:
             # 1 core is handling UI and this thread, the rest is working on running the calculations
             with multiprocessing.Pool(processes=test_data.cpu_cores - 1) as pool:
-                for shield_generator_variant in self._shield_generator_variants.values():
+                for shield_generator_variant in test_data.shield_generator_variants.values():
                     pool.apply_async(test_case, args=(test_data, shield_generator_variant), callback=apply_async_callback)
                 pool.close()
                 pool.join()
         else:
-            for shield_generator_variant in self._shield_generator_variants.values():
+            for shield_generator_variant in test_data.shield_generator_variants.values():
                 result = test_case(test_data, shield_generator_variant)
                 if result["bestSurvivalTime"] > best_result["bestSurvivalTime"]:
                     best_result = result
@@ -402,8 +412,15 @@ class ShieldTester(tk.Tk):
         ui_data.thermal_dps = int(self._thermal_dps_entry.get()) if self._thermal_dps_entry.get() else 0
         ui_data.absolute_dps = int(self._absolute_dps_entry.get()) if self._absolute_dps_entry.get() else 0
         ui_data.cpu_cores = self._cores_slider.get()
+        ui_data.usePrismatic = True if self._usePrismatic.get() else False
 
+        if ui_data.usePrismatic:
+            ui_data.shield_generator_variants = self._shield_generator_variants
+        else:
+            ui_data.shield_generator_variants = {k: v for k, v in self._shield_generator_variants.items() if v.type != "Prismatic"}
         ui_data.shield_booster_variants = self._shield_booster_variants
+
+        self._progress_bar.config(maximum=len(ui_data.shield_generator_variants))
 
         t = threading.Thread(target=self._compute_background, args=(ui_data,))
         t.start()
@@ -418,6 +435,7 @@ class ShieldTester(tk.Tk):
             logfile.write("Shield Booster Count: [{}]\n".format(data.number_of_boosters))
             logfile.write("Shield Cell Bank Hit Point Pool: [{}]\n".format(data.scb_hitpoints))
             logfile.write("Guardian Shield Reinforcement Hit Point Pool: [{}]\n".format(data.guardian_hitpoints))
+            logfile.write("Access to Prismatic Shields: [{}]\n".format("Yes" if data.usePrismatic else "No"))
             logfile.write("Explosive DPS: [{}]\n".format(data.explosive_dps))
             logfile.write("Kinetic DPS: [{}]\n".format(data.kinetic_dps))
             logfile.write("Thermal DPS: [{}]\n".format(data.thermal_dps))
