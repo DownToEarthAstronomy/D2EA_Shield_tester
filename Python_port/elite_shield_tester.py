@@ -24,7 +24,7 @@ from tkinter import ttk, messagebox, scrolledtext
 from typing import List, Dict
 
 # Configuration
-VERSION = 0.3
+VERSION = "0.4"
 
 path = os.pardir
 if re.match(".*elite_shield_tester\.exe", sys.executable):
@@ -34,7 +34,7 @@ FILE_SHIELD_GENERATOR_VARIANTS = os.path.join(path, "ShieldGeneratorVariants.csv
 LOG_DIRECTORY = os.path.join(os.getcwd(), "Logs")
 
 
-class IntegerEntry(tk.Entry):
+class CustomEntry(tk.Entry):
     # base class for validating entry widgets
     def __init__(self, master, value="", **kw):
         super().__init__(master, **kw)
@@ -51,12 +51,16 @@ class IntegerEntry(tk.Entry):
             self.__variable.set(self.__value)
         elif newvalue != value:
             self.__value = newvalue
-            self.__variable.set(self.newvalue)
+            self.__variable.set(newvalue)
         else:
             self.__value = value
 
-    @staticmethod
-    def validate(value):
+    def validate(self, value):
+        return True
+
+
+class IntegerEntry(CustomEntry):
+    def validate(self, value):
         try:
             if value:
                 v = int(value)
@@ -67,15 +71,30 @@ class IntegerEntry(tk.Entry):
             return None
 
 
+class TextEntry(CustomEntry):
+    def __init__(self, master, **kw):
+        super().__init__(master, **kw)
+        self._regex = re.compile("^([A-Za-z0-9,._-]*|[A-Za-z0-9,.-_]+[A-Za-z0-9,._ -]*)$")
+
+    def validate(self, value):
+        if value:
+            if self._regex.match(value):
+                return value
+            else:
+                return None
+        else:
+            return ""
+
+
 class ShieldBoosterVariant:
     def __init__(self, csv_row):
         self.id = int(csv_row["ID"])
         self.engineering = csv_row["Engineering"]
         self.experimental = csv_row["Experimental"]
         self.shieldStrengthBonus = float(csv_row["ShieldStrengthBonus"])
-        self.expResBonus = float(csv_row["ExpResBonus"])
-        self.kinResBonus = float(csv_row["KinResBonus"])
-        self.thermResBonus = float(csv_row["ThermResBonus"])
+        self.expResBonus = 1.0 - float(csv_row["ExpResBonus"])
+        self.kinResBonus = 1.0 - float(csv_row["KinResBonus"])
+        self.thermResBonus = 1.0 - float(csv_row["ThermResBonus"])
 
 
 class ShieldGeneratorVariant:
@@ -86,9 +105,9 @@ class ShieldGeneratorVariant:
         self.experimental = csv_row["Experimental"]
         self.shieldStrength = int(csv_row["ShieldStrength"])
         self.regenRate = float(csv_row["RegenRate"])
-        self.expRes = float(csv_row["ExpRes"])
-        self.kinRes = float(csv_row["KinRes"])
-        self.thermRes = float(csv_row["ThermRes"])
+        self.expRes = 1.0 - float(csv_row["ExpRes"])
+        self.kinRes = 1.0 - float(csv_row["KinRes"])
+        self.thermRes = 1.0 - float(csv_row["ThermRes"])
 
 
 class LoadOutStat:
@@ -112,7 +131,18 @@ class ShieldTesterData:
         self.scb_hitpoints = 0
         self.guardian_hitpoints = 0
         self.shield_booster_variants = None
+        self.shield_generator_variants = None
         self.booster_combinations = None
+        self.usePrismatic = False
+
+
+class TestResult:
+    def __init__(self, best_shield_generator: int=0, best_shield_booster_loadout: List[int]=None,
+                 best_loadout_stats: LoadOutStat=None, best_survival_time: int=0):
+        self.best_shield_generator = best_shield_generator
+        self.best_shield_booster_loadout = best_shield_booster_loadout
+        self.best_loadout_stats = best_loadout_stats
+        self.best_survival_time = best_survival_time  # if negative, the ship didn't die
 
 
 class ShieldTester(tk.Tk):
@@ -124,6 +154,7 @@ class ShieldTester(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Shield Tester v{}".format(VERSION))
+        self._runtime = 0
 
         self.bind(self.EVENT_COMPUTE_OUTPUT, lambda e: self._event_process_output(e))
         self.bind(self.EVENT_COMPUTE_COMPLETE, lambda e: self._event_compute_complete(e))
@@ -144,13 +175,21 @@ class ShieldTester(tk.Tk):
         # left frame
         self._left_frame = tk.LabelFrame(self, borderwidth=1, relief=tk.RIDGE, text="Config")
         self._left_frame.grid(row=1, column=1, sticky=tk.NSEW)
-        tk.Label(self._left_frame, text="Number of boosters").grid(row=0, column=0, sticky=tk.SW, padx=padding, pady=padding)
+
+        row = 0
+        tk.Label(self._left_frame, text="Name of test (optional)").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._test_name = TextEntry(self._left_frame)
+        self._test_name.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
+        self._lockable_ui_elements.append(self._test_name)
+
+        row += 1
+        tk.Label(self._left_frame, text="Number of boosters").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
         self._booster_slider = tk.Scale(self._left_frame, from_=0, to=8, orient=tk.HORIZONTAL, length=175, takefocus=True)
         self._booster_slider.set(2)
-        self._booster_slider.grid(row=0, column=1, sticky=tk.E, padx=padding, pady=padding)
+        self._booster_slider.grid(row=row, column=1, sticky=tk.E, padx=padding, pady=padding)
         self._lockable_ui_elements.append(self._booster_slider)
 
-        row = 1
+        row += 1
         tk.Label(self._left_frame, text="Damage effectiveness in %").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
         self._effectiveness_slider = tk.Scale(self._left_frame, from_=1, to=100, orient=tk.HORIZONTAL, length=175, takefocus=True)
         self._effectiveness_slider.set(25)
@@ -194,6 +233,14 @@ class ShieldTester(tk.Tk):
         self._absolute_dps_entry = IntegerEntry(self._left_frame)
         self._absolute_dps_entry.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
         self._lockable_ui_elements.append(self._absolute_dps_entry)
+
+        row += 1
+        tk.Label(self._left_frame, text="Access to prismatic shields").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._usePrismatic = tk.IntVar()
+        self._usePrismatic.set(1)
+        self._prismatic_check_button = tk.Checkbutton(self._left_frame, variable=self._usePrismatic)
+        self._prismatic_check_button.grid(row=row, column=1, sticky=tk.W, pady=padding)
+        self._lockable_ui_elements.append(self._prismatic_check_button)
 
         # empty row
         row += 1
@@ -262,7 +309,6 @@ class ShieldTester(tk.Tk):
             error_occurred = True
 
         if not error_occurred:
-            self._progress_bar.config(maximum=len(self._shield_generator_variants))
             self._unlock_ui_elements()
         else:
             if tk.messagebox.askretrycancel("No data", "Could not read CSV files.\nPlease place them in the same directory as this program.\n"
@@ -308,6 +354,7 @@ class ShieldTester(tk.Tk):
             variations_list.append(variations)
 
     def _compute_background(self, test_data: ShieldTesterData):
+        self._runtime = time.time()
         output = list()
         output.append("Shield Booster Count: {0}".format(test_data.number_of_boosters))
         output.append("Shield Booster Variants: {0}".format(len(self._shield_booster_variants)))
@@ -320,64 +367,72 @@ class ShieldTester(tk.Tk):
         variations_list = list()  # list of all possible booster variations
         self._generate_booster_variations(test_data.number_of_boosters, variations_list)
         test_data.booster_combinations = variations_list
-        output.append("Shield loadouts to be tested: [{0:n}]".format(len(variations_list) * len(self._shield_generator_variants)))
+
+        output.append("Shield loadouts to be tested: [{0:n}]".format(len(variations_list) * len(test_data.shield_generator_variants)))
         output.append("Running calculations. Please wait...")
         output.append("")
         self.message_queue.put((tk.END, "\n".join(output)))
         output = list()
         self.event_generate(self.EVENT_COMPUTE_OUTPUT)  # thread safe communication
 
-        best_result = {"bestSurvivalTime": -1}
+        best_result = TestResult(best_survival_time=0)
 
-        def apply_async_callback(r: Dict[str, object]):
+        def apply_async_callback(r: TestResult):
             nonlocal best_result
-            if r["bestSurvivalTime"] > best_result["bestSurvivalTime"]:
-                best_result = r
+            if best_result.best_survival_time < 0:
+                if r.best_survival_time < best_result.best_survival_time:
+                    best_result = r
+            else:
+                if r.best_survival_time < 0:
+                    best_result = r
+                elif r.best_survival_time > best_result.best_survival_time:
+                    best_result = r
             self.event_generate(self.EVENT_PROGRESS_BAR_STEP)
 
-        if test_data.cpu_cores > 1 and (len(variations_list) * len(self._shield_generator_variants)) > 1000:
+        if test_data.cpu_cores > 1 and (len(variations_list) * len(test_data.shield_generator_variants)) > 1000:
             # 1 core is handling UI and this thread, the rest is working on running the calculations
             with multiprocessing.Pool(processes=test_data.cpu_cores - 1) as pool:
-                for shield_generator_variant in self._shield_generator_variants.values():
+                for shield_generator_variant in test_data.shield_generator_variants.values():
                     pool.apply_async(test_case, args=(test_data, shield_generator_variant), callback=apply_async_callback)
                 pool.close()
                 pool.join()
         else:
-            for shield_generator_variant in self._shield_generator_variants.values():
+            for shield_generator_variant in test_data.shield_generator_variants.values():
                 result = test_case(test_data, shield_generator_variant)
-                if result["bestSurvivalTime"] > best_result["bestSurvivalTime"]:
-                    best_result = result
-                self.event_generate(self.EVENT_PROGRESS_BAR_STEP)
+                apply_async_callback(result)  # can use the same function here as mp.Pool would
 
+        output.append("Calculations took {:.2f} seconds".format(time.time() - self._runtime))
         output.append("")
         output.append("---- TEST RESULTS ----")
-        if best_result["bestSurvivalTime"] > 0:
+        if best_result.best_survival_time != 0:
             # sort by survival time and put highest value to start of the list
-            output.append("Survival Time [s]: [{0:.3f}]".format(best_result["bestSurvivalTime"]))
-
-            shield_generator = self._shield_generator_variants.get(best_result["bestShieldGenerator"])
+            if best_result.best_survival_time > 0:
+                output.append("Survival Time [s]: [{0:.3f}]".format(best_result.best_survival_time))
+            else:
+                output.append("Survival Time [s]: [Didn't die]")
+            shield_generator = self._shield_generator_variants.get(best_result.best_shield_generator)
             output.append("Shield Generator: [{type}] - [{eng}] - [{exp}]"
                           .format(type=shield_generator.type, eng=shield_generator.engineering, exp=shield_generator.experimental))
             output.append("Shield Boosters:")
-            for bestShieldBoosterLoadout in best_result["bestShieldBoosterLoadout"]:
+            for bestShieldBoosterLoadout in best_result.best_shield_booster_loadout:
                 shield_booster_variant = self._shield_booster_variants.get(bestShieldBoosterLoadout)
                 output.append("  [{eng}] - [{exp}]".format(eng=shield_booster_variant.engineering, exp=shield_booster_variant.experimental))
 
             output.append("")
-            output.append("Shield Hitpoints: [{0:.3f}]".format(best_result["bestLoadoutStats"].hitPoints))
-            output.append("Shield Regen: [{0} hp/s]".format(best_result["bestLoadoutStats"].regenRate))
-            output.append("Explosive Resistance: [{0:.3f}]".format(best_result["bestLoadoutStats"].explosiveResistance * 100))
-            output.append("Kinetic Resistance: [{0:.3f}]".format(best_result["bestLoadoutStats"].kineticResistance * 100))
-            output.append("Thermal Resistance: [{0:.3f}]".format(best_result["bestLoadoutStats"].thermalResistance * 100))
+            output.append("Shield Hitpoints: [{0:.3f}]".format(best_result.best_loadout_stats.hitPoints))
+            output.append("Shield Regen: [{0} hp/s]".format(best_result.best_loadout_stats.regenRate))
+            output.append("Explosive Resistance: [{0:.3f}]".format((1.0 - best_result.best_loadout_stats.explosiveResistance) * 100))
+            output.append("Kinetic Resistance: [{0:.3f}]".format((1.0 - best_result.best_loadout_stats.kineticResistance) * 100))
+            output.append("Thermal Resistance: [{0:.3f}]".format((1.0 - best_result.best_loadout_stats.thermalResistance) * 100))
         else:
-            output.append("Didn't take enough damage. Please increase DPS and/or damage effectiveness.")
+            output.append("No test results. Please change DPS and/or damage effectiveness.")
 
         output_string = "\n".join(output)
         self.message_queue.put((tk.END, output_string))
         self.event_generate(self.EVENT_COMPUTE_OUTPUT)  # thread safe communication
         self.event_generate(self.EVENT_COMPUTE_COMPLETE)
         try:
-            self._write_log(test_data, output_string)
+            self._write_log(test_data, output_string, self._test_name.get())
         except Exception as e:
             print("Error writing logfile")
             print(e)
@@ -402,32 +457,42 @@ class ShieldTester(tk.Tk):
         ui_data.thermal_dps = int(self._thermal_dps_entry.get()) if self._thermal_dps_entry.get() else 0
         ui_data.absolute_dps = int(self._absolute_dps_entry.get()) if self._absolute_dps_entry.get() else 0
         ui_data.cpu_cores = self._cores_slider.get()
+        ui_data.usePrismatic = True if self._usePrismatic.get() else False
 
+        if ui_data.usePrismatic:
+            ui_data.shield_generator_variants = self._shield_generator_variants
+        else:
+            ui_data.shield_generator_variants = {k: v for k, v in self._shield_generator_variants.items() if v.type != "Prismatic"}
         ui_data.shield_booster_variants = self._shield_booster_variants
+
+        self._progress_bar.config(maximum=len(ui_data.shield_generator_variants))
 
         t = threading.Thread(target=self._compute_background, args=(ui_data,))
         t.start()
 
     @staticmethod
-    def _write_log(data: ShieldTesterData, result: str):
+    def _write_log(data: ShieldTesterData, result: str, filename=None):
         os.makedirs(LOG_DIRECTORY, exist_ok=True)
-        with open(os.path.join(LOG_DIRECTORY, time.strftime("%Y-%m-%d %H.%M.%S") + ".txt"), "a+") as logfile:
+        if not filename:
+            filename = time.strftime("%Y-%m-%d %H.%M.%S")
+        with open(os.path.join(LOG_DIRECTORY, filename + ".txt"), "a+") as logfile:
             logfile.write("Test run at: {}\n".format(time.strftime("%Y-%m-%d %H:%M:%S")))
-            logfile.write("\n")
             logfile.write("---- TEST SETUP ----\n")
             logfile.write("Shield Booster Count: [{}]\n".format(data.number_of_boosters))
             logfile.write("Shield Cell Bank Hit Point Pool: [{}]\n".format(data.scb_hitpoints))
             logfile.write("Guardian Shield Reinforcement Hit Point Pool: [{}]\n".format(data.guardian_hitpoints))
+            logfile.write("Access to Prismatic Shields: [{}]\n".format("Yes" if data.usePrismatic else "No"))
             logfile.write("Explosive DPS: [{}]\n".format(data.explosive_dps))
             logfile.write("Kinetic DPS: [{}]\n".format(data.kinetic_dps))
             logfile.write("Thermal DPS: [{}]\n".format(data.thermal_dps))
             logfile.write("Absolute DPS: [{}]\n".format(data.absolute_dps))
             logfile.write("Damage Effectiveness: [{:.0f}%]\n".format(data.damage_effectiveness * 100))
             logfile.write(result)
+            logfile.write("\n\n\n")
             logfile.flush()
 
 
-def test_case(data: ShieldTesterData, shield_generator_variant: ShieldGeneratorVariant) -> Dict:
+def test_case(data: ShieldTesterData, shield_generator_variant: ShieldGeneratorVariant) -> TestResult:
     best_survival_time = 0
     best_shield_generator = 0
     best_shield_booster_loadout = None
@@ -438,38 +503,43 @@ def test_case(data: ShieldTesterData, shield_generator_variant: ShieldGeneratorV
         loadout_stats = calculate_loadout_stats(data, shield_generator_variant, booster_variation)
 
         actual_dps = data.damage_effectiveness * (
-                data.explosive_dps * (1 - loadout_stats.explosiveResistance) +
-                data.kinetic_dps * (1 - loadout_stats.kineticResistance) +
-                data.thermal_dps * (1 - loadout_stats.thermalResistance) +
-                data.absolute_dps) - loadout_stats.regenRate * (1 - data.damage_effectiveness)
+                data.explosive_dps * loadout_stats.explosiveResistance +
+                data.kinetic_dps * loadout_stats.kineticResistance +
+                data.thermal_dps * loadout_stats.thermalResistance +
+                data.absolute_dps) - loadout_stats.regenRate * (1.0 - data.damage_effectiveness)
 
         survival_time = (loadout_stats.hitPoints + data.scb_hitpoints) / actual_dps
 
-        if survival_time > best_survival_time:
-            best_shield_generator = shield_generator_variant.id
-            best_shield_booster_loadout = booster_variation
-            best_loadout_stats = loadout_stats
-            best_survival_time = survival_time
+        if actual_dps > 0 and best_survival_time >= 0:
+            # if another run set best_survival_time to a negative value, then the ship didn't die, therefore the other result is better
+            if survival_time > best_survival_time:
+                best_shield_generator = shield_generator_variant.id
+                best_shield_booster_loadout = booster_variation
+                best_loadout_stats = loadout_stats
+                best_survival_time = survival_time
+        elif actual_dps < 0:
+            if survival_time < best_survival_time:
+                best_shield_generator = shield_generator_variant.id
+                best_shield_booster_loadout = booster_variation
+                best_loadout_stats = loadout_stats
+                best_survival_time = survival_time
 
-    return {"bestShieldGenerator": best_shield_generator,
-            "bestShieldBoosterLoadout": best_shield_booster_loadout,
-            "bestLoadoutStats": best_loadout_stats,
-            "bestSurvivalTime": best_survival_time}
+    return TestResult(best_shield_generator, best_shield_booster_loadout, best_loadout_stats, best_survival_time)
 
 
 def calculate_loadout_stats(data: ShieldTesterData, shield_generator_variant: ShieldGeneratorVariant, shield_booster_loadout: List[int]) -> LoadOutStat:
-    exp_modifier = 1
-    kin_modifier = 1
-    therm_modifier = 1
-    hitpoint_bonus = 0
+    exp_modifier = 1.0
+    kin_modifier = 1.0
+    therm_modifier = 1.0
+    hitpoint_bonus = 1.0
 
     for booster_id in shield_booster_loadout:
         booster_stats = data.shield_booster_variants.get(booster_id)
 
-        exp_modifier = exp_modifier * (1 - booster_stats.expResBonus)
-        kin_modifier = kin_modifier * (1 - booster_stats.kinResBonus)
-        therm_modifier = therm_modifier * (1 - booster_stats.thermResBonus)
-        hitpoint_bonus = hitpoint_bonus + booster_stats.shieldStrengthBonus
+        exp_modifier *= booster_stats.expResBonus
+        kin_modifier *= booster_stats.kinResBonus
+        therm_modifier *= booster_stats.thermResBonus
+        hitpoint_bonus += booster_stats.shieldStrengthBonus
 
     # Compensate for diminishing returns
     if exp_modifier < 0.7:
@@ -480,12 +550,12 @@ def calculate_loadout_stats(data: ShieldTesterData, shield_generator_variant: Sh
         therm_modifier = 0.7 - (0.7 - therm_modifier) / 2
 
     # Compute final resistance
-    exp_res = 1 - ((1 - shield_generator_variant.expRes) * exp_modifier)
-    kin_res = 1 - ((1 - shield_generator_variant.kinRes) * kin_modifier)
-    therm_res = 1 - ((1 - shield_generator_variant.thermRes) * therm_modifier)
+    exp_res = shield_generator_variant.expRes * exp_modifier
+    kin_res = shield_generator_variant.kinRes * kin_modifier
+    therm_res = shield_generator_variant.thermRes * therm_modifier
 
     # Compute final hitpoints
-    hitpoints = (1 + hitpoint_bonus) * shield_generator_variant.shieldStrength + data.guardian_hitpoints
+    hitpoints = hitpoint_bonus * shield_generator_variant.shieldStrength + data.guardian_hitpoints
 
     return LoadOutStat(hitpoints, shield_generator_variant.regenRate, exp_res, kin_res, therm_res)
 
