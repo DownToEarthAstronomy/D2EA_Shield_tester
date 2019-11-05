@@ -92,9 +92,9 @@ class ShieldBoosterVariant:
         self.engineering = csv_row["Engineering"]
         self.experimental = csv_row["Experimental"]
         self.shieldStrengthBonus = float(csv_row["ShieldStrengthBonus"])
-        self.expResBonus = float(csv_row["ExpResBonus"])
-        self.kinResBonus = float(csv_row["KinResBonus"])
-        self.thermResBonus = float(csv_row["ThermResBonus"])
+        self.expResBonus = 1.0 - float(csv_row["ExpResBonus"])
+        self.kinResBonus = 1.0 - float(csv_row["KinResBonus"])
+        self.thermResBonus = 1.0 - float(csv_row["ThermResBonus"])
 
 
 class ShieldGeneratorVariant:
@@ -105,9 +105,9 @@ class ShieldGeneratorVariant:
         self.experimental = csv_row["Experimental"]
         self.shieldStrength = int(csv_row["ShieldStrength"])
         self.regenRate = float(csv_row["RegenRate"])
-        self.expRes = float(csv_row["ExpRes"])
-        self.kinRes = float(csv_row["KinRes"])
-        self.thermRes = float(csv_row["ThermRes"])
+        self.expRes = 1.0 - float(csv_row["ExpRes"])
+        self.kinRes = 1.0 - float(csv_row["KinRes"])
+        self.thermRes = 1.0 - float(csv_row["ThermRes"])
 
 
 class LoadOutStat:
@@ -421,9 +421,9 @@ class ShieldTester(tk.Tk):
             output.append("")
             output.append("Shield Hitpoints: [{0:.3f}]".format(best_result.best_loadout_stats.hitPoints))
             output.append("Shield Regen: [{0} hp/s]".format(best_result.best_loadout_stats.regenRate))
-            output.append("Explosive Resistance: [{0:.3f}]".format(best_result.best_loadout_stats.explosiveResistance * 100))
-            output.append("Kinetic Resistance: [{0:.3f}]".format(best_result.best_loadout_stats.kineticResistance * 100))
-            output.append("Thermal Resistance: [{0:.3f}]".format(best_result.best_loadout_stats.thermalResistance * 100))
+            output.append("Explosive Resistance: [{0:.3f}]".format((1.0 - best_result.best_loadout_stats.explosiveResistance) * 100))
+            output.append("Kinetic Resistance: [{0:.3f}]".format((1.0 - best_result.best_loadout_stats.kineticResistance) * 100))
+            output.append("Thermal Resistance: [{0:.3f}]".format((1.0 - best_result.best_loadout_stats.thermalResistance) * 100))
         else:
             output.append("No test results. Please change DPS and/or damage effectiveness.")
 
@@ -503,10 +503,10 @@ def test_case(data: ShieldTesterData, shield_generator_variant: ShieldGeneratorV
         loadout_stats = calculate_loadout_stats(data, shield_generator_variant, booster_variation)
 
         actual_dps = data.damage_effectiveness * (
-                data.explosive_dps * (1 - loadout_stats.explosiveResistance) +
-                data.kinetic_dps * (1 - loadout_stats.kineticResistance) +
-                data.thermal_dps * (1 - loadout_stats.thermalResistance) +
-                data.absolute_dps) - loadout_stats.regenRate * (1 - data.damage_effectiveness)
+                data.explosive_dps * loadout_stats.explosiveResistance +
+                data.kinetic_dps * loadout_stats.kineticResistance +
+                data.thermal_dps * loadout_stats.thermalResistance +
+                data.absolute_dps) - loadout_stats.regenRate * (1.0 - data.damage_effectiveness)
 
         survival_time = (loadout_stats.hitPoints + data.scb_hitpoints) / actual_dps
 
@@ -528,18 +528,18 @@ def test_case(data: ShieldTesterData, shield_generator_variant: ShieldGeneratorV
 
 
 def calculate_loadout_stats(data: ShieldTesterData, shield_generator_variant: ShieldGeneratorVariant, shield_booster_loadout: List[int]) -> LoadOutStat:
-    exp_modifier = 1
-    kin_modifier = 1
-    therm_modifier = 1
-    hitpoint_bonus = 0
+    exp_modifier = 1.0
+    kin_modifier = 1.0
+    therm_modifier = 1.0
+    hitpoint_bonus = 1.0
 
     for booster_id in shield_booster_loadout:
         booster_stats = data.shield_booster_variants.get(booster_id)
 
-        exp_modifier = exp_modifier * (1 - booster_stats.expResBonus)
-        kin_modifier = kin_modifier * (1 - booster_stats.kinResBonus)
-        therm_modifier = therm_modifier * (1 - booster_stats.thermResBonus)
-        hitpoint_bonus = hitpoint_bonus + booster_stats.shieldStrengthBonus
+        exp_modifier *= booster_stats.expResBonus
+        kin_modifier *= booster_stats.kinResBonus
+        therm_modifier *= booster_stats.thermResBonus
+        hitpoint_bonus += booster_stats.shieldStrengthBonus
 
     # Compensate for diminishing returns
     if exp_modifier < 0.7:
@@ -550,12 +550,12 @@ def calculate_loadout_stats(data: ShieldTesterData, shield_generator_variant: Sh
         therm_modifier = 0.7 - (0.7 - therm_modifier) / 2
 
     # Compute final resistance
-    exp_res = 1 - ((1 - shield_generator_variant.expRes) * exp_modifier)
-    kin_res = 1 - ((1 - shield_generator_variant.kinRes) * kin_modifier)
-    therm_res = 1 - ((1 - shield_generator_variant.thermRes) * therm_modifier)
+    exp_res = shield_generator_variant.expRes * exp_modifier
+    kin_res = shield_generator_variant.kinRes * kin_modifier
+    therm_res = shield_generator_variant.thermRes * therm_modifier
 
     # Compute final hitpoints
-    hitpoints = (1 + hitpoint_bonus) * shield_generator_variant.shieldStrength + data.guardian_hitpoints
+    hitpoints = hitpoint_bonus * shield_generator_variant.shieldStrength + data.guardian_hitpoints
 
     return LoadOutStat(hitpoints, shield_generator_variant.regenRate, exp_res, kin_res, therm_res)
 
