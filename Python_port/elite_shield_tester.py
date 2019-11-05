@@ -154,6 +154,7 @@ class ShieldTester(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Shield Tester v{}".format(VERSION))
+        self._runtime = 0
 
         self.bind(self.EVENT_COMPUTE_OUTPUT, lambda e: self._event_process_output(e))
         self.bind(self.EVENT_COMPUTE_COMPLETE, lambda e: self._event_compute_complete(e))
@@ -353,6 +354,7 @@ class ShieldTester(tk.Tk):
             variations_list.append(variations)
 
     def _compute_background(self, test_data: ShieldTesterData):
+        self._runtime = time.time()
         output = list()
         output.append("Shield Booster Count: {0}".format(test_data.number_of_boosters))
         output.append("Shield Booster Variants: {0}".format(len(self._shield_booster_variants)))
@@ -399,6 +401,7 @@ class ShieldTester(tk.Tk):
                 result = test_case(test_data, shield_generator_variant)
                 apply_async_callback(result)  # can use the same function here as mp.Pool would
 
+        output.append("Calculations took {:.2f} seconds".format(time.time() - self._runtime))
         output.append("")
         output.append("---- TEST RESULTS ----")
         if best_result.best_survival_time != 0:
