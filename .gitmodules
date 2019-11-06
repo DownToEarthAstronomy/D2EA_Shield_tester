@@ -1,0 +1,4 @@
+[submodule "RustShieldTester"]
+	path = RustShieldTester
+	url = https://github.com/Freaky/elite_shield_tester.git
+	branch = master
