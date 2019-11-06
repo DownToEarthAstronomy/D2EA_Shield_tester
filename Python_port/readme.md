@@ -50,10 +50,6 @@ If you have Guardian Shield Reinforcement Packages, include their combined hitpo
 
 ![](interface.png)
 
-For some reason multi-core computation might be slower when using the executable instead running from source.
-This has an impact on the time it takes to run a simulation, therefore it might be better to run tests with up to 4 shield boosters on just 1 core.
-The difference isn't huge but noticeable. Just test it and choose whatever works best for you.
-
 ### Name of Test
 
 It is possible to give the test run a name. This will determine the name of the log file and all tests with the same name will be written into the same file. If no name is specified, the current time stamp will be used.\
