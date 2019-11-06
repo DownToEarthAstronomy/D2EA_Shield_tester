@@ -26,7 +26,7 @@ from tkinter import ttk, messagebox, scrolledtext
 from typing import List, Dict, Tuple
 
 # Configuration
-VERSION = "0.4"
+VERSION = "0.5"
 
 path = os.pardir
 if re.match(".*elite_shield_tester\.exe", sys.executable):
@@ -35,6 +35,7 @@ FILE_SHIELD_BOOSTER_VARIANTS_SHORT = os.path.join(path, "ShieldBoosterVariants_s
 FILE_SHIELD_BOOSTER_VARIANTS = os.path.join(path, "ShieldBoosterVariants.csv")
 FILE_SHIELD_GENERATOR_VARIANTS = os.path.join(path, "ShieldGeneratorVariants.csv")
 LOG_DIRECTORY = os.path.join(os.getcwd(), "Logs")
+MP_CHUNK_SIZE = 10000
 
 
 class CustomEntry(tk.Entry):
@@ -114,7 +115,8 @@ class ShieldGeneratorVariant:
 
 
 class LoadOutStat:
-    def __init__(self, hitpoints: float=0.0, regen_rate: float=0.0, explosive_resistance: float=0.0, kinetic_resistance: float=0.0, thermal_resistance: float=0.0):
+    def __init__(self, hitpoints: float = 0.0, regen_rate: float = 0.0, explosive_resistance: float = 0.0,
+                 kinetic_resistance: float = 0.0, thermal_resistance: float = 0.0):
         self.hitPoints = hitpoints
         self.regenRate = regen_rate
         self.explosiveResistance = explosive_resistance
@@ -133,16 +135,14 @@ class ShieldTesterData:
         self.cpu_cores = 0
         self.scb_hitpoints = 0
         self.guardian_hitpoints = 0
-        self.shield_booster_variants = None
-        self.booster_combination_bonuses = None
         self.shield_generator_variants = None
-        self.booster_combinations = None
+        self.shield_booster_variants = None
         self.usePrismatic = False
 
 
 class TestResult:
-    def __init__(self, best_shield_generator: int=0, best_shield_booster_loadout: List[int]=None,
-                 best_loadout_stats: LoadOutStat=None, best_survival_time: int=0):
+    def __init__(self, best_shield_generator: int = 0, best_shield_booster_loadout: List[int] = None,
+                 best_loadout_stats: LoadOutStat = None, best_survival_time: int = 0):
         self.best_shield_generator = best_shield_generator
         self.best_shield_booster_loadout = best_shield_booster_loadout
         self.best_loadout_stats = best_loadout_stats
@@ -170,9 +170,6 @@ class ShieldTester(tk.Tk):
 
         self._shield_booster_variants_long = None
         self._shield_booster_variants_short = None
-
-        self._shield_booster_combinations = None
-        self._shield_booster_combination_bonuses = None
 
         # add some padding
         tk.Frame(self, width=10, height=10).grid(row=0, column=0, sticky=tk.N)
@@ -268,12 +265,9 @@ class ShieldTester(tk.Tk):
         row += 1
         tk.Label(self._left_frame, text="CPU cores to use").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
         self._cores_slider = tk.Scale(self._left_frame, from_=1, to=os.cpu_count(), orient=tk.HORIZONTAL, length=175, takefocus=True)
-        self._cores_slider.set(1)
-        if sys.version_info >= (3, 8):
-            self._cores_slider.grid(row=row, column=1, sticky=tk.E, padx=padding, pady=padding)
-            self._lockable_ui_elements.append(self._cores_slider)
-        else:
-            tk.Label(self._left_frame, text="Upgrade to Python 3.8+ to unlock multiple cores").grid(row=row, column=1, sticky=tk.SW, padx=padding, pady=padding)
+        self._cores_slider.set(os.cpu_count())
+        self._cores_slider.grid(row=row, column=1, sticky=tk.E, padx=padding, pady=padding)
+        self._lockable_ui_elements.append(self._cores_slider)
 
         row += 1
         tk.Label(self._left_frame, text="Shield loadouts to be tested", justify="left").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
@@ -395,6 +389,7 @@ class ShieldTester(tk.Tk):
 
     def _event_compute_complete(self, event):
         self._unlock_ui_elements()
+        self._progress_bar.stop()
 
     def _event_show_warning_logfile(self, event):
         messagebox.showwarning("Could not write logfile.", "Could not write logfile.")
@@ -411,10 +406,9 @@ class ShieldTester(tk.Tk):
         self.event_generate(self.EVENT_COMPUTE_OUTPUT, when="tail")  # thread safe communication
 
         # use built in itertools and assume booster ids are starting at 1 and that there are no gaps
-        test_data.booster_combinations = list(itertools.combinations_with_replacement(range(1, len(self._shield_booster_variants) + 1), test_data.number_of_boosters))
-        test_data.booster_combination_bonuses = list(map(self._calculate_booster_bonuses, test_data.booster_combinations))
+        booster_combinations = list(itertools.combinations_with_replacement(range(1, len(self._shield_booster_variants) + 1), test_data.number_of_boosters))
 
-        output.append("Shield loadouts to be tested: [{0:n}]".format(len(test_data.booster_combinations) * len(test_data.shield_generator_variants)))
+        output.append("Shield loadouts to be tested: [{0:n}]".format(len(booster_combinations) * len(test_data.shield_generator_variants)))
         output.append("Running calculations. Please wait...")
         output.append("")
         self._message_queue.put((tk.END, "\n".join(output)))
@@ -435,17 +429,20 @@ class ShieldTester(tk.Tk):
                     best_result = r
             self.event_generate(self.EVENT_PROGRESS_BAR_STEP, when="tail")
 
-        if test_data.cpu_cores > 1 and (len(test_data.booster_combinations) * len(test_data.shield_generator_variants)) > 1000:
+        if test_data.cpu_cores > 1 and (len(booster_combinations) * len(test_data.shield_generator_variants)) > MP_CHUNK_SIZE:
             # 1 core is handling UI and this thread, the rest is working on running the calculations
             with multiprocessing.Pool(processes=test_data.cpu_cores - 1) as pool:
-                for shield_generator_variant in test_data.shield_generator_variants.values():
-                    pool.apply_async(test_case, args=(test_data, shield_generator_variant), callback=apply_async_callback)
+                last_i = 0
+                for i in range(MP_CHUNK_SIZE, len(booster_combinations), MP_CHUNK_SIZE):
+                    pool.apply_async(test_case, args=(test_data, booster_combinations[last_i:i]), callback=apply_async_callback)
+                    last_i = i + 1
+                if last_i < len(booster_combinations):
+                    pool.apply_async(test_case, args=(test_data, booster_combinations[last_i:]), callback=apply_async_callback)
                 pool.close()
                 pool.join()
         else:
-            for shield_generator_variant in test_data.shield_generator_variants.values():
-                result = test_case(test_data, shield_generator_variant)
-                apply_async_callback(result)  # can use the same function here as mp.Pool would
+            result = test_case(test_data, booster_combinations)
+            apply_async_callback(result)  # can use the same function here as mp.Pool would
 
         output.append("Calculations took {:.2f} seconds".format(time.time() - self._runtime))
         output.append("")
@@ -484,30 +481,6 @@ class ShieldTester(tk.Tk):
             print(e)
             self.event_generate(self.EVENT_WARNING_WRITE_LOGFILE, when="tail")
 
-    def _calculate_booster_bonuses(self, booster_loadout: Tuple[int]):
-        exp_modifier = 1.0
-        kin_modifier = 1.0
-        therm_modifier = 1.0
-        hitpoint_bonus = 1.0
-
-        for booster_id in booster_loadout:
-            booster_stats = self._shield_booster_variants.get(booster_id)
-
-            exp_modifier *= booster_stats.expResBonus
-            kin_modifier *= booster_stats.kinResBonus
-            therm_modifier *= booster_stats.thermResBonus
-            hitpoint_bonus += booster_stats.shieldStrengthBonus
-
-        # Compensate for diminishing returns
-        if exp_modifier < 0.7:
-            exp_modifier = 0.7 - (0.7 - exp_modifier) / 2
-        if kin_modifier < 0.7:
-            kin_modifier = 0.7 - (0.7 - kin_modifier) / 2
-        if therm_modifier < 0.7:
-            therm_modifier = 0.7 - (0.7 - therm_modifier) / 2
-
-        return exp_modifier, kin_modifier, therm_modifier, hitpoint_bonus
-
     def compute(self):
         self._lock_ui_elements()
 
@@ -535,7 +508,8 @@ class ShieldTester(tk.Tk):
             ui_data.shield_generator_variants = {k: v for k, v in self._shield_generator_variants.items() if v.type != "Prismatic"}
         ui_data.shield_booster_variants = self._shield_booster_variants
 
-        self._progress_bar.config(maximum=len(ui_data.shield_generator_variants))
+        steps = int(self.calculate_number_of_possible_variations(ui_data.number_of_boosters, len(self._shield_booster_variants)) / MP_CHUNK_SIZE) + 1
+        self._progress_bar.config(maximum=steps)
 
         t = threading.Thread(target=self._compute_background, args=(ui_data,))
         t.start()
@@ -568,52 +542,78 @@ class ShieldTester(tk.Tk):
         return int(result)
 
 
-def test_case(data: ShieldTesterData, shield_generator_variant: ShieldGeneratorVariant) -> TestResult:
+def calculate_booster_bonuses(shield_booster_variants: Dict[int, ShieldBoosterVariant], booster_loadout: List[int]) -> Tuple[float, float, float, float]:
+    exp_modifier = 1.0
+    kin_modifier = 1.0
+    therm_modifier = 1.0
+    hitpoint_bonus = 1.0
+
+    for booster_id in booster_loadout:
+        booster_stats = shield_booster_variants.get(booster_id)
+
+        exp_modifier *= booster_stats.expResBonus
+        kin_modifier *= booster_stats.kinResBonus
+        therm_modifier *= booster_stats.thermResBonus
+        hitpoint_bonus += booster_stats.shieldStrengthBonus
+
+    # Compensate for diminishing returns
+    if exp_modifier < 0.7:
+        exp_modifier = 0.7 - (0.7 - exp_modifier) / 2
+    if kin_modifier < 0.7:
+        kin_modifier = 0.7 - (0.7 - kin_modifier) / 2
+    if therm_modifier < 0.7:
+        therm_modifier = 0.7 - (0.7 - therm_modifier) / 2
+
+    return exp_modifier, kin_modifier, therm_modifier, hitpoint_bonus
+
+
+def test_case(data: ShieldTesterData, booster_variations) -> TestResult:
     best_survival_time = 0
     best_shield_generator = 0
     best_shield_booster_loadout = None
     best_loadout_stats = 0
 
-    for i in range(0, len(data.booster_combinations)):
-        booster_variation = data.booster_combinations[i]
-        exp_modifier, kin_modifier, therm_modifier, hitpoint_bonus = data.booster_combination_bonuses[i]
-        # Calculate the resistance, regen-rate and hitpoints of the current loadout
-        explosive_resistance = shield_generator_variant.expRes * exp_modifier
-        kinetic_resistance = shield_generator_variant.kinRes * kin_modifier
-        thermal_resistance = shield_generator_variant.thermRes * therm_modifier
+    for booster_variation in booster_variations:
+        exp_modifier, kin_modifier, therm_modifier, hitpoint_bonus = calculate_booster_bonuses(data.shield_booster_variants, booster_variation)
 
-        # Compute final hitpoints
-        hitpoints = hitpoint_bonus * shield_generator_variant.shieldStrength + data.guardian_hitpoints
+        for shield_generator_variant in data.shield_generator_variants.values():
+            # Calculate the resistance, regen-rate and hitpoints of the current loadout
+            explosive_resistance = shield_generator_variant.expRes * exp_modifier
+            kinetic_resistance = shield_generator_variant.kinRes * kin_modifier
+            thermal_resistance = shield_generator_variant.thermRes * therm_modifier
 
-        actual_dps = data.damage_effectiveness * (
-                data.explosive_dps * explosive_resistance +
-                data.kinetic_dps * kinetic_resistance +
-                data.thermal_dps * thermal_resistance +
-                data.absolute_dps) - shield_generator_variant.regenRate * (1.0 - data.damage_effectiveness)
+            # Compute final hitpoints
+            hitpoints = hitpoint_bonus * shield_generator_variant.shieldStrength + data.guardian_hitpoints
 
-        survival_time = (hitpoints + data.scb_hitpoints) / actual_dps
+            actual_dps = data.damage_effectiveness * (
+                    data.explosive_dps * explosive_resistance +
+                    data.kinetic_dps * kinetic_resistance +
+                    data.thermal_dps * thermal_resistance +
+                    data.absolute_dps) - shield_generator_variant.regenRate * (1.0 - data.damage_effectiveness)
 
-        if actual_dps > 0 and best_survival_time >= 0:
-            # if another run set best_survival_time to a negative value, then the ship didn't die, therefore the other result is better
-            if survival_time > best_survival_time:
-                best_shield_generator = shield_generator_variant.id
-                best_shield_booster_loadout = booster_variation
-                best_loadout_stats = LoadOutStat(hitpoints=hitpoints,
-                                                 regen_rate=shield_generator_variant.regenRate,
-                                                 explosive_resistance=explosive_resistance,
-                                                 kinetic_resistance=kinetic_resistance,
-                                                 thermal_resistance=thermal_resistance)
-                best_survival_time = survival_time
-        elif actual_dps < 0:
-            if survival_time < best_survival_time:
-                best_shield_generator = shield_generator_variant.id
-                best_shield_booster_loadout = booster_variation
-                best_loadout_stats = LoadOutStat(hitpoints=hitpoints,
-                                                 regen_rate=shield_generator_variant.regenRate,
-                                                 explosive_resistance=explosive_resistance,
-                                                 kinetic_resistance=kinetic_resistance,
-                                                 thermal_resistance=thermal_resistance)
-                best_survival_time = survival_time
+            survival_time = (hitpoints + data.scb_hitpoints) / actual_dps
+
+            if actual_dps > 0 and best_survival_time >= 0:
+                # if another run set best_survival_time to a negative value, then the ship didn't die, therefore the other result is better
+                if survival_time > best_survival_time:
+                    best_shield_generator = shield_generator_variant.id
+                    best_shield_booster_loadout = booster_variation
+                    best_loadout_stats = LoadOutStat(hitpoints=hitpoints,
+                                                     regen_rate=shield_generator_variant.regenRate,
+                                                     explosive_resistance=explosive_resistance,
+                                                     kinetic_resistance=kinetic_resistance,
+                                                     thermal_resistance=thermal_resistance)
+                    best_survival_time = survival_time
+            elif actual_dps < 0:
+                if survival_time < best_survival_time:
+                    best_shield_generator = shield_generator_variant.id
+                    best_shield_booster_loadout = booster_variation
+                    best_loadout_stats = LoadOutStat(hitpoints=hitpoints,
+                                                     regen_rate=shield_generator_variant.regenRate,
+                                                     explosive_resistance=explosive_resistance,
+                                                     kinetic_resistance=kinetic_resistance,
+                                                     thermal_resistance=thermal_resistance)
+                    best_survival_time = survival_time
 
     return TestResult(best_shield_generator, best_shield_booster_loadout, best_loadout_stats, best_survival_time)
 
