@@ -62,3 +62,7 @@ Because this affects the file name and not every character is allowed for a file
 ### Access to Prismatic Shields
 
 There is a checkbox you can uncheck if you don't want prismatic shields to be taken into consideration when running tests.
+
+### Use Short List
+
+The short list contains only 12 instead of 20 items. That makes the calculations much faster with the disadvantage of having any resistance focused boosters taken into account.
