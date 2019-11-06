@@ -30,7 +30,8 @@ VERSION = "0.4"
 path = os.pardir
 if re.match(".*elite_shield_tester\.exe", sys.executable):
     path = os.getcwd()
-FILE_SHIELD_BOOSTER_VARIANTS = os.path.join(path, "ShieldBoosterVariants_short.csv")
+FILE_SHIELD_BOOSTER_VARIANTS_SHORT = os.path.join(path, "ShieldBoosterVariants_short.csv")
+FILE_SHIELD_BOOSTER_VARIANTS = os.path.join(path, "ShieldBoosterVariants.csv")
 FILE_SHIELD_GENERATOR_VARIANTS = os.path.join(path, "ShieldGeneratorVariants.csv")
 LOG_DIRECTORY = os.path.join(os.getcwd(), "Logs")
 
@@ -166,6 +167,12 @@ class ShieldTester(tk.Tk):
         self._shield_booster_variants = None
         self._shield_generator_variants = None
 
+        self._shield_booster_variants_long = None
+        self._shield_booster_variants_short = None
+
+        self._shield_booster_combinations = None
+        self._shield_booster_combination_bonuses = None
+
         # add some padding
         tk.Frame(self, width=10, height=10).grid(row=0, column=0, sticky=tk.N)
         tk.Frame(self, width=10, height=10).grid(row=2, column=3, sticky=tk.N)
@@ -291,14 +298,23 @@ class ShieldTester(tk.Tk):
 
     def _read_csv_files(self):
         error_occurred = False
-        if os.path.exists(FILE_SHIELD_BOOSTER_VARIANTS) and os.path.exists(FILE_SHIELD_GENERATOR_VARIANTS):
+        if os.path.exists(FILE_SHIELD_BOOSTER_VARIANTS) \
+                and os.path.exists(FILE_SHIELD_BOOSTER_VARIANTS_SHORT) \
+                and os.path.exists(FILE_SHIELD_GENERATOR_VARIANTS):
             try:
-                self._shield_booster_variants = dict()
+                self._shield_booster_variants_long = dict()
                 with open(FILE_SHIELD_BOOSTER_VARIANTS, "r") as csv_file:
                     reader = csv.DictReader(csv_file)
                     for row in reader:
                         variant = ShieldBoosterVariant(row)
-                        self._shield_booster_variants.setdefault(variant.id, variant)
+                        self._shield_booster_variants_long.setdefault(variant.id, variant)
+
+                self._shield_booster_variants_short = dict()
+                with open(FILE_SHIELD_BOOSTER_VARIANTS_SHORT, "r") as csv_file:
+                    reader = csv.DictReader(csv_file)
+                    for row in reader:
+                        variant = ShieldBoosterVariant(row)
+                        self._shield_booster_variants_short.setdefault(variant.id, variant)
 
                 self._shield_generator_variants = dict()
                 with open(FILE_SHIELD_GENERATOR_VARIANTS, "r") as csv_file:
@@ -315,10 +331,13 @@ class ShieldTester(tk.Tk):
 
         if not error_occurred:
             self._unlock_ui_elements()
+            self._shield_booster_variants = self._shield_booster_variants_short  # initialize with short list
         else:
-            if tk.messagebox.askretrycancel("No data", "Could not read CSV files.\nPlease place them in the same directory as this program.\n"
-                                                       "Required:\n{generator}\n{booster}".format(generator=os.path.basename(FILE_SHIELD_GENERATOR_VARIANTS),
-                                                                                                  booster=os.path.basename(FILE_SHIELD_BOOSTER_VARIANTS))):
+            if tk.messagebox.askretrycancel(
+                    "No data", "Could not read CSV files.\nPlease place them in the same directory as this program.\n"
+                    "Required:\n{generator}\n{booster_long}\n{booster_short}".format(generator=os.path.basename(FILE_SHIELD_GENERATOR_VARIANTS),
+                                                                                     booster_long=os.path.basename(FILE_SHIELD_BOOSTER_VARIANTS),
+                                                                                     booster_short=os.path.basename(FILE_SHIELD_BOOSTER_VARIANTS_SHORT))):
                 self._read_csv_files()
 
     def _lock_ui_elements(self):
