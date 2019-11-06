@@ -13,6 +13,7 @@ Don't forget to copy csv files into the exe's directory afterwards.
 import csv
 import os
 import sys
+import math
 import re
 import locale
 import time
@@ -193,7 +194,8 @@ class ShieldTester(tk.Tk):
 
         row += 1
         tk.Label(self._left_frame, text="Number of boosters").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
-        self._booster_slider = tk.Scale(self._left_frame, from_=0, to=8, orient=tk.HORIZONTAL, length=175, takefocus=True)
+        self._booster_slider = tk.Scale(self._left_frame, from_=0, to=8, orient=tk.HORIZONTAL, length=175, takefocus=True,
+                                        command=self._calculate_number_of_tests_command)
         self._booster_slider.set(2)
         self._booster_slider.grid(row=row, column=1, sticky=tk.E, padx=padding, pady=padding)
         self._lockable_ui_elements.append(self._booster_slider)
@@ -247,9 +249,17 @@ class ShieldTester(tk.Tk):
         tk.Label(self._left_frame, text="Access to prismatic shields").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
         self._usePrismatic = tk.IntVar()
         self._usePrismatic.set(1)
-        self._prismatic_check_button = tk.Checkbutton(self._left_frame, variable=self._usePrismatic)
+        self._prismatic_check_button = tk.Checkbutton(self._left_frame, variable=self._usePrismatic, command=self._calculate_number_of_tests_command)
         self._prismatic_check_button.grid(row=row, column=1, sticky=tk.W, pady=padding)
         self._lockable_ui_elements.append(self._prismatic_check_button)
+
+        row += 1
+        tk.Label(self._left_frame, text="Use short list").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._use_short_list = tk.IntVar()
+        self._use_short_list.set(1)
+        self._use_short_list_check_button = tk.Checkbutton(self._left_frame, variable=self._use_short_list, command=self._short_list_command)
+        self._use_short_list_check_button.grid(row=row, column=1, sticky=tk.W, pady=padding)
+        self._lockable_ui_elements.append(self._use_short_list_check_button)
 
         # empty row
         row += 1
@@ -264,6 +274,11 @@ class ShieldTester(tk.Tk):
             self._lockable_ui_elements.append(self._cores_slider)
         else:
             tk.Label(self._left_frame, text="Upgrade to Python 3.8+ to unlock multiple cores").grid(row=row, column=1, sticky=tk.SW, padx=padding, pady=padding)
+
+        row += 1
+        tk.Label(self._left_frame, text="Shield loadouts to be tested", justify="left").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._number_of_tests_label = tk.Label(self._left_frame, text="")
+        self._number_of_tests_label.grid(row=row, column=1, sticky=tk.W, padx=padding, pady=padding)
 
         row += 1
         self._compute_button = tk.Button(self._left_frame, text="Compute best loadout", command=self.compute)
@@ -295,6 +310,25 @@ class ShieldTester(tk.Tk):
         def set_window_size():
             self.minsize(self.winfo_reqwidth(), self.winfo_reqheight())
         self.after(200, set_window_size)
+
+    def _calculate_number_of_tests_command(self, value=""):
+        if not self._shield_booster_variants:
+            return
+        if not value:
+            value = self._booster_slider.get()
+        if not self._usePrismatic.get():
+            shield_generators = len(list(filter(lambda x: x.type != "Prismatic", self._shield_generator_variants.values())))
+        else:
+            shield_generators = len(self._shield_generator_variants)
+        self._number_of_tests_label.config(text="{0:n}".format(self.calculate_number_of_possible_variations(int(value),
+                                                                                                            len(self._shield_booster_variants)) * shield_generators))
+
+    def _short_list_command(self, value=None):
+        if self._use_short_list.get():
+            self._shield_booster_variants = self._shield_booster_variants_short
+        else:
+            self._shield_booster_variants = self._shield_booster_variants_long
+        self._calculate_number_of_tests_command()
 
     def _read_csv_files(self):
         error_occurred = False
@@ -526,6 +560,12 @@ class ShieldTester(tk.Tk):
             logfile.write(result)
             logfile.write("\n\n\n")
             logfile.flush()
+
+    @staticmethod
+    def calculate_number_of_possible_variations(number_of_boosters: int, number_of_booster_variations: int):
+        result = math.factorial(number_of_booster_variations + number_of_boosters - 1)
+        result = result / math.factorial(number_of_booster_variations - 1) / math.factorial(number_of_boosters)
+        return int(result)
 
 
 def test_case(data: ShieldTesterData, shield_generator_variant: ShieldGeneratorVariant) -> TestResult:
