@@ -12,6 +12,7 @@ $ShieldBoosterPath = $('{0}\ShieldBoosterVariants_short.csv' -f $PSScriptRoot)
 
 # Get number of Logical Processors. This will be used to determine the number of parallel threads we will run
 $NumberOfLogicalProcessors = $(Get-WmiObject -class Win32_processor).NumberOfLogicalProcessors
+$NumberOfLogicalProcessors = 4
 
 write-host 'Loading modules'
 . $PSScriptRoot\ShieldTestConfig.ps1
@@ -112,6 +113,7 @@ Foreach($ShieldBooster in $ShieldBoosterLoadoutList[$BestResult.BestShieldBooste
 Write-host ''
 Write-host $('Shield Hitpoints: [{0}]' -f $($BestResult.BestLoadoutStats.HitPoints - $SCBHitPoint)) # We do not include SCB hip point in the shield health (only when testing)
 Write-host $('Shield Regen: [{0} hp/s]' -f $BestResult.BestLoadoutStats.RegenRate)
+Write-host $('Shield Regen Time (from 50%): [{0} s]' -f $(($BestResult.BestLoadoutStats.HitPoints - $SCBHitPoint) / (2 * $BestResult.BestLoadoutStats.RegenRate)))
 Write-host $('ExplosivecResistance: [{0}]' -f $($BestResult.BestLoadoutStats.ExplosiveResistance * 100))
 Write-host $('Kinetic Resistance: [{0}]' -f $($BestResult.BestLoadoutStats.KineticResistance * 100))
 Write-host $('Thermal Resistance: [{0}]' -f $($BestResult.BestLoadoutStats.ThermalResistance * 100))
