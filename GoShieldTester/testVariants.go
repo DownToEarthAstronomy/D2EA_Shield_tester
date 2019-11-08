@@ -21,11 +21,21 @@ func testCase(ch chan resultT, wg *sync.WaitGroup, shieldGenerator generatorT, b
 
 		var survivalTime float64 = loadoutStats.hitPoints / actualDPS
 
-		if survivalTime > bestTestCase.survivalTime {
-			bestTestCase.shieldGenerator = shieldGenerator
-			bestTestCase.shieldBoosterLoadout = shieldBoosterLoadout
-			bestTestCase.loadOutStats = loadoutStats
-			bestTestCase.survivalTime = survivalTime
+		result := resultT{
+			shieldGenerator:      shieldGenerator,
+			shieldBoosterLoadout: shieldBoosterLoadout,
+			loadOutStats:         loadoutStats,
+			survivalTime:         survivalTime,
+		}
+
+		if actualDPS > 0 && bestTestCase.survivalTime >= 0 {
+			if result.survivalTime > bestTestCase.survivalTime {
+				bestTestCase = result
+			}
+		} else if actualDPS < 0 {
+			if result.survivalTime < bestTestCase.survivalTime {
+				bestTestCase = result
+			}
 		}
 	}
 
@@ -48,8 +58,16 @@ func testGenerators(generators []generatorT, boosterVariants []boosterT, booster
 	close(ch)
 
 	for result := range ch {
-		if result.survivalTime > bestResult.survivalTime {
-			bestResult = result
+		if bestResult.survivalTime < 0 {
+			if result.survivalTime < bestResult.survivalTime {
+				bestResult = result
+			}
+		} else {
+			if result.survivalTime < 0 {
+				bestResult = result
+			} else if result.survivalTime > bestResult.survivalTime {
+				bestResult = result
+			}
 		}
 	}
 
