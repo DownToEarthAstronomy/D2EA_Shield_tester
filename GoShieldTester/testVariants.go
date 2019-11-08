@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"sync"
 )
 
@@ -40,19 +39,13 @@ func testGenerators(generators []generatorT, boosterVariants []boosterT, booster
 	ch := make(chan resultT, len(generators))
 	wg := sync.WaitGroup{}
 
-	fmt.Print("Tests [")
-
 	for _, generator := range generators {
-		fmt.Print("#")
 		wg.Add(1)
-
 		go testCase(ch, &wg, generator, boosterVariants, boosterList)
 	}
 
 	wg.Wait()
 	close(ch)
-
-	fmt.Println("]")
 
 	for result := range ch {
 		if result.survivalTime > bestResult.survivalTime {

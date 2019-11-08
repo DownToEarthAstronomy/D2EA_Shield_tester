@@ -24,7 +24,7 @@ func showResults(bestResult resultT, boosterVariants []boosterT) {
 	fmt.Println("Kinetic DPS:          [", config.kineticDPS, "]")
 	fmt.Println("Thermal DPS:          [", config.thermalDPS, "]")
 	fmt.Println("Absolute DPS:         [", config.absoluteDPS, "]")
-	fmt.Println("Damage Effectiveness: [", config.damageEffectiveness, "]")
+	fmt.Println("Damage Effectiveness: [", config.damageEffectiveness*100, "%]")
 
 	fmt.Println()
 	fmt.Println("---- TEST RESULTS ----")
