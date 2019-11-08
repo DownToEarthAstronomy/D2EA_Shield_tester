@@ -16,7 +16,7 @@ func loadConfig() configT {
 	config = configT{
 		shieldBoosterCount:     3,    // 1-4 = small ships (2 typical), 2-6 = medium ships (4 typical), 4-8 = large ships (6-7 typical)
 		prismatics:             true, // do you have prismatics unlocked?
-		explosiveDPS:           0,    // missles
+		explosiveDPS:           33,   // missles
 		kineticDPS:             33,   // cannons and missles
 		thermalDPS:             33,   // laser weapons
 		absoluteDPS:            0,    // 0 for most NPCs except Thargoids, 100 for a Cyclops, 150 for a Basilisk, 200 for a Hydra

@@ -30,9 +30,8 @@ func processFlags() {
 	cucumber := flag.Bool("cucumber", false, "Useful Cucumber defaults")
 	shortboost := flag.Bool("shortboost", false, "Load the short booster list")
 
-	config.damageEffectiveness = config.damageEffectiveness / 100 // convert from integer to percentage
-
 	flag.Parse()
+	config.damageEffectiveness = config.damageEffectiveness / 100 // convert from integer to percentage
 
 	if config.shieldBoosterCount < 0 {
 		fmt.Println("Can't have negative shield boosters, setting to 0")
@@ -96,13 +95,8 @@ func main() {
 	fmt.Println("Shield loadouts to be tested: ", len(shieldBoosterLoadoutList)*len(generators))
 
 	startTime := time.Now()
-
 	var result = testGenerators(generators, boosterVariants, shieldBoosterLoadoutList)
-
 	endTime := time.Now()
 
-	fmt.Println("Calculations took: ", endTime.Sub(startTime))
-	fmt.Println()
-
-	showResults(result, boosterVariants)
+	showResults(result, boosterVariants, endTime.Sub(startTime))
 }
