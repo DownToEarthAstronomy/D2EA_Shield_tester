@@ -89,14 +89,16 @@ func main() {
 
 	var generators = loadGenerators()
 	var boosterVariants = loadboosterVariants()
-	fmt.Println("Generating list of booster loadouts")
-	var shieldBoosterLoadoutList = getBoosterLoadoutList(len(boosterVariants))
+	fmt.Printf("Loaded %d shields and %d boosters\n", len(generators), len(boosterVariants))
 
-	fmt.Println("Shield loadouts to be tested: ", len(shieldBoosterLoadoutList)*len(generators))
+	var shieldBoosterLoadoutList = getBoosterLoadoutList(len(boosterVariants))
 
 	startTime := time.Now()
 	var result = testGenerators(generators, boosterVariants, shieldBoosterLoadoutList)
 	endTime := time.Now()
+	dur := endTime.Sub(startTime)
 
-	showResults(result, boosterVariants, endTime.Sub(startTime))
+	fmt.Println("Tested", len(shieldBoosterLoadoutList)*len(generators), "loadouts in", dur)
+
+	showResults(result, boosterVariants, dur)
 }

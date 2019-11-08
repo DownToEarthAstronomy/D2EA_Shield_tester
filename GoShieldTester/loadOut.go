@@ -13,7 +13,7 @@ func getLoadoutStats(shieldGeneratorVariant generatorT, shieldBoosterLoadout []i
 	var expModifier float64 = 1.0
 	var kinModifier float64 = 1.0
 	var thermModifier float64 = 1.0
-	var hitPointBonus float64 = 0.0
+	var hitPointBonus float64 = 1.0
 
 	var expRes, kinRes, thermRes, hitPoints float64
 
@@ -22,10 +22,10 @@ func getLoadoutStats(shieldGeneratorVariant generatorT, shieldBoosterLoadout []i
 
 		var boosterVariantStats = boosterVariants[booster-1]
 
-		expModifier *= boosterVariantStats.expResBonus
-		kinModifier *= boosterVariantStats.kinResBonus
-		thermModifier *= boosterVariantStats.thermResBonus
-		hitPointBonus += boosterVariantStats.shieldStrengthBonus
+		expModifier = expModifier * boosterVariantStats.expResBonus
+		kinModifier = kinModifier * boosterVariantStats.kinResBonus
+		thermModifier = thermModifier * boosterVariantStats.thermResBonus
+		hitPointBonus = hitPointBonus + boosterVariantStats.shieldStrengthBonus
 	}
 
 	// Compensate for diminishing returns

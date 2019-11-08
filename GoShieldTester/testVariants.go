@@ -9,19 +9,21 @@ func testCase(ch chan resultT, wg *sync.WaitGroup, shieldGenerator generatorT, b
 		survivalTime: 0.0,
 	}
 
+	var result resultT
+
 	for _, shieldBoosterLoadout := range shieldBoosterLoadoutList {
 		// Calculate the resistance, regen-rate and hitpoints of the current loadout
 		var loadoutStats = getLoadoutStats(shieldGenerator, shieldBoosterLoadout, boosterVariants)
 
 		var actualDPS float64 = config.damageEffectiveness*
-			(config.explosiveDPS*(1-loadoutStats.explosiveResistance)+
-				config.kineticDPS*(1-loadoutStats.kineticResistance)+
-				config.thermalDPS*(1-loadoutStats.thermalResistance)+
+			(config.explosiveDPS*loadoutStats.explosiveResistance+
+				config.kineticDPS*loadoutStats.kineticResistance+
+				config.thermalDPS*loadoutStats.thermalResistance+
 				config.absoluteDPS) - loadoutStats.regenRate*(1-config.damageEffectiveness)
 
-		var survivalTime float64 = loadoutStats.hitPoints / actualDPS
+		var survivalTime float64 = (loadoutStats.hitPoints + config.scbHitPoint) / actualDPS
 
-		result := resultT{
+		result = resultT{
 			shieldGenerator:      shieldGenerator,
 			shieldBoosterLoadout: shieldBoosterLoadout,
 			loadOutStats:         loadoutStats,
