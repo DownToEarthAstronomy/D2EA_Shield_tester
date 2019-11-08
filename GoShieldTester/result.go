@@ -39,7 +39,7 @@ func showResults(bestResult resultT, boosterVariants []boosterT, dur time.Durati
 	i := 1
 	for _, booster := range bestResult.shieldBoosterLoadout {
 		var oBooster = boosterVariants[booster-1]
-		fmt.Println("Shield Booster", i, "    [", oBooster.engineering, "] -]", oBooster.experimental, "]")
+		fmt.Println("Shield Booster", i, "    [", oBooster.engineering, "] - [", oBooster.experimental, "]")
 		i++
 	}
 
