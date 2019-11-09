@@ -193,14 +193,14 @@ class ShieldTester(tk.Tk):
         tk.Label(self._left_frame, text="Number of boosters").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
         self._booster_slider = tk.Scale(self._left_frame, from_=0, to=8, orient=tk.HORIZONTAL, length=175, takefocus=True,
                                         command=self._calculate_number_of_tests_command)
-        self._booster_slider.set(2)
+        self._booster_slider.set(7)
         self._booster_slider.grid(row=row, column=1, sticky=tk.E, padx=padding, pady=padding)
         self._lockable_ui_elements.append(self._booster_slider)
 
         row += 1
         tk.Label(self._left_frame, text="Damage effectiveness in %").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
         self._effectiveness_slider = tk.Scale(self._left_frame, from_=1, to=100, orient=tk.HORIZONTAL, length=175, takefocus=True)
-        self._effectiveness_slider.set(25)
+        self._effectiveness_slider.set(65)
         self._effectiveness_slider.grid(row=row, column=1, sticky=tk.E, padx=padding, pady=padding)
         self._lockable_ui_elements.append(self._effectiveness_slider)
 
@@ -239,6 +239,7 @@ class ShieldTester(tk.Tk):
         row += 1
         tk.Label(self._left_frame, text="Absolute DPS (Thargoids)").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
         self._absolute_dps_entry = IntegerEntry(self._left_frame)
+        self._absolute_dps_entry.insert(0, 10)
         self._absolute_dps_entry.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
         self._lockable_ui_elements.append(self._absolute_dps_entry)
 
