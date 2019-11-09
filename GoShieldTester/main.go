@@ -21,16 +21,17 @@ func processFlags() {
 	flag.Float64Var(&config.kineticDPS, "kdps", config.kineticDPS, "Kinetic DPS percentage (use 0 for Thargoids)")
 	flag.Float64Var(&config.thermalDPS, "tdps", config.thermalDPS, "Thermal DPS percentage (use 0 for Thargoids)")
 	flag.Float64Var(&config.absoluteDPS, "adps", config.absoluteDPS, "Absolute DPS percentage (use 100 for Thargoids)")
-	flag.Float64Var(&config.damageEffectiveness, "dmg", config.damageEffectiveness, "Damage effectiveness (use 0.1 for PvE, 0.5 for PvP, and 0.65 for Thargoids)")
+	flag.Float64Var(&config.damageEffectiveness, "dmg", config.damageEffectiveness, "Damage effectiveness (25 for fixed weapons, 65 for hazrez PvP, 100 constant attack)")
 	flag.Float64Var(&config.scbHitPoint, "scb", config.scbHitPoint, "SCB HitPoints (default 0)")
 	flag.Float64Var(&config.guardianShieldHitPoint, "gshp", config.guardianShieldHitPoint, "Guardian HitPoints (default 0)")
 
 	prismatics := flag.Bool("noprismatics", false, "Disable Prismatic shields")
 	thargoid := flag.Bool("thargoid", false, "Useful Thargoid defaults")
 	cucumber := flag.Bool("cucumber", false, "Useful Cucumber defaults")
-	allboosters := flag.Bool("fullboost", false, "Load the full booster list")
+	shortboost := flag.Bool("shortboost", false, "Load the short booster list")
 
 	flag.Parse()
+	config.damageEffectiveness = config.damageEffectiveness / 100 // convert from integer to percentage
 
 	if config.shieldBoosterCount < 0 {
 		fmt.Println("Can't have negative shield boosters, setting to 0")
@@ -52,9 +53,9 @@ func processFlags() {
 		*thargoid = false
 	}
 
-	if *allboosters {
-		fmt.Println("Loading all boosters")
-		config.boosterFile = "../ShieldBoosterVariants.csv"
+	if *shortboost {
+		fmt.Println("Loading short booster list")
+		config.boosterFile = "../ShieldBoosterVariants_short.csv"
 	}
 
 	if *cucumber {
@@ -86,27 +87,18 @@ func main() {
 
 	processFlags()
 
-	fmt.Println("Test started at: ", time.Now().Format(time.RFC1123))
-
 	var generators = loadGenerators()
-	fmt.Println("Loaded", len(generators), "generator variants")
-
 	var boosterVariants = loadboosterVariants()
-	fmt.Println("Loaded", len(boosterVariants), "shield booster variants")
+	fmt.Printf("Loaded %d shields and %d boosters\n", len(generators), len(boosterVariants))
 
 	var shieldBoosterLoadoutList = getBoosterLoadoutList(len(boosterVariants))
 
-	fmt.Println("Loadout shield booster variations to be tested per generator: ", len(shieldBoosterLoadoutList))
-	fmt.Println("Total loadouts to be tested: ", len(shieldBoosterLoadoutList)*len(generators))
-
 	startTime := time.Now()
-
 	var result = testGenerators(generators, boosterVariants, shieldBoosterLoadoutList)
-
 	endTime := time.Now()
+	dur := endTime.Sub(startTime)
 
-	fmt.Println("Time elapsed: [", endTime.Sub(startTime), "]")
-	fmt.Println()
+	fmt.Println("Tested", len(shieldBoosterLoadoutList)*len(generators), "loadouts in", dur)
 
-	showResults(result, boosterVariants)
+	showResults(result, boosterVariants, dur)
 }

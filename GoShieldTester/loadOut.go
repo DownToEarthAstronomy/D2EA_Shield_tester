@@ -13,7 +13,7 @@ func getLoadoutStats(shieldGeneratorVariant generatorT, shieldBoosterLoadout []i
 	var expModifier float64 = 1.0
 	var kinModifier float64 = 1.0
 	var thermModifier float64 = 1.0
-	var hitPointBonus float64 = 0.0
+	var hitPointBonus float64 = 1.0
 
 	var expRes, kinRes, thermRes, hitPoints float64
 
@@ -22,9 +22,9 @@ func getLoadoutStats(shieldGeneratorVariant generatorT, shieldBoosterLoadout []i
 
 		var boosterVariantStats = boosterVariants[booster-1]
 
-		expModifier = expModifier * (1 - boosterVariantStats.expResBonus)
-		kinModifier = kinModifier * (1 - boosterVariantStats.kinResBonus)
-		thermModifier = thermModifier * (1 - boosterVariantStats.thermResBonus)
+		expModifier = expModifier * boosterVariantStats.expResBonus
+		kinModifier = kinModifier * boosterVariantStats.kinResBonus
+		thermModifier = thermModifier * boosterVariantStats.thermResBonus
 		hitPointBonus = hitPointBonus + boosterVariantStats.shieldStrengthBonus
 	}
 
@@ -42,12 +42,12 @@ func getLoadoutStats(shieldGeneratorVariant generatorT, shieldBoosterLoadout []i
 	}
 
 	// Compute final Resistance
-	expRes = 1 - ((1 - shieldGeneratorVariant.expRes) * expModifier)
-	kinRes = 1 - ((1 - shieldGeneratorVariant.kinRes) * kinModifier)
-	thermRes = 1 - ((1 - shieldGeneratorVariant.thermRes) * thermModifier)
+	expRes = shieldGeneratorVariant.expRes * expModifier
+	kinRes = shieldGeneratorVariant.kinRes * kinModifier
+	thermRes = shieldGeneratorVariant.thermRes * thermModifier
 
 	// Compute final Hitpoints
-	hitPoints = (1+hitPointBonus)*shieldGeneratorVariant.shieldStrength + config.scbHitPoint + config.guardianShieldHitPoint
+	hitPoints = hitPointBonus*shieldGeneratorVariant.shieldStrength + config.scbHitPoint + config.guardianShieldHitPoint
 
 	return loadOutStatT{
 		hitPoints:           hitPoints,
