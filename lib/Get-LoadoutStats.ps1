@@ -1,6 +1,7 @@
 Function Get-LoadoutStats{
     Param(
         $ShieldGenratorVariant,
+        $ShieldGenertorBaseHitPoint,
         $ShieldBoosterLoadout,
         $ShieldBoosterVariantList
     )
@@ -8,7 +9,7 @@ Function Get-LoadoutStats{
     $ExpModifier = 1
     $KinModifier = 1
     $ThermModifier = 1
-    $HitPointBonus = 0
+    $BoosterHitPointBonus = 0
 
     # Compute non diminishing returns modifiers
     ForEach($Booster in $ShieldBoosterLoadout){
@@ -20,7 +21,7 @@ Function Get-LoadoutStats{
         $KinModifier = $KinModifier * (1 - $BoosterStats.KinResBonus)
         $ThermModifier = $ThermModifier * (1 - $BoosterStats.ThermResBonus)
 
-        $HitPointBonus = $HitPointBonus + $BoosterStats.ShieldStrengthBonus
+        $BoosterHitPointBonus = $BoosterHitPointBonus + $BoosterStats.ShieldStrengthBonus
     }
 
     # Compensate for diminishing returns
@@ -39,9 +40,8 @@ Function Get-LoadoutStats{
     $KinRes = 1 - ((1 - $ShieldGenratorVariant.KinRes) * $KinModifier)
     $ThermRes = 1 - ((1 - $ShieldGenratorVariant.ThermRes) * $ThermModifier)
 
-    # Compute final Hitpoints
-
-    $HitPoints = (1 + $HitPointBonus) * $ShieldGenratorVariant.ShieldStrength
+    # Compute final Hitpoints  
+    $HitPoints = $ShieldGenertorBaseHitPoint * (1 + $ShieldGenratorVariant.OptimalMultiplierBonus) * (1 + $BoosterHitPointBonus)
 
     $LoadoutStat = New-Object PSCustomObject -Property @{
         HitPoints = [Double]$HitPoints + [Double]$SCBHitPoint + [Double]$GuardianShieldHitPoint

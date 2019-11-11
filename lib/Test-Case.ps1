@@ -8,6 +8,18 @@ $TestCase = {
 
     . $ScriptRoot\ShieldTestConfig.ps1
     . $ScriptRoot\lib\Get-LoadoutStats.ps1
+    . $ScriptRoot\lib\Get-ShieldHP.ps1
+
+    $ShipStat = Import-csv $('{0}\lib\ShipStats.csv' -f $ScriptRoot) | Where-Object{$_.ShipName -eq $ShipName}
+    
+    IF($ShieldGenerator.Type -eq 'Bi-Weave'){
+        $ShieldRating = 'C'
+    }Else{
+        $ShieldRating = 'A'
+    }
+   
+    $ShieldGenratorStat = Import-Csv $('{0}\lib\ShieldStats.csv' -f  $ScriptRoot) | Where-Object{$_.type -eq $ShieldGenerator.Type -and $_.class -eq $ShieldGeneratorSize -and $_.rating -eq $ShieldRating} 
+    $ShieldGenertorBaseHitPoint = Get-ShieldHP -ShieldGenratorStat $ShieldGenratorStat -ShipMass $ShipStat.HullMass -ShipBaseShield $ShipStat.baseShieldStrength
 
     $BestSurvivalTime = 0
     
@@ -16,6 +28,7 @@ $TestCase = {
         # Calculate the resistance, regen-rate and hitpoints of the current loadout
         $LoadoutStats = Get-LoadoutStats `
             -ShieldGenratorVariant $ShieldGenerator `
+            -ShieldGenertorBaseHitPoint $ShieldGenertorBaseHitPoint `
             -ShieldBoosterLoadout $ShieldBoosterLoadoutList[$ShieldBoosterLoadout] `
             -ShieldBoosterVariantList $ShieldBoosterVariantList
 
