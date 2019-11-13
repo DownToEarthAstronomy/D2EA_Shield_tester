@@ -20,6 +20,8 @@ $TestCase = {
    
     $ShieldGenratorStat = Import-Csv $('{0}\lib\ShieldStats.csv' -f  $ScriptRoot) | Where-Object{$_.type -eq $ShieldGenerator.Type -and $_.class -eq $ShieldGeneratorSize -and $_.rating -eq $ShieldRating} 
     $ShieldGenertorBaseHitPoint = Get-ShieldHP -ShieldGenratorStat $ShieldGenratorStat -ShipMass $ShipStat.HullMass -ShipBaseShield $ShipStat.baseShieldStrength
+    $ShieldGenertorBaseRecharge = [Double]$ShieldGenratorStat.regen
+
 
     $BestSurvivalTime = 0
     
@@ -29,6 +31,7 @@ $TestCase = {
         $LoadoutStats = Get-LoadoutStats `
             -ShieldGenratorVariant $ShieldGenerator `
             -ShieldGenertorBaseHitPoint $ShieldGenertorBaseHitPoint `
+            -ShieldGenertorBaseRecharge $ShieldGenertorBaseRecharge `
             -ShieldBoosterLoadout $ShieldBoosterLoadoutList[$ShieldBoosterLoadout] `
             -ShieldBoosterVariantList $ShieldBoosterVariantList
 

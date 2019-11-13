@@ -1,46 +1,46 @@
-ID,Type,Engineering,Experimental,RegenRate,ExpRes,KinRes,ThermRes,OptimalMultiplierBonus
-1,Normal,Kinetic Resistance,Fast Charge,2.1,0.4925,0.6955,-0.4007,0
-2,Normal,Kinetic Resistance,Multi-Weave,1.8,0.515,0.709,-0.3386,0
-3,Normal,Kinetic Resistance,Hi-Cap,1.8,0.5,0.7,-0.38,0.06
-4,Normal,Kinetic Resistance,Thermo Block,1.8,0.5,0.7,-0.2696,-0.03
-5,Normal,Kinetic Resistance,Force Block,1.8,0.5,0.724,-0.38,-0.03
-6,Normal,Reinforced,Fast Charge,2.1,0.5762,0.4915,-0.017,0.38
-7,Normal,Reinforced,Multi-Weave,1.8,0.595,0.514,0.0281,0.38
-8,Normal,Reinforced,Hi-Cap,1.8,0.5825,0.499,-0.002,0.4628
-9,Normal,Reinforced,Thermo Block,1.8,0.5825,0.499,0.0782,0.3386
-10,Normal,Reinforced,Force Block,1.8,0.5825,0.5391,-0.002,0.3386
-11,Normal,Thermal Resistance,Fast Charge,2.1,0.4925,0.2692,0.391,0
-12,Normal,Thermal Resistance,Multi-Weave,1.8,0.515,0.3016,0.418,0
-13,Normal,Thermal Resistance,Hi-Cap,1.8,0.5,0.28,0.4,0.06
-14,Normal,Thermal Resistance,Thermo Block,1.8,0.5,0.28,0.448,-0.03
-15,Normal,Thermal Resistance,Force Block,1.8,0.5,0.3376,0.4,-0.03
-16,Bi-Weave,Kinetic Resistance,Fast Charge,5.1,0.4925,0.6955,-0.4007,0
-17,Bi-Weave,Kinetic Resistance,Multi-Weave,4.4,0.515,0.709,-0.3386,0
-18,Bi-Weave,Kinetic Resistance,Hi-Cap,4.4,0.5,0.7,-0.38,0.06
-19,Bi-Weave,Kinetic Resistance,Thermo Block,4.4,0.5,0.7,-0.2696,-0.03
-20,Bi-Weave,Kinetic Resistance,Force Block,4.4,0.5,0.724,-0.38,-0.03
-21,Bi-Weave,Reinforced,Fast Charge,5.1,0.5762,0.4915,-0.017,0.38
-22,Bi-Weave,Reinforced,Multi-Weave,4.4,0.595,0.514,0.0281,0.38
-23,Bi-Weave,Reinforced,Hi-Cap,4.4,0.5825,0.499,-0.002,0.4628
-24,Bi-Weave,Reinforced,Thermo Block,4.4,0.5825,0.499,0.0782,0.3386
-25,Bi-Weave,Reinforced,Force Block,4.4,0.5825,0.5391,-0.002,0.3386
-26,Bi-Weave,Thermal Resistance,Fast Charge,5.1,0.4925,0.2692,0.391,0
-27,Bi-Weave,Thermal Resistance,Multi-Weave,4.4,0.515,0.3016,0.418,0
-28,Bi-Weave,Thermal Resistance,Hi-Cap,4.4,0.5,0.28,0.4,0.06
-29,Bi-Weave,Thermal Resistance,Thermo Block,4.4,0.5,0.28,0.448,-0.03
-30,Bi-Weave,Thermal Resistance,Force Block,4.4,0.5,0.3376,0.4,-0.03
-31,Prismatic,Kinetic Resistance,Fast Charge,1.3,0.4925,0.6955,-0.4007,0
-32,Prismatic,Kinetic Resistance,Multi-Weave,1.1,0.515,0.709,-0.3386,0
-33,Prismatic,Kinetic Resistance,Hi-Cap,1.1,0.5,0.7,-0.38,0.06
-34,Prismatic,Kinetic Resistance,Thermo Block,1.1,0.5,0.7,-0.2696,-0.03
-35,Prismatic,Kinetic Resistance,Force Block,1.1,0.5,0.724,-0.38,-0.03
-36,Prismatic,Reinforced,Fast Charge,1.3,0.5762,0.4915,-0.017,0.38
-37,Prismatic,Reinforced,Multi-Weave,1.1,0.595,0.514,0.0281,0.38
-38,Prismatic,Reinforced,Hi-Cap,1.1,0.5825,0.499,-0.002,0.4628
-39,Prismatic,Reinforced,Thermo Block,1.1,0.5825,0.499,0.0782,0.3386
-40,Prismatic,Reinforced,Force Block,1.1,0.5825,0.5391,-0.002,0.3386
-41,Prismatic,Thermal Resistance,Fast Charge,1.3,0.4925,0.2692,0.391,0
-42,Prismatic,Thermal Resistance,Multi-Weave,1.1,0.515,0.3016,0.418,0
-43,Prismatic,Thermal Resistance,Hi-Cap,1.1,0.5,0.28,0.4,0.06
-44,Prismatic,Thermal Resistance,Thermo Block,1.1,0.5,0.28,0.448,-0.03
-45,Prismatic,Thermal Resistance,Force Block,1.1,0.5,0.3376,0.4,-0.03
+ID,Type,Engineering,Experimental,RegenRateBobus,ExpRes,KinRes,ThermRes,OptimalMultiplierBonus
+1,Normal,Kinetic Resistance,Fast Charge,0.15,0.4925,0.6955,-0.4007,0
+2,Normal,Kinetic Resistance,Multi-Weave,0,0.515,0.709,-0.3386,0
+3,Normal,Kinetic Resistance,Hi-Cap,0,0.5,0.7,-0.38,0.06
+4,Normal,Kinetic Resistance,Thermo Block,0,0.5,0.7,-0.2696,-0.03
+5,Normal,Kinetic Resistance,Force Block,0,0.5,0.724,-0.38,-0.03
+6,Normal,Reinforced,Fast Charge,0.15,0.5762,0.4915,-0.017,0.38
+7,Normal,Reinforced,Multi-Weave,0,0.595,0.514,0.0281,0.38
+8,Normal,Reinforced,Hi-Cap,0,0.5825,0.499,-0.002,0.4628
+9,Normal,Reinforced,Thermo Block,0,0.5825,0.499,0.0782,0.3386
+10,Normal,Reinforced,Force Block,0,0.5825,0.5391,-0.002,0.3386
+11,Normal,Thermal Resistance,Fast Charge,0.15,0.4925,0.2692,0.391,0
+12,Normal,Thermal Resistance,Multi-Weave,0,0.515,0.3016,0.418,0
+13,Normal,Thermal Resistance,Hi-Cap,0,0.5,0.28,0.4,0.06
+14,Normal,Thermal Resistance,Thermo Block,0,0.5,0.28,0.448,-0.03
+15,Normal,Thermal Resistance,Force Block,0,0.5,0.3376,0.4,-0.03
+16,Bi-Weave,Kinetic Resistance,Fast Charge,0.15,0.4925,0.6955,-0.4007,0
+17,Bi-Weave,Kinetic Resistance,Multi-Weave,0,0.515,0.709,-0.3386,0
+18,Bi-Weave,Kinetic Resistance,Hi-Cap,0,0.5,0.7,-0.38,0.06
+19,Bi-Weave,Kinetic Resistance,Thermo Block,0,0.5,0.7,-0.2696,-0.03
+20,Bi-Weave,Kinetic Resistance,Force Block,0,0.5,0.724,-0.38,-0.03
+21,Bi-Weave,Reinforced,Fast Charge,0.15,0.5762,0.4915,-0.017,0.38
+22,Bi-Weave,Reinforced,Multi-Weave,0,0.595,0.514,0.0281,0.38
+23,Bi-Weave,Reinforced,Hi-Cap,0,0.5825,0.499,-0.002,0.4628
+24,Bi-Weave,Reinforced,Thermo Block,0,0.5825,0.499,0.0782,0.3386
+25,Bi-Weave,Reinforced,Force Block,0,0.5825,0.5391,-0.002,0.3386
+26,Bi-Weave,Thermal Resistance,Fast Charge,0.15,0.4925,0.2692,0.391,0
+27,Bi-Weave,Thermal Resistance,Multi-Weave,0,0.515,0.3016,0.418,0
+28,Bi-Weave,Thermal Resistance,Hi-Cap,0,0.5,0.28,0.4,0.06
+29,Bi-Weave,Thermal Resistance,Thermo Block,0,0.5,0.28,0.448,-0.03
+30,Bi-Weave,Thermal Resistance,Force Block,0,0.5,0.3376,0.4,-0.03
+31,Prismatic,Kinetic Resistance,Fast Charge,0.15,0.4925,0.6955,-0.4007,0
+32,Prismatic,Kinetic Resistance,Multi-Weave,0,0.515,0.709,-0.3386,0
+33,Prismatic,Kinetic Resistance,Hi-Cap,0,0.5,0.7,-0.38,0.06
+34,Prismatic,Kinetic Resistance,Thermo Block,0,0.5,0.7,-0.2696,-0.03
+35,Prismatic,Kinetic Resistance,Force Block,0,0.5,0.724,-0.38,-0.03
+36,Prismatic,Reinforced,Fast Charge,0.15,0.5762,0.4915,-0.017,0.38
+37,Prismatic,Reinforced,Multi-Weave,0,0.595,0.514,0.0281,0.38
+38,Prismatic,Reinforced,Hi-Cap,0,0.5825,0.499,-0.002,0.4628
+39,Prismatic,Reinforced,Thermo Block,0,0.5825,0.499,0.0782,0.3386
+40,Prismatic,Reinforced,Force Block,0,0.5825,0.5391,-0.002,0.3386
+41,Prismatic,Thermal Resistance,Fast Charge,0.15,0.4925,0.2692,0.391,0
+42,Prismatic,Thermal Resistance,Multi-Weave,0,0.515,0.3016,0.418,0
+43,Prismatic,Thermal Resistance,Hi-Cap,0,0.5,0.28,0.4,0.06
+44,Prismatic,Thermal Resistance,Thermo Block,0,0.5,0.28,0.448,-0.03
+45,Prismatic,Thermal Resistance,Force Block,0,0.5,0.3376,0.4,-0.03
