@@ -1,0 +1,4367 @@
+{
+  "ships": [
+    {
+      "ship": "Adder",
+      "symbol": "Adder",
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": "Adder",
+        "Modules": [
+          {
+            "Item": "Adder_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size3_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size3_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size3_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size1_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size2_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size3_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size3_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 60,
+      "hullMass": 35,
+      "utility_slots": 2,
+      "highest_internal": 3
+    },
+    {
+      "ship": "Alliance Challenger",
+      "symbol": "TypeX_3",
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": "TypeX_3",
+        "Modules": [
+          {
+            "Item": "TypeX_3_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size6_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size6_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size5_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size5_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size6_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size4_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size4_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 220,
+      "hullMass": 450,
+      "utility_slots": 4,
+      "highest_internal": 6
+    },
+    {
+      "ship": "Alliance Chieftain",
+      "symbol": "TypeX",
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": "TypeX",
+        "Modules": [
+          {
+            "Item": "TypeX_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size6_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size6_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size5_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size5_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size6_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size4_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size4_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 200,
+      "hullMass": 400,
+      "utility_slots": 4,
+      "highest_internal": 6
+    },
+    {
+      "ship": "Alliance Crusader",
+      "symbol": "TypeX_2",
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": "TypeX_2",
+        "Modules": [
+          {
+            "Item": "TypeX_2_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size6_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size6_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size5_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size5_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size6_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size4_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size4_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 200,
+      "hullMass": 500,
+      "utility_slots": 4,
+      "highest_internal": 6
+    },
+    {
+      "ship": "Anaconda",
+      "symbol": "Anaconda",
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": "Anaconda",
+        "Modules": [
+          {
+            "Item": "Anaconda_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size8_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size7_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size6_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size5_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size8_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size5_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size8_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 350,
+      "hullMass": 400,
+      "utility_slots": 8,
+      "highest_internal": 7
+    },
+    {
+      "ship": "Asp Explorer",
+      "symbol": "Asp",
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": "Asp",
+        "Modules": [
+          {
+            "Item": "Asp_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size5_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size5_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size5_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size4_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size4_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size5_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size5_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 140,
+      "hullMass": 280,
+      "utility_slots": 4,
+      "highest_internal": 6
+    },
+    {
+      "ship": "Asp Scout",
+      "symbol": "Asp_Scout",
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": "Asp_Scout",
+        "Modules": [
+          {
+            "Item": "Asp_Scout_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size4_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size4_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size4_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size3_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size4_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size4_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size4_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 120,
+      "hullMass": 150,
+      "utility_slots": 2,
+      "highest_internal": 5
+    },
+    {
+      "ship": "Beluga Liner",
+      "symbol": "BelugaLiner",
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": "BelugaLiner",
+        "Modules": [
+          {
+            "Item": "BelugaLiner_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size6_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size7_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size7_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size8_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size6_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size7_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size5_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 280,
+      "hullMass": 950,
+      "utility_slots": 6,
+      "highest_internal": 6
+    },
+    {
+      "ship": "Cobra Mk III",
+      "symbol": null,
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": null,
+        "Modules": [
+          {
+            "Item": "None_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size4_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size4_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size4_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size3_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size3_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size4_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size3_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 80,
+      "hullMass": 180,
+      "utility_slots": 2,
+      "highest_internal": 4
+    },
+    {
+      "ship": "Cobra Mk IV",
+      "symbol": null,
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": null,
+        "Modules": [
+          {
+            "Item": "None_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size4_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size4_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size4_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size3_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size3_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size4_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size3_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 120,
+      "hullMass": 210,
+      "utility_slots": 2,
+      "highest_internal": 4
+    },
+    {
+      "ship": "Diamondback Explorer",
+      "symbol": "DiamondBackXL",
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": "DiamondBackXL",
+        "Modules": [
+          {
+            "Item": "DiamondBackXL_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size4_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size4_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size5_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size3_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size4_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size5_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size3_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 150,
+      "hullMass": 260,
+      "utility_slots": 4,
+      "highest_internal": 4
+    },
+    {
+      "ship": "Diamondback Scout",
+      "symbol": "DiamondBack",
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": "DiamondBack",
+        "Modules": [
+          {
+            "Item": "DiamondBack_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size4_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size4_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size4_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size2_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size3_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size4_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size2_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 120,
+      "hullMass": 170,
+      "utility_slots": 4,
+      "highest_internal": 3
+    },
+    {
+      "ship": "Dolphin",
+      "symbol": "Dolphin",
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": "Dolphin",
+        "Modules": [
+          {
+            "Item": "Dolphin_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size4_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size5_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size4_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size4_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size3_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size4_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size3_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 110,
+      "hullMass": 140,
+      "utility_slots": 3,
+      "highest_internal": 5
+    },
+    {
+      "ship": "Eagle",
+      "symbol": "Eagle",
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": "Eagle",
+        "Modules": [
+          {
+            "Item": "Eagle_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size2_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size3_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size3_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size1_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size2_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size2_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size2_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 60,
+      "hullMass": 50,
+      "utility_slots": 1,
+      "highest_internal": 3
+    },
+    {
+      "ship": "Federal Assault Ship",
+      "symbol": "Federation_Dropship_MkII",
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": "Federation_Dropship_MkII",
+        "Modules": [
+          {
+            "Item": "Federation_Dropship_MkII_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size6_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size6_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size5_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size5_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size6_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size4_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size4_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 200,
+      "hullMass": 480,
+      "utility_slots": 4,
+      "highest_internal": 5
+    },
+    {
+      "ship": "Federal Corvette",
+      "symbol": "Federation_Corvette",
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": "Federation_Corvette",
+        "Modules": [
+          {
+            "Item": "Federation_Corvette_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size8_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size7_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size6_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size5_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size8_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size5_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size8_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 555,
+      "hullMass": 900,
+      "utility_slots": 8,
+      "highest_internal": 7
+    },
+    {
+      "ship": "Federal Dropship",
+      "symbol": "Federation_Dropship",
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": "Federation_Dropship",
+        "Modules": [
+          {
+            "Item": "Federation_Dropship_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size6_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size6_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size5_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size5_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size6_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size4_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size4_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 200,
+      "hullMass": 580,
+      "utility_slots": 4,
+      "highest_internal": 6
+    },
+    {
+      "ship": "Federal Gunship",
+      "symbol": "Federation_Gunship",
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": "Federation_Gunship",
+        "Modules": [
+          {
+            "Item": "Federation_Gunship_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size6_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size6_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size5_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size5_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size7_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size4_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size5_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 250,
+      "hullMass": 580,
+      "utility_slots": 4,
+      "highest_internal": 6
+    },
+    {
+      "ship": "Fer-de-Lance",
+      "symbol": "FerDeLance",
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": "FerDeLance",
+        "Modules": [
+          {
+            "Item": "FerDeLance_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size5_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size5_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size4_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size4_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size6_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size3_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size4_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 300,
+      "hullMass": 250,
+      "utility_slots": 6,
+      "highest_internal": 5
+    },
+    {
+      "ship": "Hauler",
+      "symbol": "Hauler",
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": "Hauler",
+        "Modules": [
+          {
+            "Item": "Hauler_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size2_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size2_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size2_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size1_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size1_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size2_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size1_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 50,
+      "hullMass": 14,
+      "utility_slots": 2,
+      "highest_internal": 3
+    },
+    {
+      "ship": "Imperial Clipper",
+      "symbol": "Empire_Trader",
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": "Empire_Trader",
+        "Modules": [
+          {
+            "Item": "Empire_Trader_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size6_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size6_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size5_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size5_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size6_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size4_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size5_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 180,
+      "hullMass": 400,
+      "utility_slots": 4,
+      "highest_internal": 7
+    },
+    {
+      "ship": "Imperial Courier",
+      "symbol": "Empire_Courier",
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": "Empire_Courier",
+        "Modules": [
+          {
+            "Item": "Empire_Courier_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size4_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size3_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size3_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size1_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size3_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size3_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size2_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 200,
+      "hullMass": 35,
+      "utility_slots": 4,
+      "highest_internal": 3
+    },
+    {
+      "ship": "Imperial Cutter",
+      "symbol": "Cutter",
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": "Cutter",
+        "Modules": [
+          {
+            "Item": "Cutter_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size8_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size8_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size7_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size7_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size7_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size6_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size7_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 600,
+      "hullMass": 1100,
+      "utility_slots": 8,
+      "highest_internal": 8
+    },
+    {
+      "ship": "Imperial Eagle",
+      "symbol": "Empire_Eagle",
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": "Empire_Eagle",
+        "Modules": [
+          {
+            "Item": "Empire_Eagle_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size3_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size3_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size3_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size1_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size2_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size2_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size2_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 80,
+      "hullMass": 50,
+      "utility_slots": 1,
+      "highest_internal": 3
+    },
+    {
+      "ship": "Keelback",
+      "symbol": "Independant_Trader",
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": "Independant_Trader",
+        "Modules": [
+          {
+            "Item": "Independant_Trader_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size4_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size4_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size4_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size1_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size3_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size4_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size2_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 135,
+      "hullMass": 180,
+      "utility_slots": 3,
+      "highest_internal": 5
+    },
+    {
+      "ship": "Krait Mk II",
+      "symbol": null,
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": null,
+        "Modules": [
+          {
+            "Item": "None_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size7_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size6_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size5_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size4_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size7_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size5_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size6_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 220,
+      "hullMass": 320,
+      "utility_slots": 4,
+      "highest_internal": 6
+    },
+    {
+      "ship": "Krait Phantom",
+      "symbol": "Krait_Light",
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": "Krait_Light",
+        "Modules": [
+          {
+            "Item": "Krait_Light_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size7_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size6_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size5_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size4_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size7_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size5_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size6_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 200,
+      "hullMass": 270,
+      "utility_slots": 4,
+      "highest_internal": 6
+    },
+    {
+      "ship": "Mamba",
+      "symbol": "Mamba",
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": "Mamba",
+        "Modules": [
+          {
+            "Item": "Mamba_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size6_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size5_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size4_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size4_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size6_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size3_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size4_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 270,
+      "hullMass": 250,
+      "utility_slots": 6,
+      "highest_internal": 5
+    },
+    {
+      "ship": "Orca",
+      "symbol": "Orca",
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": "Orca",
+        "Modules": [
+          {
+            "Item": "Orca_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size5_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size6_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size5_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size6_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size5_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size5_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size4_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 220,
+      "hullMass": 290,
+      "utility_slots": 4,
+      "highest_internal": 6
+    },
+    {
+      "ship": "Python",
+      "symbol": "Python",
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": "Python",
+        "Modules": [
+          {
+            "Item": "Python_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size7_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size6_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size5_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size4_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size7_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size5_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size6_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 260,
+      "hullMass": 350,
+      "utility_slots": 4,
+      "highest_internal": 6
+    },
+    {
+      "ship": "Sidewinder",
+      "symbol": "SideWinder",
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": "SideWinder",
+        "Modules": [
+          {
+            "Item": "SideWinder_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size2_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size2_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size2_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size1_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size1_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size1_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size1_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 40,
+      "hullMass": 25,
+      "utility_slots": 2,
+      "highest_internal": 2
+    },
+    {
+      "ship": "Type-10 Defender",
+      "symbol": "Type9_Military",
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": "Type9_Military",
+        "Modules": [
+          {
+            "Item": "Type9_Military_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size6_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size7_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size6_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size5_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size7_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size6_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size4_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 320,
+      "hullMass": 1200,
+      "utility_slots": 8,
+      "highest_internal": 8
+    },
+    {
+      "ship": "Type-6 Transporter",
+      "symbol": "Type6",
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": "Type6",
+        "Modules": [
+          {
+            "Item": "Type6_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size3_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size4_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size4_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size2_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size3_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size4_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size2_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 90,
+      "hullMass": 155,
+      "utility_slots": 3,
+      "highest_internal": 5
+    },
+    {
+      "ship": "Type-7 Transporter",
+      "symbol": "Type7",
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": "Type7",
+        "Modules": [
+          {
+            "Item": "Type7_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size4_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size5_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size5_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size4_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size3_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size5_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size3_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 155,
+      "hullMass": 350,
+      "utility_slots": 4,
+      "highest_internal": 6
+    },
+    {
+      "ship": "Type-9 Heavy",
+      "symbol": "Type9",
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": "Type9",
+        "Modules": [
+          {
+            "Item": "Type9_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size6_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size7_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size6_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size5_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size6_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size6_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size4_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 240,
+      "hullMass": 850,
+      "utility_slots": 4,
+      "highest_internal": 8
+    },
+    {
+      "ship": "Viper",
+      "symbol": null,
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": null,
+        "Modules": [
+          {
+            "Item": "None_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size3_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size3_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size3_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size2_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size3_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size2_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size3_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 105,
+      "hullMass": 50,
+      "utility_slots": 2,
+      "highest_internal": 3
+    },
+    {
+      "ship": "Viper Mk IV",
+      "symbol": null,
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": null,
+        "Modules": [
+          {
+            "Item": "None_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size4_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size4_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size4_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size2_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size3_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size4_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size3_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 150,
+      "hullMass": 190,
+      "utility_slots": 2,
+      "highest_internal": 4
+    },
+    {
+      "ship": "Vulture",
+      "symbol": "Vulture",
+      "loadout_template": {
+        "event": "Loadout",
+        "Ship": "Vulture",
+        "Modules": [
+          {
+            "Item": "Vulture_armour_grade1",
+            "Slot": "armour",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Powerplant_Size4_Class1",
+            "Slot": "powerplant",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Engine_Size5_Class1",
+            "Slot": "mainengines",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Hyperdrive_Size4_Class1",
+            "Slot": "frameshiftdrive",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_LifeSupport_Size3_Class1",
+            "Slot": "lifesupport",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_PowerDistributor_Size5_Class1",
+            "Slot": "powerdistributor",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_FuelTank_Size3_Class3",
+            "Slot": "fueltank",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "Int_Sensors_Size4_Class1",
+            "Slot": "radar",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "int_planetapproachsuite",
+            "Slot": "planetaryapproachsuite",
+            "On": true,
+            "Priority": 0
+          },
+          {
+            "Item": "modularcargobaydoor",
+            "Slot": "cargohatch",
+            "On": true,
+            "Priority": 0
+          }
+        ]
+      },
+      "baseShieldStrength": 240,
+      "hullMass": 230,
+      "utility_slots": 4,
+      "highest_internal": 5
+    }
+  ],
+  "shield_booster_variants": [
+    {
+      "engineering": "Heavy duty",
+      "experimental": "Blast Block",
+      "shield_strength_bonus": 0.6394,
+      "exp_res_bonus": 0.02,
+      "kin_res_bonus": 0,
+      "therm_res_bonus": 0,
+      "can_skip": true,
+      "loadout_template": {
+        "Item": "Hpt_ShieldBooster_Size0_Class5",
+        "Slot": "",
+        "On": true,
+        "Priority": 0,
+        "Engineering": {
+          "BlueprintName": "ShieldBooster_HeavyDuty",
+          "Level": 5,
+          "Quality": 1,
+          "Modifiers": [
+            {
+              "Label": "Integrity",
+              "Value": 55.2,
+              "OriginalValue": 48,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "PowerDraw",
+              "Value": 1.5,
+              "OriginalValue": 1.2,
+              "LessIsGood": 1
+            },
+            {
+              "Label": "DefenceModifierShieldMultiplier",
+              "Value": 63.94,
+              "OriginalValue": 20.0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ExplosiveResistance",
+              "Value": 2.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            }
+          ],
+          "ExperimentalEffect": "special_shieldbooster_explosive"
+        }
+      }
+    },
+    {
+      "engineering": "Heavy duty",
+      "experimental": "Super Capacitors",
+      "shield_strength_bonus": 0.7388,
+      "exp_res_bonus": -0.02,
+      "kin_res_bonus": -0.02,
+      "therm_res_bonus": -0.02,
+      "can_skip": false,
+      "loadout_template": {
+        "Item": "Hpt_ShieldBooster_Size0_Class5",
+        "Slot": "",
+        "On": true,
+        "Priority": 0,
+        "Engineering": {
+          "BlueprintName": "ShieldBooster_HeavyDuty",
+          "Level": 5,
+          "Quality": 1,
+          "Modifiers": [
+            {
+              "Label": "Integrity",
+              "Value": 55.2,
+              "OriginalValue": 48,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "PowerDraw",
+              "Value": 1.5,
+              "OriginalValue": 1.2,
+              "LessIsGood": 1
+            },
+            {
+              "Label": "DefenceModifierShieldMultiplier",
+              "Value": 73.88,
+              "OriginalValue": 20.0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "KineticResistance",
+              "Value": -2.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ThermicResistance",
+              "Value": -2.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ExplosiveResistance",
+              "Value": -2.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            }
+          ],
+          "ExperimentalEffect": "special_shieldbooster_chunky"
+        }
+      }
+    },
+    {
+      "engineering": "Heavy duty",
+      "experimental": "Force Block",
+      "shield_strength_bonus": 0.6394,
+      "exp_res_bonus": 0,
+      "kin_res_bonus": 0.02,
+      "therm_res_bonus": 0,
+      "can_skip": false,
+      "loadout_template": {
+        "Item": "Hpt_ShieldBooster_Size0_Class5",
+        "Slot": "",
+        "On": true,
+        "Priority": 0,
+        "Engineering": {
+          "BlueprintName": "ShieldBooster_HeavyDuty",
+          "Level": 5,
+          "Quality": 1,
+          "Modifiers": [
+            {
+              "Label": "Integrity",
+              "Value": 55.2,
+              "OriginalValue": 48,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "PowerDraw",
+              "Value": 1.5,
+              "OriginalValue": 1.2,
+              "LessIsGood": 1
+            },
+            {
+              "Label": "DefenceModifierShieldMultiplier",
+              "Value": 63.94,
+              "OriginalValue": 20.0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "KineticResistance",
+              "Value": 2.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            }
+          ],
+          "ExperimentalEffect": "special_shieldbooster_kinetic"
+        }
+      }
+    },
+    {
+      "engineering": "Heavy duty",
+      "experimental": "Thermo Block",
+      "shield_strength_bonus": 0.6394,
+      "exp_res_bonus": 0,
+      "kin_res_bonus": 0,
+      "therm_res_bonus": 0.02,
+      "can_skip": false,
+      "loadout_template": {
+        "Item": "Hpt_ShieldBooster_Size0_Class5",
+        "Slot": "",
+        "On": true,
+        "Priority": 0,
+        "Engineering": {
+          "BlueprintName": "ShieldBooster_HeavyDuty",
+          "Level": 5,
+          "Quality": 1,
+          "Modifiers": [
+            {
+              "Label": "Integrity",
+              "Value": 55.2,
+              "OriginalValue": 48,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "PowerDraw",
+              "Value": 1.5,
+              "OriginalValue": 1.2,
+              "LessIsGood": 1
+            },
+            {
+              "Label": "DefenceModifierShieldMultiplier",
+              "Value": 63.94,
+              "OriginalValue": 20.0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ThermicResistance",
+              "Value": 2.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            }
+          ],
+          "ExperimentalEffect": "special_shieldbooster_thermic"
+        }
+      }
+    },
+    {
+      "engineering": "Thermal resistant",
+      "experimental": "Blast Block",
+      "shield_strength_bonus": 0.188,
+      "exp_res_bonus": -0.0192,
+      "kin_res_bonus": -0.04,
+      "therm_res_bonus": 0.27,
+      "can_skip": true,
+      "loadout_template": {
+        "Item": "Hpt_ShieldBooster_Size0_Class5",
+        "Slot": "",
+        "On": true,
+        "Priority": 0,
+        "Engineering": {
+          "BlueprintName": "ShieldBooster_Thermic",
+          "Level": 5,
+          "Quality": 1,
+          "Modifiers": [
+            {
+              "Label": "DefenceModifierShieldMultiplier",
+              "Value": 18.8,
+              "OriginalValue": 20.0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "KineticResistance",
+              "Value": -4.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ThermicResistance",
+              "Value": 27.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ExplosiveResistance",
+              "Value": -1.92,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            }
+          ],
+          "ExperimentalEffect": "special_shieldbooster_explosive"
+        }
+      }
+    },
+    {
+      "engineering": "Thermal resistant",
+      "experimental": "Super Capacitors",
+      "shield_strength_bonus": 0.26,
+      "exp_res_bonus": -0.0608,
+      "kin_res_bonus": -0.0608,
+      "therm_res_bonus": 0.2554,
+      "can_skip": false,
+      "loadout_template": {
+        "Item": "Hpt_ShieldBooster_Size0_Class5",
+        "Slot": "",
+        "On": true,
+        "Priority": 0,
+        "Engineering": {
+          "BlueprintName": "ShieldBooster_Thermic",
+          "Level": 5,
+          "Quality": 1,
+          "Modifiers": [
+            {
+              "Label": "DefenceModifierShieldMultiplier",
+              "Value": 26.0,
+              "OriginalValue": 20.0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "KineticResistance",
+              "Value": -6.08,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ThermicResistance",
+              "Value": 25.540000000000003,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ExplosiveResistance",
+              "Value": -6.08,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            }
+          ],
+          "ExperimentalEffect": "special_shieldbooster_chunky"
+        }
+      }
+    },
+    {
+      "engineering": "Thermal resistant",
+      "experimental": "Force Block",
+      "shield_strength_bonus": 0.188,
+      "exp_res_bonus": -0.04,
+      "kin_res_bonus": -0.0192,
+      "therm_res_bonus": 0.27,
+      "can_skip": false,
+      "loadout_template": {
+        "Item": "Hpt_ShieldBooster_Size0_Class5",
+        "Slot": "",
+        "On": true,
+        "Priority": 0,
+        "Engineering": {
+          "BlueprintName": "ShieldBooster_Thermic",
+          "Level": 5,
+          "Quality": 1,
+          "Modifiers": [
+            {
+              "Label": "DefenceModifierShieldMultiplier",
+              "Value": 18.8,
+              "OriginalValue": 20.0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "KineticResistance",
+              "Value": -1.92,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ThermicResistance",
+              "Value": 27.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ExplosiveResistance",
+              "Value": -4.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            }
+          ],
+          "ExperimentalEffect": "special_shieldbooster_kinetic"
+        }
+      }
+    },
+    {
+      "engineering": "Thermal resistant",
+      "experimental": "Thermo Block",
+      "shield_strength_bonus": 0.188,
+      "exp_res_bonus": -0.04,
+      "kin_res_bonus": -0.04,
+      "therm_res_bonus": 0.2846,
+      "can_skip": false,
+      "loadout_template": {
+        "Item": "Hpt_ShieldBooster_Size0_Class5",
+        "Slot": "",
+        "On": true,
+        "Priority": 0,
+        "Engineering": {
+          "BlueprintName": "ShieldBooster_Thermic",
+          "Level": 5,
+          "Quality": 1,
+          "Modifiers": [
+            {
+              "Label": "DefenceModifierShieldMultiplier",
+              "Value": 18.8,
+              "OriginalValue": 20.0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "KineticResistance",
+              "Value": -4.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ThermicResistance",
+              "Value": 28.46,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ExplosiveResistance",
+              "Value": -4.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            }
+          ],
+          "ExperimentalEffect": "special_shieldbooster_thermic"
+        }
+      }
+    },
+    {
+      "engineering": "Blast resistant",
+      "experimental": "Blast Block",
+      "shield_strength_bonus": 0.188,
+      "exp_res_bonus": 0.2846,
+      "kin_res_bonus": -0.04,
+      "therm_res_bonus": -0.04,
+      "can_skip": true,
+      "loadout_template": {
+        "Item": "Hpt_ShieldBooster_Size0_Class5",
+        "Slot": "",
+        "On": true,
+        "Priority": 0,
+        "Engineering": {
+          "BlueprintName": "ShieldBooster_Explosive",
+          "Level": 5,
+          "Quality": 1,
+          "Modifiers": [
+            {
+              "Label": "DefenceModifierShieldMultiplier",
+              "Value": 18.8,
+              "OriginalValue": 20.0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "KineticResistance",
+              "Value": -4.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ThermicResistance",
+              "Value": -4.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ExplosiveResistance",
+              "Value": 28.46,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            }
+          ],
+          "ExperimentalEffect": "special_shieldbooster_explosive"
+        }
+      }
+    },
+    {
+      "engineering": "Blast resistant",
+      "experimental": "Super Capacitors",
+      "shield_strength_bonus": 0.26,
+      "exp_res_bonus": 0.2554,
+      "kin_res_bonus": -0.0608,
+      "therm_res_bonus": -0.0608,
+      "can_skip": true,
+      "loadout_template": {
+        "Item": "Hpt_ShieldBooster_Size0_Class5",
+        "Slot": "",
+        "On": true,
+        "Priority": 0,
+        "Engineering": {
+          "BlueprintName": "ShieldBooster_Explosive",
+          "Level": 5,
+          "Quality": 1,
+          "Modifiers": [
+            {
+              "Label": "DefenceModifierShieldMultiplier",
+              "Value": 26.0,
+              "OriginalValue": 20.0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "KineticResistance",
+              "Value": -6.08,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ThermicResistance",
+              "Value": -6.08,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ExplosiveResistance",
+              "Value": 25.540000000000003,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            }
+          ],
+          "ExperimentalEffect": "special_shieldbooster_chunky"
+        }
+      }
+    },
+    {
+      "engineering": "Blast resistant",
+      "experimental": "Force Block",
+      "shield_strength_bonus": 0.188,
+      "exp_res_bonus": 0.27,
+      "kin_res_bonus": -0.0192,
+      "therm_res_bonus": -0.04,
+      "can_skip": true,
+      "loadout_template": {
+        "Item": "Hpt_ShieldBooster_Size0_Class5",
+        "Slot": "",
+        "On": true,
+        "Priority": 0,
+        "Engineering": {
+          "BlueprintName": "ShieldBooster_Explosive",
+          "Level": 5,
+          "Quality": 1,
+          "Modifiers": [
+            {
+              "Label": "DefenceModifierShieldMultiplier",
+              "Value": 18.8,
+              "OriginalValue": 20.0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "KineticResistance",
+              "Value": -1.92,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ThermicResistance",
+              "Value": -4.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ExplosiveResistance",
+              "Value": 27.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            }
+          ],
+          "ExperimentalEffect": "special_shieldbooster_kinetic"
+        }
+      }
+    },
+    {
+      "engineering": "Blast resistant",
+      "experimental": "Thermo Block",
+      "shield_strength_bonus": 0.188,
+      "exp_res_bonus": 0.27,
+      "kin_res_bonus": -0.04,
+      "therm_res_bonus": -0.0192,
+      "can_skip": true,
+      "loadout_template": {
+        "Item": "Hpt_ShieldBooster_Size0_Class5",
+        "Slot": "",
+        "On": true,
+        "Priority": 0,
+        "Engineering": {
+          "BlueprintName": "ShieldBooster_Explosive",
+          "Level": 5,
+          "Quality": 1,
+          "Modifiers": [
+            {
+              "Label": "DefenceModifierShieldMultiplier",
+              "Value": 18.8,
+              "OriginalValue": 20.0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "KineticResistance",
+              "Value": -4.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ThermicResistance",
+              "Value": -1.92,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ExplosiveResistance",
+              "Value": 27.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            }
+          ],
+          "ExperimentalEffect": "special_shieldbooster_thermic"
+        }
+      }
+    },
+    {
+      "engineering": "Kinetic resistant",
+      "experimental": "Blast Block",
+      "shield_strength_bonus": 0.188,
+      "exp_res_bonus": -0.0192,
+      "kin_res_bonus": 0.27,
+      "therm_res_bonus": -0.04,
+      "can_skip": true,
+      "loadout_template": {
+        "Item": "Hpt_ShieldBooster_Size0_Class5",
+        "Slot": "",
+        "On": true,
+        "Priority": 0,
+        "Engineering": {
+          "BlueprintName": "ShieldBooster_Kinetic",
+          "Level": 5,
+          "Quality": 1,
+          "Modifiers": [
+            {
+              "Label": "DefenceModifierShieldMultiplier",
+              "Value": 18.8,
+              "OriginalValue": 20.0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "KineticResistance",
+              "Value": 27.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ThermicResistance",
+              "Value": -4.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ExplosiveResistance",
+              "Value": -1.92,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            }
+          ],
+          "ExperimentalEffect": "special_shieldbooster_explosive"
+        }
+      }
+    },
+    {
+      "engineering": "Kinetic resistant",
+      "experimental": "Super Capacitors",
+      "shield_strength_bonus": 0.26,
+      "exp_res_bonus": -0.0608,
+      "kin_res_bonus": 0.2554,
+      "therm_res_bonus": -0.0608,
+      "can_skip": false,
+      "loadout_template": {
+        "Item": "Hpt_ShieldBooster_Size0_Class5",
+        "Slot": "",
+        "On": true,
+        "Priority": 0,
+        "Engineering": {
+          "BlueprintName": "ShieldBooster_Kinetic",
+          "Level": 5,
+          "Quality": 1,
+          "Modifiers": [
+            {
+              "Label": "DefenceModifierShieldMultiplier",
+              "Value": 26.0,
+              "OriginalValue": 20.0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "KineticResistance",
+              "Value": 25.540000000000003,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ThermicResistance",
+              "Value": -6.08,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ExplosiveResistance",
+              "Value": -6.08,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            }
+          ],
+          "ExperimentalEffect": "special_shieldbooster_chunky"
+        }
+      }
+    },
+    {
+      "engineering": "Kinetic resistant",
+      "experimental": "Force Block",
+      "shield_strength_bonus": 0.188,
+      "exp_res_bonus": -0.04,
+      "kin_res_bonus": 0.2846,
+      "therm_res_bonus": -0.04,
+      "can_skip": false,
+      "loadout_template": {
+        "Item": "Hpt_ShieldBooster_Size0_Class5",
+        "Slot": "",
+        "On": true,
+        "Priority": 0,
+        "Engineering": {
+          "BlueprintName": "ShieldBooster_Kinetic",
+          "Level": 5,
+          "Quality": 1,
+          "Modifiers": [
+            {
+              "Label": "DefenceModifierShieldMultiplier",
+              "Value": 18.8,
+              "OriginalValue": 20.0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "KineticResistance",
+              "Value": 28.46,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ThermicResistance",
+              "Value": -4.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ExplosiveResistance",
+              "Value": -4.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            }
+          ],
+          "ExperimentalEffect": "special_shieldbooster_kinetic"
+        }
+      }
+    },
+    {
+      "engineering": "Kinetic resistant",
+      "experimental": "Thermo Block",
+      "shield_strength_bonus": 0.188,
+      "exp_res_bonus": -0.04,
+      "kin_res_bonus": 0.27,
+      "therm_res_bonus": -0.0192,
+      "can_skip": false,
+      "loadout_template": {
+        "Item": "Hpt_ShieldBooster_Size0_Class5",
+        "Slot": "",
+        "On": true,
+        "Priority": 0,
+        "Engineering": {
+          "BlueprintName": "ShieldBooster_Kinetic",
+          "Level": 5,
+          "Quality": 1,
+          "Modifiers": [
+            {
+              "Label": "DefenceModifierShieldMultiplier",
+              "Value": 18.8,
+              "OriginalValue": 20.0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "KineticResistance",
+              "Value": 27.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ThermicResistance",
+              "Value": -1.92,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ExplosiveResistance",
+              "Value": -4.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            }
+          ],
+          "ExperimentalEffect": "special_shieldbooster_thermic"
+        }
+      }
+    },
+    {
+      "engineering": "Resistance augmented",
+      "experimental": "Blast Block",
+      "shield_strength_bonus": 0.188,
+      "exp_res_bonus": 0.1866,
+      "kin_res_bonus": 0.17,
+      "therm_res_bonus": 0.17,
+      "can_skip": true,
+      "loadout_template": {
+        "Item": "Hpt_ShieldBooster_Size0_Class5",
+        "Slot": "",
+        "On": true,
+        "Priority": 0,
+        "Engineering": {
+          "BlueprintName": "ShieldBooster_Resistive",
+          "Level": 5,
+          "Quality": 1,
+          "Modifiers": [
+            {
+              "Label": "Integrity",
+              "Value": 42.24,
+              "OriginalValue": 48,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "PowerDraw",
+              "Value": 1.5,
+              "OriginalValue": 1.2,
+              "LessIsGood": 1
+            },
+            {
+              "Label": "DefenceModifierShieldMultiplier",
+              "Value": 18.8,
+              "OriginalValue": 20.0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "KineticResistance",
+              "Value": 17.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ThermicResistance",
+              "Value": 17.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ExplosiveResistance",
+              "Value": 18.66,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            }
+          ],
+          "ExperimentalEffect": "special_shieldbooster_explosive"
+        }
+      }
+    },
+    {
+      "engineering": "Resistance augmented",
+      "experimental": "Super Capacitors",
+      "shield_strength_bonus": 0.26,
+      "exp_res_bonus": 0.1534,
+      "kin_res_bonus": 0.1534,
+      "therm_res_bonus": 0.1534,
+      "can_skip": false,
+      "loadout_template": {
+        "Item": "Hpt_ShieldBooster_Size0_Class5",
+        "Slot": "",
+        "On": true,
+        "Priority": 0,
+        "Engineering": {
+          "BlueprintName": "ShieldBooster_Resistive",
+          "Level": 5,
+          "Quality": 1,
+          "Modifiers": [
+            {
+              "Label": "Integrity",
+              "Value": 42.24,
+              "OriginalValue": 48,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "PowerDraw",
+              "Value": 1.5,
+              "OriginalValue": 1.2,
+              "LessIsGood": 1
+            },
+            {
+              "Label": "DefenceModifierShieldMultiplier",
+              "Value": 26.0,
+              "OriginalValue": 20.0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "KineticResistance",
+              "Value": 15.340000000000002,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ThermicResistance",
+              "Value": 15.340000000000002,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ExplosiveResistance",
+              "Value": 15.340000000000002,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            }
+          ],
+          "ExperimentalEffect": "special_shieldbooster_chunky"
+        }
+      }
+    },
+    {
+      "engineering": "Resistance augmented",
+      "experimental": "Force Block",
+      "shield_strength_bonus": 0.188,
+      "exp_res_bonus": 0.17,
+      "kin_res_bonus": 0.1866,
+      "therm_res_bonus": 0.17,
+      "can_skip": false,
+      "loadout_template": {
+        "Item": "Hpt_ShieldBooster_Size0_Class5",
+        "Slot": "",
+        "On": true,
+        "Priority": 0,
+        "Engineering": {
+          "BlueprintName": "ShieldBooster_Resistive",
+          "Level": 5,
+          "Quality": 1,
+          "Modifiers": [
+            {
+              "Label": "Integrity",
+              "Value": 42.24,
+              "OriginalValue": 48,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "PowerDraw",
+              "Value": 1.5,
+              "OriginalValue": 1.2,
+              "LessIsGood": 1
+            },
+            {
+              "Label": "DefenceModifierShieldMultiplier",
+              "Value": 18.8,
+              "OriginalValue": 20.0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "KineticResistance",
+              "Value": 18.66,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ThermicResistance",
+              "Value": 17.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ExplosiveResistance",
+              "Value": 17.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            }
+          ],
+          "ExperimentalEffect": "special_shieldbooster_kinetic"
+        }
+      }
+    },
+    {
+      "engineering": "Resistance augmented",
+      "experimental": "Thermo Block",
+      "shield_strength_bonus": 0.188,
+      "exp_res_bonus": 0.17,
+      "kin_res_bonus": 0.17,
+      "therm_res_bonus": 0.1866,
+      "can_skip": false,
+      "loadout_template": {
+        "Item": "Hpt_ShieldBooster_Size0_Class5",
+        "Slot": "",
+        "On": true,
+        "Priority": 0,
+        "Engineering": {
+          "BlueprintName": "ShieldBooster_Resistive",
+          "Level": 5,
+          "Quality": 1,
+          "Modifiers": [
+            {
+              "Label": "Integrity",
+              "Value": 42.24,
+              "OriginalValue": 48,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "PowerDraw",
+              "Value": 1.5,
+              "OriginalValue": 1.2,
+              "LessIsGood": 1
+            },
+            {
+              "Label": "DefenceModifierShieldMultiplier",
+              "Value": 18.8,
+              "OriginalValue": 20.0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "KineticResistance",
+              "Value": 17.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ThermicResistance",
+              "Value": 18.66,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ExplosiveResistance",
+              "Value": 17.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            }
+          ],
+          "ExperimentalEffect": "special_shieldbooster_thermic"
+        }
+      }
+    }
+  ],
+  "shield_generators": {
+    "modules": {
+      "bi-weave": [
+        {
+          "symbol": "Int_ShieldGenerator_Size1_Class3_Fast",
+          "integrity": 40,
+          "power": 1.2,
+          "explres": 0.5,
+          "kinres": 0.4,
+          "thermres": -0.2,
+          "name": "Bi-Weave Shield",
+          "class": 1,
+          "regen": 1.8,
+          "brokenregen": 2.4,
+          "distdraw": 0.6,
+          "maxmass": 63,
+          "maxmul": 1.4,
+          "minmass": 13,
+          "minmul": 0.4,
+          "optmass": 25,
+          "optmul": 0.9
+        },
+        {
+          "symbol": "Int_ShieldGenerator_Size2_Class3_Fast",
+          "integrity": 51,
+          "power": 1.5,
+          "explres": 0.5,
+          "kinres": 0.4,
+          "thermres": -0.2,
+          "name": "Bi-Weave Shield",
+          "class": 2,
+          "regen": 1.8,
+          "brokenregen": 2.4,
+          "distdraw": 0.6,
+          "maxmass": 138,
+          "maxmul": 1.4,
+          "minmass": 28,
+          "minmul": 0.4,
+          "optmass": 55,
+          "optmul": 0.9
+        },
+        {
+          "symbol": "Int_ShieldGenerator_Size3_Class3_Fast",
+          "integrity": 64,
+          "power": 1.8,
+          "explres": 0.5,
+          "kinres": 0.4,
+          "thermres": -0.2,
+          "name": "Bi-Weave Shield",
+          "class": 3,
+          "regen": 1.8,
+          "brokenregen": 2.8,
+          "distdraw": 0.6,
+          "maxmass": 413,
+          "maxmul": 1.4,
+          "minmass": 83,
+          "minmul": 0.4,
+          "optmass": 165,
+          "optmul": 0.9
+        },
+        {
+          "symbol": "Int_ShieldGenerator_Size4_Class3_Fast",
+          "integrity": 80,
+          "power": 2.2,
+          "explres": 0.5,
+          "kinres": 0.4,
+          "thermres": -0.2,
+          "name": "Bi-Weave Shield",
+          "class": 4,
+          "regen": 1.8,
+          "brokenregen": 3.8,
+          "distdraw": 0.6,
+          "maxmass": 713,
+          "maxmul": 1.4,
+          "minmass": 143,
+          "minmul": 0.4,
+          "optmass": 285,
+          "optmul": 0.9
+        },
+        {
+          "symbol": "Int_ShieldGenerator_Size5_Class3_Fast",
+          "integrity": 96,
+          "power": 2.6,
+          "explres": 0.5,
+          "kinres": 0.4,
+          "thermres": -0.2,
+          "name": "Bi-Weave Shield",
+          "class": 5,
+          "regen": 2.2,
+          "brokenregen": 5.6,
+          "distdraw": 0.6,
+          "maxmass": 1013,
+          "maxmul": 1.4,
+          "minmass": 203,
+          "minmul": 0.4,
+          "optmass": 405,
+          "optmul": 0.9
+        },
+        {
+          "symbol": "Int_ShieldGenerator_Size6_Class3_Fast",
+          "integrity": 113,
+          "power": 3.1,
+          "explres": 0.5,
+          "kinres": 0.4,
+          "thermres": -0.2,
+          "name": "Bi-Weave Shield",
+          "class": 6,
+          "regen": 3.2,
+          "brokenregen": 8,
+          "distdraw": 0.6,
+          "maxmass": 1350,
+          "maxmul": 1.4,
+          "minmass": 270,
+          "minmul": 0.4,
+          "optmass": 540,
+          "optmul": 0.9
+        },
+        {
+          "symbol": "Int_ShieldGenerator_Size7_Class3_Fast",
+          "integrity": 131,
+          "power": 3.5,
+          "explres": 0.5,
+          "kinres": 0.4,
+          "thermres": -0.2,
+          "name": "Bi-Weave Shield",
+          "class": 7,
+          "regen": 4.4,
+          "brokenregen": 11,
+          "distdraw": 0.6,
+          "maxmass": 2650,
+          "maxmul": 1.4,
+          "minmass": 530,
+          "minmul": 0.4,
+          "optmass": 1060,
+          "optmul": 0.9
+        },
+        {
+          "symbol": "Int_ShieldGenerator_Size8_Class3_Fast",
+          "integrity": 150,
+          "power": 4,
+          "explres": 0.5,
+          "kinres": 0.4,
+          "thermres": -0.2,
+          "name": "Bi-Weave Shield",
+          "class": 8,
+          "regen": 5.8,
+          "brokenregen": 14.4,
+          "distdraw": 0.6,
+          "maxmass": 4500,
+          "maxmul": 1.4,
+          "minmass": 900,
+          "minmul": 0.4,
+          "optmass": 1800,
+          "optmul": 0.9
+        }
+      ],
+      "prismatic": [
+        {
+          "symbol": "Int_ShieldGenerator_Size1_Class5_Strong",
+          "integrity": 48,
+          "power": 2.52,
+          "explres": 0.5,
+          "kinres": 0.4,
+          "thermres": -0.2,
+          "name": "Prismatic Shield",
+          "class": 1,
+          "regen": 1,
+          "brokenregen": 1.2,
+          "distdraw": 0.6,
+          "maxmass": 63,
+          "maxmul": 2,
+          "minmass": 13,
+          "minmul": 1,
+          "optmass": 25,
+          "optmul": 1.5
+        },
+        {
+          "symbol": "Int_ShieldGenerator_Size2_Class5_Strong",
+          "integrity": 61,
+          "power": 3.15,
+          "explres": 0.5,
+          "kinres": 0.4,
+          "thermres": -0.2,
+          "name": "Prismatic Shield",
+          "class": 2,
+          "regen": 1,
+          "brokenregen": 1.2,
+          "distdraw": 0.6,
+          "maxmass": 138,
+          "maxmul": 2,
+          "minmass": 23,
+          "minmul": 1,
+          "optmass": 55,
+          "optmul": 1.5
+        },
+        {
+          "symbol": "Int_ShieldGenerator_Size3_Class5_Strong",
+          "integrity": 77,
+          "power": 3.78,
+          "explres": 0.5,
+          "kinres": 0.4,
+          "thermres": -0.2,
+          "name": "Prismatic Shield",
+          "class": 3,
+          "regen": 1,
+          "brokenregen": 1.3,
+          "distdraw": 0.6,
+          "maxmass": 413,
+          "maxmul": 2,
+          "minmass": 83,
+          "minmul": 1,
+          "optmass": 165,
+          "optmul": 1.5
+        },
+        {
+          "symbol": "Int_ShieldGenerator_Size4_Class5_Strong",
+          "integrity": 96,
+          "power": 4.62,
+          "explres": 0.5,
+          "kinres": 0.4,
+          "thermres": -0.2,
+          "name": "Prismatic Shield",
+          "class": 4,
+          "regen": 1,
+          "brokenregen": 1.7,
+          "distdraw": 0.6,
+          "maxmass": 713,
+          "maxmul": 2,
+          "minmass": 143,
+          "minmul": 1,
+          "optmass": 285,
+          "optmul": 1.5
+        },
+        {
+          "symbol": "Int_ShieldGenerator_Size5_Class5_Strong",
+          "integrity": 115,
+          "power": 5.46,
+          "explres": 0.5,
+          "kinres": 0.4,
+          "thermres": -0.2,
+          "name": "Prismatic Shield",
+          "class": 5,
+          "regen": 1,
+          "brokenregen": 2.3,
+          "distdraw": 0.6,
+          "maxmass": 1013,
+          "maxmul": 2,
+          "minmass": 203,
+          "minmul": 1,
+          "optmass": 405,
+          "optmul": 1.5
+        },
+        {
+          "symbol": "Int_ShieldGenerator_Size6_Class5_Strong",
+          "integrity": 136,
+          "power": 6.51,
+          "explres": 0.5,
+          "kinres": 0.4,
+          "thermres": -0.2,
+          "name": "Prismatic Shield",
+          "class": 6,
+          "regen": 1,
+          "brokenregen": 3.2,
+          "distdraw": 0.6,
+          "maxmass": 1350,
+          "maxmul": 2,
+          "minmass": 270,
+          "minmul": 1,
+          "optmass": 540,
+          "optmul": 1.5
+        },
+        {
+          "symbol": "Int_ShieldGenerator_Size7_Class5_Strong",
+          "integrity": 157,
+          "power": 7.35,
+          "explres": 0.5,
+          "kinres": 0.4,
+          "thermres": -0.2,
+          "name": "Prismatic Shield",
+          "class": 7,
+          "regen": 1.1,
+          "brokenregen": 4.2,
+          "distdraw": 0.6,
+          "maxmass": 2650,
+          "maxmul": 2,
+          "minmass": 530,
+          "minmul": 1,
+          "optmass": 1060,
+          "optmul": 1.5
+        },
+        {
+          "symbol": "Int_ShieldGenerator_Size8_Class5_Strong",
+          "integrity": 180,
+          "power": 8.4,
+          "explres": 0.5,
+          "kinres": 0.4,
+          "thermres": -0.2,
+          "name": "Prismatic Shield",
+          "class": 8,
+          "regen": 1.4,
+          "brokenregen": 5.4,
+          "distdraw": 0.6,
+          "maxmass": 4500,
+          "maxmul": 2,
+          "minmass": 900,
+          "minmul": 1,
+          "optmass": 1800,
+          "optmul": 1.5
+        }
+      ],
+      "normal": [
+        {
+          "symbol": "Int_ShieldGenerator_Size1_Class5",
+          "integrity": 48,
+          "power": 1.68,
+          "explres": 0.5,
+          "kinres": 0.4,
+          "thermres": -0.2,
+          "name": "Shield Generator",
+          "class": 1,
+          "regen": 1,
+          "brokenregen": 1.6,
+          "distdraw": 0.6,
+          "maxmass": 63,
+          "maxmul": 1.7,
+          "minmass": 13,
+          "minmul": 0.7,
+          "optmass": 25,
+          "optmul": 1.2
+        },
+        {
+          "symbol": "Int_ShieldGenerator_Size2_Class5",
+          "integrity": 61,
+          "power": 2.1,
+          "explres": 0.5,
+          "kinres": 0.4,
+          "thermres": -0.2,
+          "name": "Shield Generator",
+          "class": 2,
+          "regen": 1,
+          "brokenregen": 1.6,
+          "distdraw": 0.6,
+          "maxmass": 138,
+          "maxmul": 1.7,
+          "minmass": 28,
+          "minmul": 0.7,
+          "optmass": 55,
+          "optmul": 1.2
+        },
+        {
+          "symbol": "Int_ShieldGenerator_Size3_Class5",
+          "integrity": 77,
+          "power": 2.52,
+          "explres": 0.5,
+          "kinres": 0.4,
+          "thermres": -0.2,
+          "name": "Shield Generator",
+          "class": 3,
+          "regen": 1,
+          "brokenregen": 1.87,
+          "distdraw": 0.6,
+          "maxmass": 413,
+          "maxmul": 1.7,
+          "minmass": 83,
+          "minmul": 0.7,
+          "optmass": 165,
+          "optmul": 1.2
+        },
+        {
+          "symbol": "Int_ShieldGenerator_Size4_Class5",
+          "integrity": 96,
+          "power": 3.08,
+          "explres": 0.5,
+          "kinres": 0.4,
+          "thermres": -0.2,
+          "name": "Shield Generator",
+          "class": 4,
+          "regen": 1,
+          "brokenregen": 2.53,
+          "distdraw": 0.6,
+          "maxmass": 713,
+          "maxmul": 1.7,
+          "minmass": 143,
+          "minmul": 0.7,
+          "optmass": 285,
+          "optmul": 1.2
+        },
+        {
+          "symbol": "Int_ShieldGenerator_Size5_Class5",
+          "integrity": 115,
+          "power": 3.64,
+          "explres": 0.5,
+          "kinres": 0.4,
+          "thermres": -0.2,
+          "name": "Shield Generator",
+          "class": 5,
+          "regen": 1,
+          "brokenregen": 3.75,
+          "distdraw": 0.6,
+          "maxmass": 1013,
+          "maxmul": 1.7,
+          "minmass": 203,
+          "minmul": 0.7,
+          "optmass": 405,
+          "optmul": 1.2
+        },
+        {
+          "symbol": "Int_ShieldGenerator_Size6_Class5",
+          "integrity": 136,
+          "power": 4.34,
+          "explres": 0.5,
+          "kinres": 0.4,
+          "thermres": -0.2,
+          "name": "Shield Generator",
+          "class": 6,
+          "regen": 1.3,
+          "brokenregen": 5.33,
+          "distdraw": 0.6,
+          "maxmass": 1350,
+          "maxmul": 1.7,
+          "minmass": 270,
+          "minmul": 0.7,
+          "optmass": 540,
+          "optmul": 1.2
+        },
+        {
+          "symbol": "Int_ShieldGenerator_Size7_Class5",
+          "integrity": 157,
+          "power": 4.9,
+          "explres": 0.5,
+          "kinres": 0.4,
+          "thermres": -0.2,
+          "name": "Shield Generator",
+          "class": 7,
+          "regen": 1.8,
+          "brokenregen": 7.33,
+          "distdraw": 0.6,
+          "maxmass": 2650,
+          "maxmul": 1.7,
+          "minmass": 530,
+          "minmul": 0.7,
+          "optmass": 1060,
+          "optmul": 1.2
+        },
+        {
+          "symbol": "Int_ShieldGenerator_Size8_Class5",
+          "integrity": 180,
+          "power": 5.6,
+          "explres": 0.5,
+          "kinres": 0.4,
+          "thermres": -0.2,
+          "name": "Shield Generator",
+          "class": 8,
+          "regen": 2.4,
+          "brokenregen": 9.6,
+          "distdraw": 0.6,
+          "maxmass": 4500,
+          "maxmul": 1.7,
+          "minmass": 900,
+          "minmul": 0.7,
+          "optmass": 1800,
+          "optmul": 1.2
+        }
+      ]
+    },
+    "engineering": {
+      "blueprints": [
+        {
+          "symbol": "ShieldGenerator_Reinforced",
+          "features": {
+            "brokenregen": -0.1,
+            "distdraw": 0.12,
+            "explres": 0.165,
+            "kinres": 0.165,
+            "optmul": 0.38,
+            "thermres": 0.165
+          },
+          "name": "Reinforced"
+        },
+        {
+          "symbol": "ShieldGenerator_Thermic",
+          "features": {
+            "integrity": 0.4,
+            "kinres": -0.2,
+            "thermres": 0.5
+          },
+          "name": "Thermal resistant"
+        },
+        {
+          "symbol": "ShieldGenerator_Kinetic",
+          "features": {
+            "integrity": 0.4,
+            "kinres": 0.5,
+            "thermres": -0.15
+          },
+          "name": "Kinetic resistant"
+        }
+      ],
+      "experimental_effects": [
+        {
+          "symbol": "special_shield_regenerative",
+          "name": "Fast Charge",
+          "features": {
+            "brokenregen": 0.15,
+            "regen": 0.15,
+            "thermres": -1.5,
+            "kinres": -1.5,
+            "explres": -1.5
+          }
+        },
+        {
+          "symbol": "special_shield_kinetic",
+          "name": "Force Block",
+          "features": {
+            "optmul": -0.03,
+            "kinres": 8
+          }
+        },
+        {
+          "symbol": "special_shield_health",
+          "name": "Hi-Cap",
+          "features": {
+            "power": 0.1,
+            "optmul": 0.06,
+            "distdraw": 0.25
+          }
+        },
+        {
+          "symbol": "special_shield_thermic",
+          "name": "Thermo Block",
+          "features": {
+            "optmul": -0.03,
+            "thermres": 8
+          }
+        },
+        {
+          "symbol": "special_shield_resistive",
+          "name": "Multi-weave",
+          "features": {
+            "thermres": 3,
+            "kinres": 3,
+            "explres": 3,
+            "power": 0.1,
+            "distdraw": 0.25
+          }
+        }
+      ]
+    }
+  }
+}
