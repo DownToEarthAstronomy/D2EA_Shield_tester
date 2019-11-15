@@ -17,7 +17,7 @@ Function Get-LoadoutList{
         $Loadout = One-Up -CurrentLoadout $Loadout -ShieldBoosterCount $ShieldBoosterCount -ShieldBoosterVariants $ShieldBoosterVariants
         $LoadoutList[$i] = $Loadout
 
-        If($Loadout[$ShieldBoosterCount - 1] -eq $($ShieldBoosterVariants - 1)){
+        If($Loadout[$ShieldBoosterCount - 1] -eq $($ShieldBoosterVariants)){
             $Run = $False
         }
 
