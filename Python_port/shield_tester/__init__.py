@@ -302,6 +302,12 @@ class ShieldGenerator(object):
         return modifiers
 
     def create_loadout(self, default_sg: ShieldGenerator, slot_class: int) -> Dict[str, Any]:
+        """
+        Create loadout dictionary for use in Coriolis
+        :param default_sg: non engineered ShieldGenerator for comparing values
+        :param slot_class: class of shield generator
+        :return: dictionary containing module information about the shield generator
+        """
         modifiers = self._create_modifier_templates(default_sg)
         engineering = {"BlueprintName": self._engineered_symbol,
                        "Level": 5,
@@ -414,12 +420,25 @@ class LoadOut(object):
         else:
             return 0
 
-    def get_total_values(self):
+    def get_total_values(self) -> Optional[Tuple[float, float, float, float]]:
+        """
+        Calculate total shield values for the loadout (boosters + shield). Returns None if boosters are not set
+        :return: exp_res, kin_res, therm_res, hp
+        """
         if self.boosters and len(self.boosters) > 0:
             return self.calculate_total_values(*ShieldBoosterVariant.calculate_booster_bonuses(self.boosters))
+        return None
 
     # noinspection PyProtectedMember
-    def calculate_total_values(self, exp_modifier, kin_modifier, therm_modifier, hitpoint_bonus):
+    def calculate_total_values(self, exp_modifier, kin_modifier, therm_modifier, hitpoint_bonus) -> Tuple[float, float, float, float]:
+        """
+        Provide booster bonuses to calculate total shield values for the loadout
+        :param exp_modifier: booster explosive modifier
+        :param kin_modifier: booster kinetic modifier
+        :param therm_modifier: booster thermal modifier
+        :param hitpoint_bonus:  booster hitpoint modifier
+        :return: exp_res, kin_res, therm_res, hp
+        """
         exp_res = (1 - self._shield_generator._explres) * exp_modifier
         kin_res = (1 - self._shield_generator._kinres) * kin_modifier
         therm_res = (1 - self._shield_generator._thermres) * therm_modifier
@@ -427,6 +446,11 @@ class LoadOut(object):
         return exp_res, kin_res, therm_res, hp
 
     def generate_loadout_event(self, default_sg: ShieldGenerator) -> Dict[str, Any]:
+        """
+        Generate loadout "event" to import into Coriolis
+        :param default_sg: default ShieldGenerator to compare changes
+        :return: loadout "event" as dictionary
+        """
         if not self._ship:
             return dict()
 
@@ -528,26 +552,32 @@ class TestCase(object):
 
     # noinspection PyProtectedMember
     @staticmethod
-    def test_case(settings: TestCase, booster_variations: List[List[int]]) -> TestResult:
+    def test_case(test_case: TestCase, booster_variations: List[List[int]]) -> TestResult:
+        """
+        Run a particular test based on provided TestCase and booster variations.
+        :param test_case: TestCase containing test setup
+        :param booster_variations: list of lists of indexes of ShieldBoosterVariant
+        :return: best result as TestResult
+        """
         best_survival_time = 0
         best_loadout = 0
         best_shield_booster_loadout = None
 
         # reduce calls -> speed up program, this should speed up the program by a couple hundred ms when using 8 boosters and the short list
-        damage_effectiveness = settings.damage_effectiveness
-        explosive_dps = settings.explosive_dps
-        kinetic_dps = settings.kinetic_dps
-        thermal_dps = settings.thermal_dps
-        absolute_dps = settings.absolute_dps
-        scb_hitpoints = settings.scb_hitpoints
-        guardian_hitpoints = settings.guardian_hitpoints
+        damage_effectiveness = test_case.damage_effectiveness
+        explosive_dps = test_case.explosive_dps
+        kinetic_dps = test_case.kinetic_dps
+        thermal_dps = test_case.thermal_dps
+        absolute_dps = test_case.absolute_dps
+        scb_hitpoints = test_case.scb_hitpoints
+        guardian_hitpoints = test_case.guardian_hitpoints
 
         for booster_variation in booster_variations:
-            boosters = [settings.shield_booster_variants[x] for x in booster_variation]
+            boosters = [test_case.shield_booster_variants[x] for x in booster_variation]
             # Do this here instead of for each loadout to save some time.
             exp_modifier, kin_modifier, therm_modifier, hitpoint_bonus = ShieldBoosterVariant.calculate_booster_bonuses(boosters)
 
-            for loadout in settings.loadout_list:
+            for loadout in test_case.loadout_list:
                 loadout.boosters = boosters
 
                 # can't use same function in LoadOut because of speed
@@ -644,6 +674,10 @@ class ShieldTester(object):
 
     @property
     def number_of_tests(self) -> int:
+        """
+        Calculate number of tests based on shield booster variants and shield generator variants
+        :return: number of tests
+        """
         if self.__test_case and self.__test_case.shield_booster_variants:
             result = math.factorial(len(self.__test_case.shield_booster_variants) + self.__test_case.number_of_boosters_to_test - 1)
             result = result / math.factorial(len(self.__test_case.shield_booster_variants) - 1) / math.factorial(self.__test_case.number_of_boosters_to_test)
@@ -651,7 +685,14 @@ class ShieldTester(object):
         return 0
 
     @staticmethod
-    def write_log(test_case: TestCase, result: TestResult, filename=None):
+    def write_log(test_case: TestCase, result: TestResult, filename=None, coriolis_url: str = None):
+        """
+        Write a log file with the test setup from a TestCase and the results from a TestResult.
+        :param test_case: TestCase for information about setup
+        :param result: TestResult for information about results
+        :param filename: optional filename to append new log (omit file ending)
+        :param coriolis_url: optional link to Coriolis
+        """
         os.makedirs(ShieldTester.LOG_DIRECTORY, exist_ok=True)
         if not filename:
             filename = time.strftime("%Y-%m-%d %H.%M.%S")
@@ -660,6 +701,10 @@ class ShieldTester(object):
             logfile.write(test_case.get_output_string())
             logfile.write("\n")
             logfile.write(result.get_output_string(test_case.guardian_hitpoints))
+            if coriolis_url:
+                logfile.write("\n")
+                logfile.write(coriolis_url)
+                logfile.write("\n")
 
             logfile.write("\n\n\n")
             logfile.flush()
@@ -687,6 +732,11 @@ class ShieldTester(object):
         return loadouts_to_test
 
     def get_default_shield_generator_of_variant(self, sg_variant: ShieldGenerator) -> Optional[ShieldGenerator]:
+        """
+        Provide a (engineered) shield generator to get a copy of the same type but as non-engineered version.
+        :param sg_variant: the (engineered) shield generator
+        :return: ShieldGenerator or None
+        """
         if sg_variant:
             return copy.deepcopy(self.__unengineered_shield_generators.get(sg_variant.symbol))
         return None
@@ -768,7 +818,7 @@ class ShieldTester(object):
         """
         Generate a link to coriolis to import the current shield build.
         :param loadout: loadout containing the build (e.g. get from results)
-        :return: 
+        :return:
         """
         if loadout and loadout.shield_generator:
             loadout_str = loadout.generate_loadout_event(self.get_default_shield_generator_of_variant(loadout.shield_generator))
