@@ -11,7 +11,8 @@ from typing import List, Tuple, Any, Dict, Optional
 
 
 class ShieldBoosterVariant(object):
-    # TODO slot names for loadout event
+    SLOT_TEMPLATE = "tinyhardpoint{}"
+
     def __init__(self):
         self._engineering = ""
         self._experimental = ""
@@ -20,7 +21,7 @@ class ShieldBoosterVariant(object):
         self._kin_res_bonus = ""
         self._therm_res_bonus = ""
         self._can_skip = False
-        self._loadout_template = ""
+        self._loadout_template = None
 
     @property
     def engineering(self):
@@ -50,9 +51,17 @@ class ShieldBoosterVariant(object):
     def can_skip(self):
         return self._can_skip
 
-    @property
-    def loadout_template(self):
-        return self._loadout_template
+    def get_loadout_template_slot(self, slot: int) -> Dict[str, Any]:
+        """
+        Get the loadout dictionary for the provided slot number
+        :param slot: int from 1 to 8 (including)
+        :return:
+        """
+        if self._loadout_template:
+            loadout = copy.deepcopy(self._loadout_template)
+            loadout["Slot"] = self.SLOT_TEMPLATE.format(slot)
+            return loadout
+        return dict()
 
     @staticmethod
     def create_from_json(json_booster: json) -> ShieldBoosterVariant:
@@ -111,6 +120,8 @@ class ShieldBoosterVariant(object):
 
 
 class ShieldGenerator(object):
+    SLOT_TEMPLATE = "slot01_size{}"
+
     CALC_NORMAL = 1
     CALC_RES = 2
     CALC_MASS = 3
@@ -185,6 +196,10 @@ class ShieldGenerator(object):
     @property
     def name(self) -> str:
         return self._name
+
+    @property
+    def symbol(self) -> str:
+        return self._symbol
 
     @property
     def regen(self) -> float:
@@ -290,12 +305,55 @@ class ShieldGenerator(object):
 
         return variations
 
+    def _create_modifier_templates(self, default_sg: ShieldGenerator):
+        modifiers = list()
+
+        def helper(label: str, def_value, value, less_is_good: int = 0):
+            return {"Label": label,
+                    "Value": value,
+                    "OriginalValue": def_value,
+                    "LessIsGood": less_is_good}
+
+        if default_sg._integrity != self._integrity:
+            modifiers.append(helper("Integrity", default_sg._integrity, self._integrity))
+        if default_sg._power != self._power:
+            modifiers.append(helper("PowerDraw", default_sg._power, self._power, 1))
+        if default_sg._optmul != self._optmul:
+            modifiers.append(helper("ShieldGenStrength", default_sg._optmul * 100, self._optmul * 100))
+        if default_sg._distdraw != self._distdraw:
+            modifiers.append(helper("EnergyPerRegen", default_sg._distdraw, self._distdraw, 1))
+        if default_sg._brokenregen != self._brokenregen:
+            modifiers.append(helper("BrokenRegenRate", default_sg._brokenregen, self._brokenregen))
+        if default_sg._regen != self._regen:
+            modifiers.append(helper("RegenRate", default_sg._regen, self._regen))
+        if default_sg._kinres != self._kinres:
+            modifiers.append(helper("KineticResistance", default_sg._kinres * 100, self._kinres * 100))
+        if default_sg._thermres != self._thermres:
+            modifiers.append(helper("ThermicResistance", default_sg._thermres * 100, self._thermres * 100))
+        if default_sg._explres != self._explres:
+            modifiers.append(helper("ExplosiveResistance", default_sg._explres * 100, self._explres * 100))
+        return modifiers
+
+    def create_loadout(self, default_sg: ShieldGenerator, slot_class: int) -> Dict[str, Any]:
+        modifiers = self._create_modifier_templates(default_sg)
+        engineering = {"BlueprintName": self._engineered_symbol,
+                       "Level": 5,
+                       "Quality": 1,
+                       "Modifiers": modifiers,
+                       "ExperimentalEffect": self._experimental_symbol}
+        loadout = {"Item": self._symbol,
+                   "Slot": self.SLOT_TEMPLATE.format(slot_class),
+                   "On": True,
+                   "Priority": 0,
+                   "Engineering": engineering}
+        return loadout
+
 
 class StarShip(object):
     def __init__(self):
         self._name = ""
         self._symbol = ""
-        self._loadout_template = ""
+        self._loadout_template = dict()
         self._base_shield_strength = 0
         self._hull_mass = 0
         self._utility_slots = 0
@@ -310,8 +368,8 @@ class StarShip(object):
         return self._symbol
 
     @property
-    def loadout_template(self):
-        return self._loadout_template
+    def loadout_template(self) -> Dict[str, Any]:
+        return copy.deepcopy(self._loadout_template)
 
     @property
     def base_shield_strength(self) -> int:
@@ -400,13 +458,21 @@ class LoadOut(object):
         hp = loadout.shield_strength * hitpoint_bonus
         return exp_res, kin_res, therm_res, hp
 
-    def generate_loadout_event(self):
-        # TODO
-        pass
+    def generate_loadout_event(self, default_sg: ShieldGenerator) -> Dict[str, Any]:
+        if not self._ship:
+            return dict()
+
+        loadout_json = self._ship.loadout_template
+        modules = loadout_json["Modules"]
+        modules.append(self._shield_generator.create_loadout(default_sg, self._ship.highest_internal))
+
+        for i, booster in enumerate(self.boosters):
+            modules.append(booster.get_loadout_template_slot(i + 1))
+        return loadout_json
 
 
 class TestResult:
-    def __init__(self, best_loadout: LoadOut = None, best_survival_time: int = 0) -> str:
+    def __init__(self, best_loadout: LoadOut = None, best_survival_time: int = 0):
         self.best_loadout = best_loadout
         self.best_survival_time = best_survival_time  # if negative, the ship didn't die
 
@@ -542,6 +608,7 @@ class ShieldTester(object):
         # key of outer dictionary is the type, key for inner dictionary is the class
         # and the value is a list of all engineered shield generator combinations of that class and type
         self.__shield_generators = dict()  # type: Dict[str, Dict[int, List[ShieldGenerator]]]
+        self.__unengineered_shield_generators = dict()
 
         self.__test_case = None
         self.__use_short_list = True
@@ -635,6 +702,11 @@ class ShieldTester(object):
             for sg in shield_generators:
                 loadouts_to_test.append(LoadOut(sg, self.__test_case.ship))
         return loadouts_to_test
+
+    def get_default_shield_generator_of_variant(self, sg_variant: ShieldGenerator) -> Optional[ShieldGenerator]:
+        if sg_variant:
+            return copy.deepcopy(self.__unengineered_shield_generators.get(sg_variant.symbol))
+        return None
 
     def compute(self, test_settings: TestCase, callback: function = None, message_queue: queue.Queue = None) -> Optional[TestResult]:
         """
@@ -751,6 +823,7 @@ class ShieldTester(object):
                 sg_type_dict = self.__shield_generators.setdefault(sg_type, dict())
                 for j_generator in sg_list:
                     generator = ShieldGenerator.create_from_json(j_generator)
+                    self.__unengineered_shield_generators.setdefault(generator.symbol, generator)
                     generator_variants = ShieldGenerator.create_engineered_shield_generators(generator,
                                                                                              sg_node["engineering"]["blueprints"],
                                                                                              sg_node["engineering"]["experimental_effects"])
