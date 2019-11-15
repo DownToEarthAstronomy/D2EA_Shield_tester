@@ -5,7 +5,6 @@ import math
 import os
 import time
 import itertools
-import threading
 import multiprocessing
 import queue
 from typing import List, Tuple, Any, Dict, Optional
@@ -73,11 +72,13 @@ class ShieldBoosterVariant(object):
         booster._loadout_template = json_booster["loadout_template"]
         return booster
 
+    # noinspection PyTypeChecker
     @staticmethod
-    def calculate_booster_bonuses(shield_boosters: List[ShieldBoosterVariant], booster_loadout: List[int]) -> Tuple[float, float, float, float]:
+    def calculate_booster_bonuses(shield_boosters: List[ShieldBoosterVariant], booster_loadout: List[int] = None) -> Tuple[float, float, float, float]:
         """
-        Calculate the combined bonus of shield boosters
-        :param shield_boosters: list of ShieldBoosterVariant
+        Calculate the combined bonus of shield boosters. This function has 2 modes: either supply it with a list of all ShieldBoosterVariant and a list of indexes
+        for the boosters to use or supply it only with a list of ShieldBoosterVariant.
+        :param shield_boosters: list of ShieldBoosterVariant.
         :param booster_loadout: booster loadout as a list of indexes of the booster in shield_boosters
         :return: tuple: exp_modifier, kin_modifier, therm_modifier, hitpoint_bonus
         """
@@ -86,11 +87,16 @@ class ShieldBoosterVariant(object):
         therm_modifier = 1.0
         hitpoint_bonus = 1.0
 
-        for booster_index in booster_loadout:
-            booster = shield_boosters[booster_index]
-            exp_modifier *= booster._exp_res_bonus
-            kin_modifier *= booster._kin_res_bonus
-            therm_modifier *= booster._therm_res_bonus
+        if booster_loadout:
+            print(booster_loadout)
+            boosters = [shield_boosters[x] for x in booster_loadout]
+        else:
+            boosters = shield_boosters
+
+        for booster in boosters:
+            exp_modifier *= (1.0 - booster._exp_res_bonus)
+            kin_modifier *= (1.0 - booster._kin_res_bonus)
+            therm_modifier *= (1.0 - booster._therm_res_bonus)
             hitpoint_bonus += booster._shield_strength_bonus
 
         # Compensate for diminishing returns
@@ -219,7 +225,7 @@ class ShieldGenerator(object):
         generator._optmul = json_generator["optmul"]
         return generator
 
-    def __calculate_and_set_engineering(self, attr: str, key: str, features: Dict[str, Any], calc_type: int, is_percentage: bool = False):
+    def _calculate_and_set_engineering(self, attr: str, key: str, features: Dict[str, Any], calc_type: int, is_percentage: bool = False):
         """
         Apply engineering changes
         :param attr: class attribute to change.
@@ -245,19 +251,19 @@ class ShieldGenerator(object):
             setattr(self, attr, round(r, 4))
 
     def _apply_engineering(self, features: json, is_percentage: bool = False):
-        self.__calculate_and_set_engineering("_integrity", "integrity", features, self.CALC_NORMAL)
-        self.__calculate_and_set_engineering("_brokenregen", "brokenregen", features, self.CALC_NORMAL)
-        self.__calculate_and_set_engineering("_regen", "regen", features, self.CALC_NORMAL)
-        self.__calculate_and_set_engineering("_distdraw", "distdraw", features, self.CALC_NORMAL)
-        self.__calculate_and_set_engineering("_power", "power", features, self.CALC_NORMAL)
+        self._calculate_and_set_engineering("_integrity", "integrity", features, self.CALC_NORMAL)
+        self._calculate_and_set_engineering("_brokenregen", "brokenregen", features, self.CALC_NORMAL)
+        self._calculate_and_set_engineering("_regen", "regen", features, self.CALC_NORMAL)
+        self._calculate_and_set_engineering("_distdraw", "distdraw", features, self.CALC_NORMAL)
+        self._calculate_and_set_engineering("_power", "power", features, self.CALC_NORMAL)
 
-        self.__calculate_and_set_engineering("_optmul", "optmul", features, self.CALC_MASS)
-        self.__calculate_and_set_engineering("_minmul", "optmul", features, self.CALC_MASS)
-        self.__calculate_and_set_engineering("_maxmul", "optmul", features, self.CALC_MASS)
+        self._calculate_and_set_engineering("_optmul", "optmul", features, self.CALC_MASS)
+        self._calculate_and_set_engineering("_minmul", "optmul", features, self.CALC_MASS)
+        self._calculate_and_set_engineering("_maxmul", "optmul", features, self.CALC_MASS)
 
-        self.__calculate_and_set_engineering("_kinres", "kinres", features, self.CALC_RES, is_percentage)
-        self.__calculate_and_set_engineering("_thermres", "thermres", features, self.CALC_RES, is_percentage)
-        self.__calculate_and_set_engineering("_explres", "explres", features, self.CALC_RES, is_percentage)
+        self._calculate_and_set_engineering("_kinres", "kinres", features, self.CALC_RES, is_percentage)
+        self._calculate_and_set_engineering("_thermres", "thermres", features, self.CALC_RES, is_percentage)
+        self._calculate_and_set_engineering("_explres", "explres", features, self.CALC_RES, is_percentage)
 
     @staticmethod
     def create_engineered_shield_generators(prototype: ShieldGenerator, blueprints: json, experimentals: json) -> List[ShieldGenerator]:
@@ -343,41 +349,64 @@ class StarShip(object):
 
 class LoadOut(object):
     def __init__(self, shield_generator: ShieldGenerator, ship: StarShip):
-        self.__shield_generator = shield_generator
-        self.__ship = ship
-        self.boosters = list()
-        self.__shield_strength = self.__calculate_shield_strength()
+        self._shield_generator = shield_generator
+        self._ship = ship
+        self.boosters = None
+        self._shield_strength = self.__calculate_shield_strength()
 
     @property
-    def shield_strength(self):
-        return self.__shield_strength
+    def shield_strength(self) -> float:
+        return self._shield_strength
+
+    @property
+    def shield_generator(self) -> ShieldGenerator:
+        return self._shield_generator
 
     def __calculate_shield_strength(self):
         # formula taken from https://github.com/EDCD/coriolis/blob/master/src/app/shipyard/Calculations.js
-        if self.__shield_generator and self.__ship:
-            min_mass = self.__shield_generator.minmass
-            opt_mass = self.__shield_generator.optmass
-            max_mass = self.__shield_generator.maxmass
-            min_mul = self.__shield_generator.minmul
-            opt_mul = self.__shield_generator.optmul
-            max_mul = self.__shield_generator.maxmul
-            hull_mass = self.__ship.hull_mass
+        if self._shield_generator and self._ship:
+            min_mass = self._shield_generator.minmass
+            opt_mass = self._shield_generator.optmass
+            max_mass = self._shield_generator.maxmass
+            min_mul = self._shield_generator.minmul
+            opt_mul = self._shield_generator.optmul
+            max_mul = self._shield_generator.maxmul
+            hull_mass = self._ship.hull_mass
 
             xnorm = min(1.0, (max_mass - hull_mass) / (max_mass - min_mass))
             exponent = math.log((opt_mul - min_mul) / (max_mul - min_mul)) / math.log(min(1.0, (max_mass - opt_mass) / (max_mass - min_mass)))
             ynorm = math.pow(xnorm, exponent)
             mul = min_mul + ynorm * (max_mul - min_mul)
-            return round(self.__ship.base_shield_strength * mul, 4)
+            return round(self._ship.base_shield_strength * mul, 4)
         else:
             return 0
+
+    def get_total_values(self):
+        if self.boosters and len(self.boosters) > 0:
+            return self.calculate_total_values(self, *ShieldBoosterVariant.calculate_booster_bonuses(self.boosters))
+
+    @staticmethod
+    def calculate_total_values(loadout: LoadOut, exp_modifier, kin_modifier, therm_modifier, hitpoint_bonus):
+        exp_res = (1 - loadout._shield_generator.explres) * exp_modifier
+        kin_res = (1 - loadout._shield_generator.kinres) * kin_modifier
+        therm_res = (1 - loadout._shield_generator.thermres) * therm_modifier
+        hp = loadout.shield_strength * hitpoint_bonus
+        return exp_res, kin_res, therm_res, hp
 
     def generate_loadout_event(self):
         # TODO
         pass
 
 
+class TestResult:
+    def __init__(self, best_loadout: LoadOut = None, best_survival_time: int = 0):
+        self.best_loadout = best_loadout
+        self.best_survival_time = best_survival_time  # if negative, the ship didn't die
+        # TODO need resi
+
+
 class TestCase(object):
-    def __init__(self):
+    def __init__(self, shield_booster_variants: List[ShieldBoosterVariant], loadout_list: List[LoadOut]):
         self.damage_effectiveness = 0
         self.explosive_dps = 0
         self.kinetic_dps = 0
@@ -385,6 +414,47 @@ class TestCase(object):
         self.absolute_dps = 0
         self.scb_hitpoints = 0
         self.guardian_hitpoints = 0
+        self.shield_booster_variants = shield_booster_variants
+        self.loadout_list = loadout_list
+
+    @staticmethod
+    def test_case(settings: TestCase, booster_variations: List[List[int]]) -> TestResult:
+        best_survival_time = 0
+        best_loadout = 0
+        best_shield_booster_loadout = None
+
+        for booster_variation in booster_variations:
+            boosters = [settings.shield_booster_variants[x] for x in booster_variation]
+            # Do this here instead of for each loadout to save some time.
+            bonuses = ShieldBoosterVariant.calculate_booster_bonuses(boosters)
+
+            for loadout in settings.loadout_list:
+                loadout.boosters = boosters
+                exp_res, kin_res, therm_res, hp = LoadOut.calculate_total_values(loadout, *bonuses)
+
+                actual_dps = settings.damage_effectiveness * (
+                        settings.explosive_dps * exp_res +
+                        settings.kinetic_dps * kin_res +
+                        settings.thermal_dps * therm_res +
+                        settings.absolute_dps) - loadout.shield_generator.regen * (1.0 - settings.damage_effectiveness)
+
+                survival_time = (hp + settings.scb_hitpoints + settings.guardian_hitpoints) / actual_dps
+
+                if actual_dps > 0 and best_survival_time >= 0:
+                    # if another run set best_survival_time to a negative value, then the ship didn't die, therefore the other result is better
+                    if survival_time > best_survival_time:
+                        best_loadout = loadout
+                        best_shield_booster_loadout = boosters
+                        best_survival_time = survival_time
+                elif actual_dps < 0:
+                    if survival_time < best_survival_time:
+                        best_loadout = loadout
+                        best_shield_booster_loadout = boosters
+                        best_survival_time = survival_time
+
+        best_loadout = copy.deepcopy(best_loadout)
+        best_loadout.boosters = best_shield_booster_loadout
+        return TestResult(best_loadout, best_survival_time)
 
 
 class ShieldTester(object):
@@ -404,7 +474,13 @@ class ShieldTester(object):
         self.__booster_variants_to_test = list()
         self.__number_of_boosters_to_test = 0
 
+        self.__runtime = 0
         self.__cpu_cores = os.cpu_count()
+        self.__is_working = False
+
+    @property
+    def is_working(self):
+        return self.__is_working
 
     @property
     def use_short_list(self) -> bool:
@@ -453,7 +529,7 @@ class ShieldTester(object):
     @number_of_boosters_to_test.setter
     def number_of_boosters_to_test(self, value: int):
         if self.__selected_ship:
-            min(self.__selected_ship.utility_slots, abs(value))
+            self.__number_of_boosters_to_test = min(self.__selected_ship.utility_slots, abs(value))
         else:
             self.__number_of_boosters_to_test = 0
 
@@ -484,6 +560,142 @@ class ShieldTester(object):
             for sg in shield_generators:
                 loadouts_to_test.append(LoadOut(sg, self.__selected_ship))
         return loadouts_to_test
+
+    def compute(self, test_settings: TestCase, callback: function = None, message_queue: queue.Queue = None):
+        """
+        Compute best loadout. Best to call this in an extra thread. It might take a while to complete.
+        :param test_settings: settings of test case
+        :param callback: optional callback. Will be called [<number of tests> / MP_CHUNK_SIZE] times if more than 1 core is used.
+                         Will be called only once when only 1 core is used
+        :param message_queue: message queue containing some output messages
+        """
+        if not self.__selected_ship or not test_settings.shield_booster_variants or not test_settings.loadout_list:
+            # nothing to test
+            # TODO maybe raise exception
+            print("Can't test nothing")
+            return
+
+        self.__runtime = time.time()
+        output = list()
+
+        # use built in itertools and assume booster ids are starting at 1 and that there are no gaps
+        booster_combinations = list(itertools.combinations_with_replacement(range(0, len(self.__booster_variants_to_test)), self.__number_of_boosters_to_test))
+
+        output.append("Shield Booster Count: [{0}]".format(self.__number_of_boosters_to_test))
+        output.append("Shield Generator Variants: [{0}]".format(len(self.__loadouts_to_test)))
+        output.append("Shield Booster Variants: [{0}]".format(len(self.__booster_variants)))
+        output.append("Shield loadouts to be tested: [{0:n}]".format(len(booster_combinations) * len(self.__loadouts_to_test)))
+        output.append("Running calculations. Please wait...")
+        output.append("")
+        if message_queue:
+            message_queue.put("\n".join(output))
+        print("\n".join(output))  # in case there is a console
+        output = list()
+
+        best_result = TestResult(best_survival_time=0)
+
+        def apply_async_callback(r: TestResult):
+            nonlocal best_result
+            if best_result.best_survival_time < 0:
+                if r.best_survival_time < best_result.best_survival_time:
+                    best_result = r
+            else:
+                if r.best_survival_time < 0:
+                    best_result = r
+                elif r.best_survival_time > best_result.best_survival_time:
+                    best_result = r
+            if callback:
+                callback()
+
+        if self.__cpu_cores > 1 and (len(booster_combinations) * len(self.__loadouts_to_test)) > self.MP_CHUNK_SIZE:
+            # 1 core is handling UI and this thread, the rest is working on running the calculations
+            with multiprocessing.Pool(processes=self.__cpu_cores - 1) as pool:
+                last_i = 0
+                for i in range(self.MP_CHUNK_SIZE, len(booster_combinations), self.MP_CHUNK_SIZE):
+                    pool.apply_async(TestCase.test_case, args=(test_settings, booster_combinations[last_i:i]), callback=apply_async_callback)
+                    last_i = i + 1
+                if last_i < len(booster_combinations):
+                    pool.apply_async(TestCase.test_case, args=(test_settings, booster_combinations[last_i:]), callback=apply_async_callback)
+                pool.close()
+                pool.join()
+        else:
+            result = TestCase.test_case(test_settings, booster_combinations)
+            apply_async_callback(result)  # can use the same function here as mp.Pool would
+
+        output.append("Calculations took {:.2f} seconds".format(time.time() - self.__runtime))
+        output.append("")
+        output = list()
+        output.append("---- TEST SETUP ----")
+        output.append("Ship Type: [{}]".format(self.__selected_ship.name))
+        output.append("Shield Generator Size: [{}]".format(self.__selected_ship.highest_internal))
+        output.append("Shield Booster Count: [{0}]".format(self.__number_of_boosters_to_test))
+        output.append("Shield Cell Bank Hit Point Pool: [{}]".format(test_settings.scb_hitpoints))
+        output.append("Guardian Shield Reinforcement Hit Point Pool: [{}]".format(test_settings.guardian_hitpoints))
+        output.append("Access to Prismatic Shields: [{}]".format("Yes" if self.__use_prismatics else "No"))
+        output.append("Explosive DPS: [{}]".format(test_settings.explosive_dps))
+        output.append("Kinetic DPS: [{}]".format(test_settings.kinetic_dps))
+        output.append("Thermal DPS: [{}]".format(test_settings.thermal_dps))
+        output.append("Absolute DPS: [{}]".format(test_settings.absolute_dps))
+        output.append("Damage Effectiveness: [{:.0f}%]".format(test_settings.damage_effectiveness * 100))
+        output.append("")
+        if message_queue:
+            message_queue.put("\n".join(output))
+        print("\n".join(output))  # in case there is a console
+
+        output = list()
+        output.append("---- TEST RESULTS ----")
+        if best_result.best_survival_time != 0:
+            # sort by survival time and put highest value to start of the list
+            if best_result.best_survival_time > 0:
+                output.append("Survival Time [s]: [{0:.3f}]".format(best_result.best_survival_time))
+            else:
+                output.append("Survival Time [s]: [Didn't die]")
+            shield_generator = best_result.best_loadout.shield_generator
+            output.append("Shield Generator: [{type}] - [{eng}] - [{exp}]"
+                          .format(type=shield_generator.name, eng=shield_generator.engineered_name, exp=shield_generator.experimental_name))
+            output.append("Shield Boosters:")
+            for shield_booster_variant in best_result.best_loadout.boosters:
+                output.append("  [{eng}] - [{exp}]".format(eng=shield_booster_variant.engineering, exp=shield_booster_variant.experimental))
+
+            output.append("")
+            exp_res, kin_res, therm_res, hp = best_result.best_loadout.get_total_values()
+            output.append("Shield Hitpoints: [{0:.3f}]".format(hp + test_settings.guardian_hitpoints))
+            output.append("Shield Regen: [{0} hp/s]".format(best_result.best_loadout.shield_generator.regen))
+            output.append("Shield Regen Time (from 50%): [{0:.2f} s]".format((hp + test_settings.guardian_hitpoints) /
+                                                                             (2 * best_result.best_loadout.shield_generator.regen)))
+            output.append("Explosive Resistance: [{0:.3f}]".format((1.0 - exp_res) * 100))
+            output.append("Kinetic Resistance: [{0:.3f}]".format((1.0 - kin_res) * 100))
+            output.append("Thermal Resistance: [{0:.3f}]".format((1.0 - therm_res) * 100))
+        else:
+            output.append("No test results. Please change DPS and/or damage effectiveness.")
+
+        output_string = "\n".join(output)
+        if message_queue:
+            message_queue.put(output_string)
+        print(output_string)
+
+        # TODO write logfile
+        """ 
+        try:
+            self._write_log(test_data, output_string, self._test_name.get())
+        except Exception as e:
+            print("Error writing logfile")
+            print(e)
+            self.event_generate(self.EVENT_WARNING_WRITE_LOGFILE, when="tail")
+        """
+
+    def create_test_case(self) -> Optional[TestCase]:
+        """
+        Create a new test case and store a copy of loadouts and booster variants in it.
+        Don't forget to add additional attributes like incoming DPS.
+        :return: TestCase or None if no loadouts are present (might need to select a ship first)
+        """
+        if self.__booster_variants_to_test and self.__loadouts_to_test:
+            shield_booster_variants = copy.deepcopy(self.__booster_variants_to_test)
+            loadouts = copy.deepcopy(self.__loadouts_to_test)
+            return TestCase(shield_booster_variants, loadouts)
+        else:
+            return None
 
     def select_ship(self, name: str):
         if name in self.__ships:
