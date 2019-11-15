@@ -154,44 +154,8 @@ class ShieldGenerator(object):
         self._experimental_symbol = ""
 
     @property
-    def maxmass(self) -> float:
-        return self._maxmass
-
-    @property
-    def maxmul(self) -> float:
-        return self._maxmul
-
-    @property
-    def minmass(self) -> float:
-        return self._minmass
-
-    @property
-    def minmul(self) -> float:
-        return self._minmul
-
-    @property
-    def optmass(self) -> float:
-        return self._optmass
-
-    @property
-    def optmul(self) -> float:
-        return self._optmul
-
-    @property
     def module_class(self) -> int:
         return self._class
-
-    @property
-    def explres(self) -> float:
-        return self._explres
-
-    @property
-    def kinres(self) -> float:
-        return self._kinres
-
-    @property
-    def thermres(self) -> float:
-        return self._thermres
 
     @property
     def name(self) -> str:
@@ -427,15 +391,16 @@ class LoadOut(object):
     def shield_generator(self) -> ShieldGenerator:
         return self._shield_generator
 
+    # noinspection PyProtectedMember
     def __calculate_shield_strength(self):
         # formula taken from https://github.com/EDCD/coriolis/blob/master/src/app/shipyard/Calculations.js
         if self._shield_generator and self._ship:
-            min_mass = self._shield_generator.minmass
-            opt_mass = self._shield_generator.optmass
-            max_mass = self._shield_generator.maxmass
-            min_mul = self._shield_generator.minmul
-            opt_mul = self._shield_generator.optmul
-            max_mul = self._shield_generator.maxmul
+            min_mass = self._shield_generator._minmass
+            opt_mass = self._shield_generator._optmass
+            max_mass = self._shield_generator._maxmass
+            min_mul = self._shield_generator._minmul
+            opt_mul = self._shield_generator._optmul
+            max_mul = self._shield_generator._maxmul
             hull_mass = self._ship.hull_mass
 
             xnorm = min(1.0, (max_mass - hull_mass) / (max_mass - min_mass))
@@ -448,14 +413,14 @@ class LoadOut(object):
 
     def get_total_values(self):
         if self.boosters and len(self.boosters) > 0:
-            return self.calculate_total_values(self, *ShieldBoosterVariant.calculate_booster_bonuses(self.boosters))
+            return self.calculate_total_values(*ShieldBoosterVariant.calculate_booster_bonuses(self.boosters))
 
-    @staticmethod
-    def calculate_total_values(loadout: LoadOut, exp_modifier, kin_modifier, therm_modifier, hitpoint_bonus):
-        exp_res = (1 - loadout._shield_generator.explres) * exp_modifier
-        kin_res = (1 - loadout._shield_generator.kinres) * kin_modifier
-        therm_res = (1 - loadout._shield_generator.thermres) * therm_modifier
-        hp = loadout.shield_strength * hitpoint_bonus
+    # noinspection PyProtectedMember
+    def calculate_total_values(self, exp_modifier, kin_modifier, therm_modifier, hitpoint_bonus):
+        exp_res = (1 - self._shield_generator._explres) * exp_modifier
+        kin_res = (1 - self._shield_generator._kinres) * kin_modifier
+        therm_res = (1 - self._shield_generator._thermres) * therm_modifier
+        hp = self._shield_strength * hitpoint_bonus
         return exp_res, kin_res, therm_res, hp
 
     def generate_loadout_event(self, default_sg: ShieldGenerator) -> Dict[str, Any]:
@@ -558,28 +523,43 @@ class TestCase(object):
         output.append("")
         return "\n".join(output)
 
+    # noinspection PyProtectedMember
     @staticmethod
     def test_case(settings: TestCase, booster_variations: List[List[int]]) -> TestResult:
         best_survival_time = 0
         best_loadout = 0
         best_shield_booster_loadout = None
 
+        # reduce calls -> speed up program, this should speed up the program by a couple hundred ms when using 8 boosters and the short list
+        damage_effectiveness = settings.damage_effectiveness
+        explosive_dps = settings.explosive_dps
+        kinetic_dps = settings.kinetic_dps
+        thermal_dps = settings.thermal_dps
+        absolute_dps = settings.absolute_dps
+        scb_hitpoints = settings.scb_hitpoints
+        guardian_hitpoints = settings.guardian_hitpoints
+
         for booster_variation in booster_variations:
             boosters = [settings.shield_booster_variants[x] for x in booster_variation]
             # Do this here instead of for each loadout to save some time.
-            bonuses = ShieldBoosterVariant.calculate_booster_bonuses(boosters)
+            exp_modifier, kin_modifier, therm_modifier, hitpoint_bonus = ShieldBoosterVariant.calculate_booster_bonuses(boosters)
 
             for loadout in settings.loadout_list:
                 loadout.boosters = boosters
-                exp_res, kin_res, therm_res, hp = LoadOut.calculate_total_values(loadout, *bonuses)
 
-                actual_dps = settings.damage_effectiveness * (
-                        settings.explosive_dps * exp_res +
-                        settings.kinetic_dps * kin_res +
-                        settings.thermal_dps * therm_res +
-                        settings.absolute_dps) - loadout.shield_generator.regen * (1.0 - settings.damage_effectiveness)
+                # can't use same function in LoadOut because of speed
+                exp_res = (1 - loadout._shield_generator._explres) * exp_modifier
+                kin_res = (1 - loadout._shield_generator._kinres) * kin_modifier
+                therm_res = (1 - loadout._shield_generator._thermres) * therm_modifier
+                hp = loadout._shield_strength * hitpoint_bonus
 
-                survival_time = (hp + settings.scb_hitpoints + settings.guardian_hitpoints) / actual_dps
+                actual_dps = damage_effectiveness * (
+                        explosive_dps * exp_res +
+                        kinetic_dps * kin_res +
+                        thermal_dps * therm_res +
+                        absolute_dps) - loadout._shield_generator._regen * (1.0 - damage_effectiveness)
+
+                survival_time = (hp + scb_hitpoints + guardian_hitpoints) / actual_dps
 
                 if actual_dps > 0 and best_survival_time >= 0:
                     # if another run set best_survival_time to a negative value, then the ship didn't die, therefore the other result is better
@@ -612,7 +592,6 @@ class ShieldTester(object):
 
         self.__test_case = None
         self.__use_short_list = True
-        self.__booster_variants_to_test = list()
 
         self.__runtime = 0
         self.__cpu_cores = os.cpu_count()
@@ -623,7 +602,7 @@ class ShieldTester(object):
 
     @use_short_list.setter
     def use_short_list(self, value: bool):
-        if not self.__test_case and self.__use_short_list != value:
+        if self.__test_case and self.__use_short_list != value:
             self.__use_short_list = value
             self.__test_case.shield_booster_variants = self.__find_boosters_to_test()
 
@@ -661,9 +640,9 @@ class ShieldTester(object):
 
     @property
     def number_of_tests(self) -> int:
-        if self.__test_case and self.__booster_variants_to_test:
-            result = math.factorial(len(self.__booster_variants_to_test) + self.__test_case.number_of_boosters_to_test - 1)
-            result = result / math.factorial(len(self.__booster_variants_to_test) - 1) / math.factorial(self.__test_case.number_of_boosters_to_test)
+        if self.__test_case and self.__test_case.shield_booster_variants:
+            result = math.factorial(len(self.__test_case.shield_booster_variants) + self.__test_case.number_of_boosters_to_test - 1)
+            result = result / math.factorial(len(self.__test_case.shield_booster_variants) - 1) / math.factorial(self.__test_case.number_of_boosters_to_test)
             return int(result * len(self.__test_case.loadout_list))
         return 0
 
@@ -728,7 +707,7 @@ class ShieldTester(object):
         output = list()
 
         # use built in itertools and assume booster ids are starting at 1 and that there are no gaps
-        booster_combinations = list(itertools.combinations_with_replacement(range(0, len(self.__booster_variants_to_test)), test_settings.number_of_boosters_to_test))
+        booster_combinations = list(itertools.combinations_with_replacement(range(0, len(test_settings.shield_booster_variants)), test_settings.number_of_boosters_to_test))
         output.append("------------ TEST RUN ------------")
         output.append("        Shield Booster Count: [{0}]".format(test_settings.number_of_boosters_to_test))
         output.append("   Shield Generator Variants: [{0}]".format(len(test_settings.loadout_list)))
@@ -815,7 +794,6 @@ class ShieldTester(object):
             # load shield booster variants
             for booster_variant in j_data["shield_booster_variants"]:
                 self.__booster_variants.append(ShieldBoosterVariant.create_from_json(booster_variant))
-            self.__booster_variants_to_test = self.__find_boosters_to_test()
 
             # load shield generators
             sg_node = j_data["shield_generators"]
