@@ -355,6 +355,13 @@ class LoadOut(object):
         self._shield_strength = self.__calculate_shield_strength()
 
     @property
+    def ship_name(self):
+        if self._ship:
+            return self._ship.name
+        else:
+            return "ship not set"
+
+    @property
     def shield_strength(self) -> float:
         return self._shield_strength
 
@@ -399,14 +406,55 @@ class LoadOut(object):
 
 
 class TestResult:
-    def __init__(self, best_loadout: LoadOut = None, best_survival_time: int = 0):
+    def __init__(self, best_loadout: LoadOut = None, best_survival_time: int = 0) -> str:
         self.best_loadout = best_loadout
         self.best_survival_time = best_survival_time  # if negative, the ship didn't die
-        # TODO need resi
+
+    def get_output_string(self, guardian_hitpoints: int = 0):
+        """
+        Get output string for console output, text output or a logfile of the test result
+        :param guardian_hitpoints: Guardian Shield Reinforcement to add to shield hitpoints
+        :return: string
+        """
+        output = list()
+        output.append("------------ TEST RESULTS ------------")
+        if self.best_survival_time != 0:
+            # sort by survival time and put highest value to start of the list
+            if self.best_survival_time > 0:
+                output.append("    Survival Time [s]: [{0:.3f}]".format(self.best_survival_time))
+            else:
+                output.append("    Survival Time [s]: [Didn't die]")
+            shield_generator = self.best_loadout.shield_generator
+            output.append("     Shield Generator: [{type}] - [{eng}] - [{exp}]".format(type=shield_generator.name,
+                                                                                       eng=shield_generator.engineered_name,
+                                                                                       exp=shield_generator.experimental_name))
+            for i, shield_booster_variant in enumerate(self.best_loadout.boosters):
+                if i == 0:
+                    output.append("     Shield Booster {i}: [{eng}] - [{exp}]".format(i=i + 1,
+                                                                                      eng=shield_booster_variant.engineering,
+                                                                                      exp=shield_booster_variant.experimental))
+                else:
+                    output.append("                    {i}: [{eng}] - [{exp}]".format(i=i + 1,
+                                                                                      eng=shield_booster_variant.engineering,
+                                                                                      exp=shield_booster_variant.experimental))
+
+            output.append("")
+            exp_res, kin_res, therm_res, hp = self.best_loadout.get_total_values()
+            output.append("Shield Hitpoints [MJ]: [{0:.3f}]".format(hp + guardian_hitpoints))
+            regen = self.best_loadout.shield_generator.regen
+            regen_time = (hp + guardian_hitpoints) / (2 * self.best_loadout.shield_generator.regen)
+            output.append("  Shield Regen [MJ/s]: [{regen}] ({time:.2f}s from 50%)".format(regen=regen, time=regen_time))
+            output.append(" Explosive Resistance: [{0:.3f}]".format((1.0 - exp_res) * 100))
+            output.append("   Kinetic Resistance: [{0:.3f}]".format((1.0 - kin_res) * 100))
+            output.append("   Thermal Resistance: [{0:.3f}]".format((1.0 - therm_res) * 100))
+        else:
+            output.append("No test results. Please change DPS and/or damage effectiveness.")
+        return "\n".join(output)
 
 
 class TestCase(object):
-    def __init__(self, shield_booster_variants: List[ShieldBoosterVariant], loadout_list: List[LoadOut]):
+    def __init__(self, ship: StarShip):
+        self.ship = ship
         self.damage_effectiveness = 0
         self.explosive_dps = 0
         self.kinetic_dps = 0
@@ -414,8 +462,35 @@ class TestCase(object):
         self.absolute_dps = 0
         self.scb_hitpoints = 0
         self.guardian_hitpoints = 0
-        self.shield_booster_variants = shield_booster_variants
-        self.loadout_list = loadout_list
+        self.shield_booster_variants = None
+        self.loadout_list = None
+        self.number_of_boosters_to_test = 0
+        self.use_prismatics = True
+
+    def get_output_string(self) -> str:
+        """
+        Get output string for console output, text output or a logfile of the test result
+        :return: string
+        """
+        output = list()
+        output.append("------------ TEST SETUP ------------")
+        if self.loadout_list:
+            output.append("                    Ship Type: [{}]".format(self.loadout_list[0].ship_name))
+            output.append("        Shield Generator Size: [{}]".format(self.loadout_list[0].shield_generator.module_class))
+        else:
+            output.append("                    Ship Type: [NOT SET]")
+            output.append("        Shield Generator Size: [SHIP NOT SET]")
+        output.append("         Shield Booster Count: [{0}]".format(self.number_of_boosters_to_test))
+        output.append("             Shield Cell Bank: [{}]".format(self.scb_hitpoints))
+        output.append("Guardian Shield Reinforcement: [{}]".format(self.guardian_hitpoints))
+        output.append("  Access to Prismatic Shields: [{}]".format("Yes" if self.use_prismatics else "No"))
+        output.append("                Explosive DPS: [{}]".format(self.explosive_dps))
+        output.append("                  Kinetic DPS: [{}]".format(self.kinetic_dps))
+        output.append("                  Thermal DPS: [{}]".format(self.thermal_dps))
+        output.append("                 Absolute DPS: [{}]".format(self.absolute_dps))
+        output.append("         Damage Effectiveness: [{:.0f}%]".format(self.damage_effectiveness * 100))
+        output.append("")
+        return "\n".join(output)
 
     @staticmethod
     def test_case(settings: TestCase, booster_variations: List[List[int]]) -> TestResult:
@@ -459,6 +534,7 @@ class TestCase(object):
 
 class ShieldTester(object):
     MP_CHUNK_SIZE = 10000
+    LOG_DIRECTORY = os.path.join(os.getcwd(), "Logs")
 
     def __init__(self):
         self.__ships = dict()
@@ -467,20 +543,12 @@ class ShieldTester(object):
         # and the value is a list of all engineered shield generator combinations of that class and type
         self.__shield_generators = dict()  # type: Dict[str, Dict[int, List[ShieldGenerator]]]
 
-        self.__selected_ship = None
-        self.__use_prismatics = True
+        self.__test_case = None
         self.__use_short_list = True
-        self.__loadouts_to_test = list()
         self.__booster_variants_to_test = list()
-        self.__number_of_boosters_to_test = 0
 
         self.__runtime = 0
         self.__cpu_cores = os.cpu_count()
-        self.__is_working = False
-
-    @property
-    def is_working(self):
-        return self.__is_working
 
     @property
     def use_short_list(self) -> bool:
@@ -488,9 +556,9 @@ class ShieldTester(object):
 
     @use_short_list.setter
     def use_short_list(self, value: bool):
-        if self.__use_short_list != value:
+        if not self.__test_case and self.__use_short_list != value:
             self.__use_short_list = value
-            self.__booster_variants_to_test = self.__find_boosters_to_test()
+            self.__test_case.shield_booster_variants = self.__find_boosters_to_test()
 
     @property
     def cpu_cores(self) -> int:
@@ -506,38 +574,45 @@ class ShieldTester(object):
 
     @property
     def selected_ship(self) -> Optional[StarShip]:
-        if self.__selected_ship:
-            return copy.deepcopy(self.__selected_ship)
+        if self.__test_case:
+            return copy.deepcopy(self.__test_case.ship)
         else:
             return None
 
     @property
     def use_prismatics(self) -> bool:
-        return self.__use_prismatics
+        if self.__test_case:
+            return self.__test_case.use_prismatics
+        else:
+            return True
 
     @use_prismatics.setter
     def use_prismatics(self, value: bool):
-        if self.__use_prismatics != value:
-            self.__use_prismatics = value
-            if self.__selected_ship:
-                self.__loadouts_to_test = self.__create_loadouts()
+        if self.__test_case and self.__test_case.use_prismatics != value:
+            self.__test_case.use_prismatics = value
+            self.__test_case.loadout_list = self.__create_loadouts()
 
     @property
-    def number_of_boosters_to_test(self):
-        return self.__number_of_boosters_to_test
+    def number_of_tests(self) -> int:
+        if self.__test_case and self.__booster_variants_to_test:
+            result = math.factorial(len(self.__booster_variants_to_test) + self.__test_case.number_of_boosters_to_test - 1)
+            result = result / math.factorial(len(self.__booster_variants_to_test) - 1) / math.factorial(self.__test_case.number_of_boosters_to_test)
+            return int(result * len(self.__test_case.loadout_list))
+        return 0
 
-    @number_of_boosters_to_test.setter
-    def number_of_boosters_to_test(self, value: int):
-        if self.__selected_ship:
-            self.__number_of_boosters_to_test = min(self.__selected_ship.utility_slots, abs(value))
-        else:
-            self.__number_of_boosters_to_test = 0
+    @staticmethod
+    def write_log(test_case: TestCase, result: TestResult, filename=None):
+        os.makedirs(ShieldTester.LOG_DIRECTORY, exist_ok=True)
+        if not filename:
+            filename = time.strftime("%Y-%m-%d %H.%M.%S")
+        with open(os.path.join(ShieldTester.LOG_DIRECTORY, filename + ".txt"), "a+") as logfile:
+            logfile.write("Test run at: {}\n".format(time.strftime("%Y-%m-%d %H:%M:%S")))
+            logfile.write(test_case.get_output_string())
+            logfile.write("\n")
+            logfile.write(result.get_output_string(test_case.guardian_hitpoints))
 
-    @property
-    def number_of_tests(self):
-        result = math.factorial(len(self.__booster_variants_to_test) + self.__number_of_boosters_to_test - 1)
-        result = result / math.factorial(len(self.__booster_variants_to_test) - 1) / math.factorial(self.__number_of_boosters_to_test)
-        return int(result * len(self.__loadouts_to_test))
+            logfile.write("\n\n\n")
+            logfile.flush()
 
     def __find_boosters_to_test(self) -> List[ShieldBoosterVariant]:
         return list(filter(lambda x: not (x.can_skip and self.__use_short_list), self.__booster_variants))
@@ -548,20 +623,20 @@ class ShieldTester(object):
         """
         loadouts_to_test = list()
 
-        if self.__selected_ship:
-            module_class = self.__selected_ship.highest_internal
+        if self.__test_case:
+            module_class = self.__test_case.ship.highest_internal
 
             shield_generators = list()
             shield_generators += self.__shield_generators.get(ShieldGenerator.TYPE_BIWEAVE).get(module_class)
             shield_generators += self.__shield_generators.get(ShieldGenerator.TYPE_NORMAL).get(module_class)
-            if self.__use_prismatics:
+            if self.__test_case.use_prismatics:
                 shield_generators += self.__shield_generators.get(ShieldGenerator.TYPE_PRISMATIC).get(module_class)
 
             for sg in shield_generators:
-                loadouts_to_test.append(LoadOut(sg, self.__selected_ship))
+                loadouts_to_test.append(LoadOut(sg, self.__test_case.ship))
         return loadouts_to_test
 
-    def compute(self, test_settings: TestCase, callback: function = None, message_queue: queue.Queue = None):
+    def compute(self, test_settings: TestCase, callback: function = None, message_queue: queue.Queue = None) -> Optional[TestResult]:
         """
         Compute best loadout. Best to call this in an extra thread. It might take a while to complete.
         :param test_settings: settings of test case
@@ -569,22 +644,24 @@ class ShieldTester(object):
                          Will be called only once when only 1 core is used
         :param message_queue: message queue containing some output messages
         """
-        if not self.__selected_ship or not test_settings.shield_booster_variants or not test_settings.loadout_list:
+        if not test_settings or not test_settings.shield_booster_variants or not test_settings.loadout_list:
             # nothing to test
             # TODO maybe raise exception
             print("Can't test nothing")
             return
 
+        print(test_settings.get_output_string())
+
         self.__runtime = time.time()
         output = list()
 
         # use built in itertools and assume booster ids are starting at 1 and that there are no gaps
-        booster_combinations = list(itertools.combinations_with_replacement(range(0, len(self.__booster_variants_to_test)), self.__number_of_boosters_to_test))
-
-        output.append("Shield Booster Count: [{0}]".format(self.__number_of_boosters_to_test))
-        output.append("Shield Generator Variants: [{0}]".format(len(self.__loadouts_to_test)))
-        output.append("Shield Booster Variants: [{0}]".format(len(self.__booster_variants)))
-        output.append("Shield loadouts to be tested: [{0:n}]".format(len(booster_combinations) * len(self.__loadouts_to_test)))
+        booster_combinations = list(itertools.combinations_with_replacement(range(0, len(self.__booster_variants_to_test)), test_settings.number_of_boosters_to_test))
+        output.append("------------ TEST RUN ------------")
+        output.append("        Shield Booster Count: [{0}]".format(test_settings.number_of_boosters_to_test))
+        output.append("   Shield Generator Variants: [{0}]".format(len(test_settings.loadout_list)))
+        output.append("     Shield Booster Variants: [{0}]".format(len(self.__booster_variants)))
+        output.append("Shield loadouts to be tested: [{0:n}]".format(len(booster_combinations) * len(test_settings.loadout_list)))
         output.append("Running calculations. Please wait...")
         output.append("")
         if message_queue:
@@ -607,7 +684,7 @@ class ShieldTester(object):
             if callback:
                 callback()
 
-        if self.__cpu_cores > 1 and (len(booster_combinations) * len(self.__loadouts_to_test)) > self.MP_CHUNK_SIZE:
+        if self.__cpu_cores > 1 and (len(booster_combinations) * len(test_settings.loadout_list)) > self.MP_CHUNK_SIZE:
             # 1 core is handling UI and this thread, the rest is working on running the calculations
             with multiprocessing.Pool(processes=self.__cpu_cores - 1) as pool:
                 last_i = 0
@@ -624,84 +701,31 @@ class ShieldTester(object):
 
         output.append("Calculations took {:.2f} seconds".format(time.time() - self.__runtime))
         output.append("")
-        output = list()
-        output.append("---- TEST SETUP ----")
-        output.append("Ship Type: [{}]".format(self.__selected_ship.name))
-        output.append("Shield Generator Size: [{}]".format(self.__selected_ship.highest_internal))
-        output.append("Shield Booster Count: [{0}]".format(self.__number_of_boosters_to_test))
-        output.append("Shield Cell Bank Hit Point Pool: [{}]".format(test_settings.scb_hitpoints))
-        output.append("Guardian Shield Reinforcement Hit Point Pool: [{}]".format(test_settings.guardian_hitpoints))
-        output.append("Access to Prismatic Shields: [{}]".format("Yes" if self.__use_prismatics else "No"))
-        output.append("Explosive DPS: [{}]".format(test_settings.explosive_dps))
-        output.append("Kinetic DPS: [{}]".format(test_settings.kinetic_dps))
-        output.append("Thermal DPS: [{}]".format(test_settings.thermal_dps))
-        output.append("Absolute DPS: [{}]".format(test_settings.absolute_dps))
-        output.append("Damage Effectiveness: [{:.0f}%]".format(test_settings.damage_effectiveness * 100))
-        output.append("")
         if message_queue:
             message_queue.put("\n".join(output))
         print("\n".join(output))  # in case there is a console
 
-        output = list()
-        output.append("---- TEST RESULTS ----")
-        if best_result.best_survival_time != 0:
-            # sort by survival time and put highest value to start of the list
-            if best_result.best_survival_time > 0:
-                output.append("Survival Time [s]: [{0:.3f}]".format(best_result.best_survival_time))
-            else:
-                output.append("Survival Time [s]: [Didn't die]")
-            shield_generator = best_result.best_loadout.shield_generator
-            output.append("Shield Generator: [{type}] - [{eng}] - [{exp}]"
-                          .format(type=shield_generator.name, eng=shield_generator.engineered_name, exp=shield_generator.experimental_name))
-            output.append("Shield Boosters:")
-            for shield_booster_variant in best_result.best_loadout.boosters:
-                output.append("  [{eng}] - [{exp}]".format(eng=shield_booster_variant.engineering, exp=shield_booster_variant.experimental))
+        print(best_result.get_output_string(test_settings.guardian_hitpoints))
 
-            output.append("")
-            exp_res, kin_res, therm_res, hp = best_result.best_loadout.get_total_values()
-            output.append("Shield Hitpoints: [{0:.3f}]".format(hp + test_settings.guardian_hitpoints))
-            output.append("Shield Regen: [{0} hp/s]".format(best_result.best_loadout.shield_generator.regen))
-            output.append("Shield Regen Time (from 50%): [{0:.2f} s]".format((hp + test_settings.guardian_hitpoints) /
-                                                                             (2 * best_result.best_loadout.shield_generator.regen)))
-            output.append("Explosive Resistance: [{0:.3f}]".format((1.0 - exp_res) * 100))
-            output.append("Kinetic Resistance: [{0:.3f}]".format((1.0 - kin_res) * 100))
-            output.append("Thermal Resistance: [{0:.3f}]".format((1.0 - therm_res) * 100))
-        else:
-            output.append("No test results. Please change DPS and/or damage effectiveness.")
+        return best_result
 
-        output_string = "\n".join(output)
-        if message_queue:
-            message_queue.put(output_string)
-        print(output_string)
-
-        # TODO write logfile
-        """ 
-        try:
-            self._write_log(test_data, output_string, self._test_name.get())
-        except Exception as e:
-            print("Error writing logfile")
-            print(e)
-            self.event_generate(self.EVENT_WARNING_WRITE_LOGFILE, when="tail")
+    def get_test_case(self) -> Optional[TestCase]:
         """
-
-    def create_test_case(self) -> Optional[TestCase]:
-        """
-        Create a new test case and store a copy of loadouts and booster variants in it.
+        Get a copy of the internal stored test case containing some settings already.
         Don't forget to add additional attributes like incoming DPS.
-        :return: TestCase or None if no loadouts are present (might need to select a ship first)
+        :return: TestCase or None if no ship was selected
         """
-        if self.__booster_variants_to_test and self.__loadouts_to_test:
-            shield_booster_variants = copy.deepcopy(self.__booster_variants_to_test)
-            loadouts = copy.deepcopy(self.__loadouts_to_test)
-            return TestCase(shield_booster_variants, loadouts)
-        else:
-            return None
+        if self.__test_case:
+            return copy.deepcopy(self.__test_case)
+
+        return None
 
     def select_ship(self, name: str):
         if name in self.__ships:
-            self.__selected_ship = self.__ships.get(name)
-            self.__loadouts_to_test = self.__create_loadouts()
-            self.__number_of_boosters_to_test = self.__selected_ship.utility_slots
+            self.__test_case = TestCase(self.__ships.get(name))
+            self.__test_case.loadout_list = self.__create_loadouts()
+            self.__test_case.number_of_boosters_to_test = self.__test_case.ship.utility_slots
+            self.__test_case.shield_booster_variants = self.__find_boosters_to_test()
 
     def load_data(self, file: str):
         """
