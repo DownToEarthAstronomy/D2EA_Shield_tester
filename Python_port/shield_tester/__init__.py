@@ -7,6 +7,9 @@ import time
 import itertools
 import multiprocessing
 import queue
+import gzip
+import base64
+import urllib.request
 from typing import List, Tuple, Any, Dict, Optional
 
 
@@ -581,6 +584,7 @@ class TestCase(object):
 class ShieldTester(object):
     MP_CHUNK_SIZE = 10000
     LOG_DIRECTORY = os.path.join(os.getcwd(), "Logs")
+    CORIOLIS_URL = "https://coriolis.io/import?data={}"
 
     def __init__(self):
         self.__ships = dict()
@@ -760,6 +764,21 @@ class ShieldTester(object):
 
         return best_result
 
+    def get_coriolis_link(self, loadout: LoadOut) -> str:
+        """
+        Generate a link to coriolis to import the current shield build.
+        :param loadout: loadout containing the build (e.g. get from results)
+        :return: 
+        """
+        if loadout and loadout.shield_generator:
+            loadout_str = loadout.generate_loadout_event(self.get_default_shield_generator_of_variant(loadout.shield_generator))
+            loadout_json = json.dumps(loadout_str).encode("utf-8")
+            loadout_gzip = gzip.compress(loadout_json)
+            loadout_b64 = base64.b64encode(loadout_gzip)
+            loadout_url = urllib.request.quote(loadout_b64)
+            return ShieldTester.CORIOLIS_URL.format(loadout_url)
+        return ""
+
     def get_test_case(self) -> Optional[TestCase]:
         """
         Get a copy of the internal stored test case containing some settings already.
@@ -768,7 +787,6 @@ class ShieldTester(object):
         """
         if self.__test_case:
             return copy.deepcopy(self.__test_case)
-
         return None
 
     def select_ship(self, name: str):
