@@ -669,9 +669,10 @@ class ShieldTester(object):
     # noinspection PyProtectedMember
     @use_prismatics.setter
     def use_prismatics(self, value: bool):
-        if self.__test_case and self.__test_case._use_prismatics != value:
+        if self.__test_case and self.__test_case.loadout_list and len(self.__test_case.loadout_list) > 0 and self.__test_case._use_prismatics != value:
             self.__test_case._use_prismatics = value
-            self.__test_case.loadout_list = self.__create_loadouts()
+            old_class = self.__test_case.loadout_list[0].shield_generator.module_class
+            self.__test_case.loadout_list = self.__create_loadouts(old_class)
 
     @property
     def number_of_tests(self) -> int:
@@ -713,14 +714,15 @@ class ShieldTester(object):
     def __find_boosters_to_test(self) -> List[ShieldBoosterVariant]:
         return copy.deepcopy(list(filter(lambda x: not (x.can_skip and self.__use_short_list), self.__booster_variants)))
 
-    def __create_loadouts(self) -> List[LoadOut]:
+    def __create_loadouts(self, module_class: int = 0) -> List[LoadOut]:
         """
         Create a list containing all relevant shield generators but no boosters
         """
         loadouts_to_test = list()
 
-        if self.__test_case:
-            module_class = self.__test_case.ship.highest_internal
+        if self.__test_case and self.__test_case.ship:
+            if module_class == 0:
+                module_class = self.__test_case.ship.highest_internal
 
             shield_generators = list()
             shield_generators += self.__shield_generators[ShieldGenerator.TYPE_BIWEAVE][module_class]
@@ -732,6 +734,30 @@ class ShieldTester(object):
             for sg in shield_generators:
                 loadouts_to_test.append(LoadOut(sg, self.__test_case.ship))
         return copy.deepcopy(loadouts_to_test)
+
+    # noinspection PyProtectedMember
+    def get_compatible_shield_generator_classes(self) -> Tuple[int, int]:
+        """
+        Find classes of shield generators that can be fitted to the selected ship.
+        :return: tuple: (min class, max class)
+        """
+        if self.__test_case and self.__test_case.ship:
+            min_class = 0
+            sg_classes = list(self.__shield_generators["normal"].keys())
+            sg_classes.sort()  # make sure they are in ascending order
+            for sg_class in sg_classes:
+                if self.__shield_generators["normal"][sg_class][0]._maxmass > self.__test_case.ship.hull_mass:
+                    min_class = sg_class
+                    break
+            return min_class, self.__test_case.ship.highest_internal
+        else:
+            return 0, 0
+
+    def create_loadouts_for_class(self, module_class: int):
+        min_class, max_class = self.get_compatible_shield_generator_classes()
+        sg_class = max(min_class, min(max_class, module_class))
+        if sg_class > 0:
+            self.__test_case.loadout_list = self.__create_loadouts(sg_class)
 
     def get_default_shield_generator_of_variant(self, sg_variant: ShieldGenerator) -> Optional[ShieldGenerator]:
         """

@@ -127,6 +127,14 @@ class ShieldTesterUi(tk.Tk):
         self._ship_select.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
 
         row += 1
+        tk.Label(self._left_frame, text="Class of shield generator").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._sg_class_slider = tk.Scale(self._left_frame, from_=1, to=8, orient=tk.HORIZONTAL, length=175, takefocus=True,
+                                         command=self._set_shield_class_command)
+        self._sg_class_slider.config(state=tk.DISABLED)
+        self._sg_class_slider.grid(row=row, column=1, sticky=tk.E, padx=padding, pady=padding)
+        self._lockable_ui_elements.append(self._sg_class_slider)
+
+        row += 1
         tk.Label(self._left_frame, text="Number of boosters").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
         self._booster_slider = tk.Scale(self._left_frame, from_=0, to=8, orient=tk.HORIZONTAL, length=175, takefocus=True,
                                         command=self._set_number_of_boosters_command)
@@ -262,6 +270,10 @@ class ShieldTesterUi(tk.Tk):
         t = threading.Thread(target=self._shield_tester.cancel)
         t.start()
 
+    def _set_shield_class_command(self, value=""):
+        if value:
+            self._shield_tester.create_loadouts_for_class(int(value))
+
     def _set_number_of_boosters_command(self, value=""):
         if self._test_case:
             self._test_case.number_of_boosters_to_test = int(value)
@@ -284,6 +296,9 @@ class ShieldTesterUi(tk.Tk):
                 slots = self._test_case.ship.utility_slots
                 self._booster_slider.config(to=slots)
                 self._booster_slider.set(slots)
+                min_class, max_class = self._shield_tester.get_compatible_shield_generator_classes()
+                self._sg_class_slider.config(from_=min_class, to=max_class)
+                self._sg_class_slider.set(max_class)
 
     def _open_coriolis_command(self):
         if self._test_result:
