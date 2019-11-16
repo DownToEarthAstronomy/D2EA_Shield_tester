@@ -644,7 +644,7 @@ class ShieldTester(object):
     def use_short_list(self, value: bool):
         if self.__test_case and self.__use_short_list != value:
             self.__use_short_list = value
-            self.__test_case.shield_booster_variants = copy.deepcopy(self.__find_boosters_to_test())
+            self.__test_case.shield_booster_variants = self.__find_boosters_to_test()
 
     @property
     def cpu_cores(self) -> int:
@@ -671,7 +671,7 @@ class ShieldTester(object):
     def use_prismatics(self, value: bool):
         if self.__test_case and self.__test_case._use_prismatics != value:
             self.__test_case._use_prismatics = value
-            self.__test_case.loadout_list = copy.deepcopy(self.__create_loadouts())
+            self.__test_case.loadout_list = self.__create_loadouts()
 
     @property
     def number_of_tests(self) -> int:
@@ -711,7 +711,7 @@ class ShieldTester(object):
             logfile.flush()
 
     def __find_boosters_to_test(self) -> List[ShieldBoosterVariant]:
-        return list(filter(lambda x: not (x.can_skip and self.__use_short_list), self.__booster_variants))
+        return copy.deepcopy(list(filter(lambda x: not (x.can_skip and self.__use_short_list), self.__booster_variants)))
 
     def __create_loadouts(self) -> List[LoadOut]:
         """
@@ -723,15 +723,15 @@ class ShieldTester(object):
             module_class = self.__test_case.ship.highest_internal
 
             shield_generators = list()
-            shield_generators += self.__shield_generators.get(ShieldGenerator.TYPE_BIWEAVE).get(module_class)
-            shield_generators += self.__shield_generators.get(ShieldGenerator.TYPE_NORMAL).get(module_class)
+            shield_generators += self.__shield_generators[ShieldGenerator.TYPE_BIWEAVE][module_class]
+            shield_generators += self.__shield_generators[ShieldGenerator.TYPE_NORMAL][module_class]
             # noinspection PyProtectedMember
             if self.__test_case._use_prismatics:
-                shield_generators += self.__shield_generators.get(ShieldGenerator.TYPE_PRISMATIC).get(module_class)
+                shield_generators += self.__shield_generators[ShieldGenerator.TYPE_PRISMATIC][module_class]
 
             for sg in shield_generators:
                 loadouts_to_test.append(LoadOut(sg, self.__test_case.ship))
-        return loadouts_to_test
+        return copy.deepcopy(loadouts_to_test)
 
     def get_default_shield_generator_of_variant(self, sg_variant: ShieldGenerator) -> Optional[ShieldGenerator]:
         """
@@ -766,8 +766,12 @@ class ShieldTester(object):
         self.__runtime = time.time()
         output = list()
 
+        # ensure booster amount is valid
+        booster_amount = test_case.number_of_boosters_to_test
+        booster_amount = max(0, min(test_case.ship.utility_slots, booster_amount))
         # use built in itertools and assume booster ids are starting at 1 and that there are no gaps
-        booster_combinations = list(itertools.combinations_with_replacement(range(0, len(test_case.shield_booster_variants)), test_case.number_of_boosters_to_test))
+        booster_combinations = list(itertools.combinations_with_replacement(range(0, len(test_case.shield_booster_variants)), booster_amount))
+
         output.append("------------ TEST RUN ------------")
         output.append("        Shield Booster Count: [{0}]".format(test_case.number_of_boosters_to_test))
         output.append("   Shield Generator Variants: [{0}]".format(len(test_case.loadout_list)))
@@ -874,12 +878,20 @@ class ShieldTester(object):
             return self.__test_case
         return None
 
-    def select_ship(self, name: str):
+    def select_ship(self, name: str) -> bool:
+        """
+        Select a ship by its name. Get names from the property ship_names.
+        This creates a new TestCase with the selected ship and the highest possible shield generator variants pre-selected.
+        :param name: Name of the ship
+        :return: True if loaded successfully, False otherwise
+        """
         if name in self.__ships:
-            self.__test_case = TestCase(copy.deepcopy(self.__ships.get(name)))
-            self.__test_case.loadout_list = copy.deepcopy(self.__create_loadouts())
+            self.__test_case = TestCase(copy.deepcopy(self.__ships[name]))
+            self.__test_case.loadout_list = self.__create_loadouts()
             self.__test_case.number_of_boosters_to_test = self.__test_case.ship.utility_slots
-            self.__test_case.shield_booster_variants = copy.deepcopy(self.__find_boosters_to_test())
+            self.__test_case.shield_booster_variants = self.__find_boosters_to_test()
+            return True
+        return False
 
     def cancel(self):
         self.__cancel = True

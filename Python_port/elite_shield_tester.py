@@ -135,13 +135,6 @@ class ShieldTesterUi(tk.Tk):
         self._lockable_ui_elements.append(self._booster_slider)
 
         row += 1
-        tk.Label(self._left_frame, text="Damage effectiveness in %").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
-        self._effectiveness_slider = tk.Scale(self._left_frame, from_=1, to=100, orient=tk.HORIZONTAL, length=175, takefocus=True)
-        self._effectiveness_slider.set(65)
-        self._effectiveness_slider.grid(row=row, column=1, sticky=tk.E, padx=padding, pady=padding)
-        self._lockable_ui_elements.append(self._effectiveness_slider)
-
-        row += 1
         tk.Label(self._left_frame, text="Shield cell bank hit point pool").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
         self._scb_hitpoints = IntegerEntry(self._left_frame)
         self._scb_hitpoints.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
@@ -179,6 +172,13 @@ class ShieldTesterUi(tk.Tk):
         self._absolute_dps_entry.insert(0, 10)
         self._absolute_dps_entry.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
         self._lockable_ui_elements.append(self._absolute_dps_entry)
+
+        row += 1
+        tk.Label(self._left_frame, text="Damage effectiveness in %").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._effectiveness_slider = tk.Scale(self._left_frame, from_=1, to=100, orient=tk.HORIZONTAL, length=175, takefocus=True)
+        self._effectiveness_slider.set(65)
+        self._effectiveness_slider.grid(row=row, column=1, sticky=tk.E, padx=padding, pady=padding)
+        self._lockable_ui_elements.append(self._effectiveness_slider)
 
         row += 1
         tk.Label(self._left_frame, text="Access to prismatic shields").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
@@ -278,12 +278,12 @@ class ShieldTesterUi(tk.Tk):
     def _ship_select_command(self, value=None):
         if self._ship_select_var.get():
             # select chosen ship
-            self._shield_tester.select_ship(self._ship_select_var.get())
-            # get test case for the chosen ship
-            self._test_case = self._shield_tester.get_test_case()
-            slots = self._test_case.ship.utility_slots
-            self._booster_slider.config(to=slots)
-            self._booster_slider.set(slots)
+            if self._shield_tester.select_ship(self._ship_select_var.get()):
+                # get test case for the chosen ship
+                self._test_case = self._shield_tester.get_test_case()
+                slots = self._test_case.ship.utility_slots
+                self._booster_slider.config(to=slots)
+                self._booster_slider.set(slots)
 
     def _open_coriolis_command(self):
         if self._test_result:
@@ -313,11 +313,12 @@ class ShieldTesterUi(tk.Tk):
                 self._ship_select_var.set("Anaconda")
             else:
                 self._ship_select_var.set(ship_names[0])
+            self._ship_select.config(takefocus=True)
             self._ship_select_command()
 
         else:
             if tk.messagebox.askretrycancel(
-                    "No data", "Could not read JSON file.\nPlease place them in the same directory as this program.\n"
+                    "No data", "Could not read JSON file.\nPlease place it in the same directory as this program.\n"
                     "Required:{data}".format(data=os.path.basename(DATA_FILE))):
                 self._load_data()
 
