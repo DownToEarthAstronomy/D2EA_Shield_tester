@@ -348,8 +348,9 @@ class ShieldTesterUi(tk.Tk):
                 self._sg_class_slider.set(max_class)
 
     def _open_coriolis_command(self):
-        if self._active_tab_data and self._active_tab_data[1]:
-            webbrowser.open(self._shield_tester.get_coriolis_link(self._active_tab_data[1].best_loadout))
+        data = self._tabs.get(self._active_tab_name, None)
+        if data and data.test_result:
+            webbrowser.open(self._shield_tester.get_coriolis_link(data.test_result.best_loadout))
 
     def _set_number_of_tests_label(self):
         self._number_of_tests_label.config(text="{:n}".format(self._shield_tester.number_of_tests))

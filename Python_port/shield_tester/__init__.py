@@ -427,7 +427,7 @@ class LoadOut(object):
         """
         if self.boosters and len(self.boosters) > 0:
             return self.calculate_total_values(*ShieldBoosterVariant.calculate_booster_bonuses(self.boosters))
-        return None
+        return self.calculate_total_values(1, 1, 1, 1)
 
     # noinspection PyProtectedMember
     def calculate_total_values(self, exp_modifier, kin_modifier, therm_modifier, hitpoint_bonus) -> Tuple[float, float, float, float]:
