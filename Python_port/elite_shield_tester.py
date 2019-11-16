@@ -81,6 +81,7 @@ class TextEntry(CustomEntry):
 class ShieldTesterUi(tk.Tk):
     EVENT_COMPUTE_OUTPUT = "<<EventComputeOutput>>"
     EVENT_COMPUTE_COMPLETE = "<<EventComputeComplete>>"
+    EVENT_COMPUTE_CANCELLED = "<<EventComputeCancelled>>"
     EVENT_PROGRESS_BAR_STEP = "<<EventProgressBarStep>>"
     EVENT_WARNING_WRITE_LOGFILE = "<<EventShowWarningWriteLogfile>>"
 
@@ -95,6 +96,7 @@ class ShieldTesterUi(tk.Tk):
 
         self.bind(self.EVENT_COMPUTE_OUTPUT, lambda e: self._event_process_output(e))
         self.bind(self.EVENT_COMPUTE_COMPLETE, lambda e: self._event_compute_complete(e))
+        self.bind(self.EVENT_COMPUTE_CANCELLED, lambda e: self._event_compute_cancelled(e))
         self.bind(self.EVENT_PROGRESS_BAR_STEP, lambda e: self._event_progress_bar_step(e))
         self.bind(self.EVENT_WARNING_WRITE_LOGFILE, lambda e: self._event_show_warning_logfile(e))
         self._message_queue = queue.SimpleQueue()
@@ -257,8 +259,8 @@ class ShieldTesterUi(tk.Tk):
         self.after(200, set_window_size)
 
     def _cancel_command(self):
-        # TODO
-        pass
+        t = threading.Thread(target=self._shield_tester.cancel)
+        t.start()
 
     def _set_number_of_boosters_command(self, value=""):
         if self._test_case:
@@ -335,18 +337,29 @@ class ShieldTesterUi(tk.Tk):
         if self._progress_bar:
             self._progress_bar.step()
 
-    def _event_compute_complete(self, event):
+    def _event_compute_cancelled(self, event):
         self._unlock_ui_elements()
         self._progress_bar.stop()
         self._write_to_text_widget("\n")
-        self._write_to_text_widget(self._test_result.get_output_string())
-        self._coriolis_button.config(state=tk.NORMAL)
-        try:
-            self._shield_tester.write_log(self._test_case, self._test_result, self._test_name.get())
-        except Exception as e:
-            print("Error writing logfile")
-            print(e)
-            self.event_generate(self.EVENT_WARNING_WRITE_LOGFILE, when="tail")
+        self._write_to_text_widget("Cancelled")
+        self._coriolis_button.config(state=tk.DISABLED)
+        self._cancel_button.config(state=tk.DISABLED)
+
+    def _event_compute_complete(self, event):
+        if self._test_result:
+            # self._test_result will be None if the test was cancelled
+            self._unlock_ui_elements()
+            self._progress_bar.stop()
+            self._write_to_text_widget("\n")
+            self._write_to_text_widget(self._test_result.get_output_string())
+            self._coriolis_button.config(state=tk.NORMAL)
+            self._cancel_button.config(state=tk.DISABLED)
+            try:
+                self._shield_tester.write_log(self._test_case, self._test_result, self._test_name.get())
+            except Exception as e:
+                print("Error writing logfile")
+                print(e)
+                self.event_generate(self.EVENT_WARNING_WRITE_LOGFILE, when="tail")
 
     def _event_show_warning_logfile(self, event):
         messagebox.showwarning("Could not write logfile.", "Could not write logfile.")
@@ -357,10 +370,13 @@ class ShieldTesterUi(tk.Tk):
         self._text_widget.config(state=tk.DISABLED)
 
     def _compute_callback(self, value: int):
+        # ensure thread safe communication
         if value == st.ShieldTester.CALLBACK_STEP:
             self.event_generate(self.EVENT_PROGRESS_BAR_STEP, when="tail")
         elif value == st.ShieldTester.CALLBACK_MESSAGE:
             self.event_generate(self.EVENT_COMPUTE_OUTPUT, when="tail")
+        elif value == st.ShieldTester.CALLBACK_CANCELLED:
+            self.event_generate(self.EVENT_COMPUTE_CANCELLED, when="tail")
 
     def _compute_background(self):
         self._test_result = self._shield_tester.compute(self._test_case, callback=self._compute_callback, message_queue=self._message_queue)
@@ -370,10 +386,11 @@ class ShieldTesterUi(tk.Tk):
         self._lock_ui_elements()
         self._coriolis_button.config(state=tk.DISABLED)
 
-        # clear text widget
+        # clear old test data
         self._text_widget.config(state=tk.NORMAL)
         self._text_widget.delete("1.0", tk.END)
         self._text_widget.config(state=tk.DISABLED)
+        self._test_result = None
 
         # get data from UI
         self._test_case.number_of_boosters_to_test = self._booster_slider.get()
@@ -390,6 +407,7 @@ class ShieldTesterUi(tk.Tk):
         steps = int(self._shield_tester.number_of_tests / len(self._test_case.loadout_list) / st.ShieldTester.MP_CHUNK_SIZE) + 1
         self._progress_bar.config(maximum=steps)
 
+        self._cancel_button.config(state=tk.NORMAL)
         t = threading.Thread(target=self._compute_background)
         t.start()
 

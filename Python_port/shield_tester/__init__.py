@@ -618,6 +618,7 @@ class ShieldTester(object):
 
     CALLBACK_MESSAGE = 1
     CALLBACK_STEP = 2
+    CALLBACK_CANCELLED = 3
 
     def __init__(self):
         self.__ships = dict()
@@ -632,6 +633,8 @@ class ShieldTester(object):
 
         self.__runtime = 0
         self.__cpu_cores = os.cpu_count()
+        self.__cancel = False
+        self.__pool = None  # type: multiprocessing.Pool
 
     @property
     def use_short_list(self) -> bool:
@@ -746,10 +749,12 @@ class ShieldTester(object):
         If set, the callback will be called [<number of tests> / test_case.loadout_list / MP_CHUNK_SIZE] times (+2 if queue is set).
         Callback function will be called with CALLBACK_MESSAGE if there is a new message and
                                               CALLBACK_STEP is used for each step
+        Calling cancel() will stop the execution of this method. Some callbacks might be called before that happens.
         :param test_case: settings of test case
         :param callback: optional callback using an int as argument
         :param message_queue: message queue containing some output messages
         """
+        self.__cancel = False
         if not test_case or not test_case.shield_booster_variants or not test_case.loadout_list:
             # nothing to test
             # TODO maybe raise exception
@@ -796,17 +801,41 @@ class ShieldTester(object):
             for j in range(0, len(l), n):
                 yield l[j:j + n]
 
+        if self.__cancel:
+            print("Cancelled")
+            if callback:
+                callback(ShieldTester.CALLBACK_CANCELLED)
+            return None
         if self.__cpu_cores > 1 and (len(booster_combinations) * len(test_case.loadout_list)) > ShieldTester.MP_CHUNK_SIZE:
             # 1 core is handling UI and this thread, the rest is working on running the calculations
             with multiprocessing.Pool(processes=self.__cpu_cores - 1) as pool:
+                self.__pool = pool
                 for chunk in chunks(booster_combinations, ShieldTester.MP_CHUNK_SIZE):
+                    if self.__cancel:
+                        print("Cancelled")
+                        self.__pool = None
+                        if callback:
+                            callback(ShieldTester.CALLBACK_CANCELLED)
+                        return None
                     pool.apply_async(TestCase.test_case, args=(test_case, chunk), callback=apply_async_callback)
                 pool.close()
                 pool.join()
+                self.__pool = None
         else:
             for chunk in chunks(booster_combinations, ShieldTester.MP_CHUNK_SIZE):
+                if self.__cancel:
+                    print("Cancelled")
+                    if callback:
+                        callback(ShieldTester.CALLBACK_CANCELLED)
+                    return None
                 result = TestCase.test_case(test_case, chunk)
                 apply_async_callback(result)  # can use the same function here as mp.Pool would
+
+        if self.__cancel:
+            print("Cancelled")
+            if callback:
+                callback(ShieldTester.CALLBACK_CANCELLED)
+            return None
 
         output.append("Calculations took {:.2f} seconds".format(time.time() - self.__runtime))
         output.append("")
@@ -851,6 +880,12 @@ class ShieldTester(object):
             self.__test_case.loadout_list = copy.deepcopy(self.__create_loadouts())
             self.__test_case.number_of_boosters_to_test = self.__test_case.ship.utility_slots
             self.__test_case.shield_booster_variants = copy.deepcopy(self.__find_boosters_to_test())
+
+    def cancel(self):
+        self.__cancel = True
+        if self.__pool:
+            self.__pool.terminate()
+            self.__pool = None
 
     def load_data(self, file: str):
         """
