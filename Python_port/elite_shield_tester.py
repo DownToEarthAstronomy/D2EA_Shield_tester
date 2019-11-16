@@ -279,6 +279,7 @@ class ShieldTesterUi(tk.Tk):
         self._tab_parent.rowconfigure(0, weight=1)
         self._tab_parent.columnconfigure(0, weight=1)
         self._tab_parent.bind(ShieldTesterUi.EVENT_TAB_CHANGED, self._event_tab_changed)
+        # self._tab_parent.bind("<Button-3>", self._event_close_tab)  # do this when lock and unlocking UI
 
         self._text_widget_placeholder = scrolledtext.ScrolledText(self._tab_parent, height=27, width=75)
         self._text_widget_placeholder.config(state=tk.DISABLED)
@@ -388,18 +389,31 @@ class ShieldTesterUi(tk.Tk):
     def _lock_ui_elements(self):
         for element in self._lockable_ui_elements:
             element.config(state=tk.DISABLED)
+        self._tab_parent.unbind("<Button-3>")
 
     def _unlock_ui_elements(self):
         for element in self._lockable_ui_elements:
             element.config(state=tk.NORMAL)
+        self._tab_parent.bind("<Button-3>", self._event_close_tab)
 
     def _event_tab_changed(self, event):
         selected_tab = event.widget.select()
-        self._active_tab_name = event.widget.tab(selected_tab, "text")
-        data = self._tabs.get(self._active_tab_name, None)
-        if data and data.test_result:
-            self._coriolis_button.config(state=tk.NORMAL)
-        else:
+        if selected_tab:
+            self._active_tab_name = event.widget.tab(selected_tab, "text")
+            data = self._tabs.get(self._active_tab_name, None)
+            if data and data.test_result:
+                self._coriolis_button.config(state=tk.NORMAL)
+            else:
+                self._coriolis_button.config(state=tk.DISABLED)
+
+    def _event_close_tab(self, event):
+        # noinspection PyProtectedMember
+        clicked_tab = self._tab_parent.tk.call(self._tab_parent._w, "identify", "tab", event.x, event.y)
+        if clicked_tab != "":
+            tab_name = event.widget.tab(clicked_tab, "text")
+            self._tab_parent.forget(clicked_tab)
+            self._tabs.pop(tab_name)
+        if len(self._tabs) == 0:
             self._coriolis_button.config(state=tk.DISABLED)
 
     def _event_process_output(self, event):
