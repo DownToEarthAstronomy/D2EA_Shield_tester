@@ -18,6 +18,7 @@ import threading
 import queue
 import webbrowser
 import tkinter as tk
+from typing import Dict, List, Optional
 from tkinter import ttk, messagebox, scrolledtext
 import shield_tester as st
 
@@ -78,12 +79,19 @@ class TextEntry(CustomEntry):
             return ""
 
 
+class TabData(object):
+    def __init__(self, tab: scrolledtext.ScrolledText = None, test_result: st.TestResult = None):
+        self.tab = tab
+        self.test_result = test_result
+
+
 class ShieldTesterUi(tk.Tk):
     EVENT_COMPUTE_OUTPUT = "<<EventComputeOutput>>"
     EVENT_COMPUTE_COMPLETE = "<<EventComputeComplete>>"
     EVENT_COMPUTE_CANCELLED = "<<EventComputeCancelled>>"
     EVENT_PROGRESS_BAR_STEP = "<<EventProgressBarStep>>"
     EVENT_WARNING_WRITE_LOGFILE = "<<EventShowWarningWriteLogfile>>"
+    EVENT_TAB_CHANGED = "<<NotebookTabChanged>>"
 
     def __init__(self):
         super().__init__()
@@ -92,20 +100,22 @@ class ShieldTesterUi(tk.Tk):
 
         self._shield_tester = st.ShieldTester()
         self._test_case = None  # type: st.TestCase
-        self._test_result = None  # type: st.TestResult
+        self._lockable_ui_elements = list()
 
-        self.bind(self.EVENT_COMPUTE_OUTPUT, lambda e: self._event_process_output(e))
-        self.bind(self.EVENT_COMPUTE_COMPLETE, lambda e: self._event_compute_complete(e))
-        self.bind(self.EVENT_COMPUTE_CANCELLED, lambda e: self._event_compute_cancelled(e))
-        self.bind(self.EVENT_PROGRESS_BAR_STEP, lambda e: self._event_progress_bar_step(e))
-        self.bind(self.EVENT_WARNING_WRITE_LOGFILE, lambda e: self._event_show_warning_logfile(e))
+        # tab_name used as key for tabs
+        self._active_tab_name = ""
+        self._tabs = dict()  # type: Dict[str, TabData]
+
+        self.bind(ShieldTesterUi.EVENT_COMPUTE_OUTPUT, lambda e: self._event_process_output(e))
+        self.bind(ShieldTesterUi.EVENT_COMPUTE_COMPLETE, lambda e: self._event_compute_complete(e))
+        self.bind(ShieldTesterUi.EVENT_COMPUTE_CANCELLED, lambda e: self._event_compute_cancelled(e))
+        self.bind(ShieldTesterUi.EVENT_PROGRESS_BAR_STEP, lambda e: self._event_progress_bar_step(e))
+        self.bind(ShieldTesterUi.EVENT_WARNING_WRITE_LOGFILE, lambda e: self._event_show_warning_logfile(e))
         self._message_queue = queue.SimpleQueue()
 
         # add some padding
         tk.Frame(self, width=10, height=10).grid(row=0, column=0, sticky=tk.N)
         tk.Frame(self, width=10, height=10).grid(row=2, column=3, sticky=tk.N)
-
-        self._lockable_ui_elements = list()
 
         def headline(frame, title, h_row):
             # headline, use this instead of LabelFrame to keep using the same grid
@@ -263,9 +273,16 @@ class ShieldTesterUi(tk.Tk):
         # right frame
         right_frame = tk.LabelFrame(self, borderwidth=1, text="Output")
         right_frame.grid(row=1, column=2, sticky=tk.NSEW)
-        self._text_widget = scrolledtext.ScrolledText(right_frame, height=27, width=75)
-        self._text_widget.grid(row=0, column=0, padx=padding, pady=padding, sticky=tk.NSEW)
-        self._text_widget.config(state=tk.DISABLED)
+
+        self._tab_parent = ttk.Notebook(right_frame)
+        self._tab_parent.grid(row=0, column=0, padx=padding, pady=padding, sticky=tk.NSEW)
+        self._tab_parent.rowconfigure(0, weight=1)
+        self._tab_parent.columnconfigure(0, weight=1)
+        self._tab_parent.bind(ShieldTesterUi.EVENT_TAB_CHANGED, self._event_tab_changed)
+
+        self._text_widget_placeholder = scrolledtext.ScrolledText(self._tab_parent, height=27, width=75)
+        self._text_widget_placeholder.config(state=tk.DISABLED)
+        self._text_widget_placeholder.grid(row=0, column=0, padx=padding, pady=padding, sticky=tk.NSEW)
 
         # set behaviour for resizing
         self.rowconfigure(1, weight=1)
@@ -278,7 +295,23 @@ class ShieldTesterUi(tk.Tk):
 
         def set_window_size():
             self.minsize(self.winfo_reqwidth(), self.winfo_reqheight())
+
         self.after(200, set_window_size)
+
+    def _add_tab(self, name: str) -> TabData:
+        if name not in self._tabs:
+            if len(self._tabs) == 0:
+                self._text_widget_placeholder.grid_remove()  # remove placeholder
+            new_tab = scrolledtext.ScrolledText(self._tab_parent, height=27, width=75)
+            new_tab.config(state=tk.DISABLED)
+            self._tab_parent.add(new_tab, text=name)
+            return self._tabs.setdefault(name, TabData(new_tab))
+
+        return self._tabs[name]
+
+    def _get_name_for_tab(self):
+        """ Either use the entered test name or use the ship's name"""
+        return self._test_name.get() if self._test_name.get() else self._test_case.ship.name
 
     def _cancel_command(self):
         t = threading.Thread(target=self._shield_tester.cancel)
@@ -315,8 +348,8 @@ class ShieldTesterUi(tk.Tk):
                 self._sg_class_slider.set(max_class)
 
     def _open_coriolis_command(self):
-        if self._test_result:
-            webbrowser.open(self._shield_tester.get_coriolis_link(self._test_result.best_loadout))
+        if self._active_tab_data and self._active_tab_data[1]:
+            webbrowser.open(self._shield_tester.get_coriolis_link(self._active_tab_data[1].best_loadout))
 
     def _set_number_of_tests_label(self):
         self._number_of_tests_label.config(text="{:n}".format(self._shield_tester.number_of_tests))
@@ -359,6 +392,15 @@ class ShieldTesterUi(tk.Tk):
         for element in self._lockable_ui_elements:
             element.config(state=tk.NORMAL)
 
+    def _event_tab_changed(self, event):
+        selected_tab = event.widget.select()
+        self._active_tab_name = event.widget.tab(selected_tab, "text")
+        data = self._tabs.get(self._active_tab_name, None)
+        if data and data.test_result:
+            self._coriolis_button.config(state=tk.NORMAL)
+        else:
+            self._coriolis_button.config(state=tk.DISABLED)
+
     def _event_process_output(self, event):
         if not self._message_queue.empty():
             self._write_to_text_widget(self._message_queue.get_nowait())
@@ -376,16 +418,20 @@ class ShieldTesterUi(tk.Tk):
         self._cancel_button.config(state=tk.DISABLED)
 
     def _event_compute_complete(self, event):
-        if self._test_result:
-            # self._test_result will be None if the test was cancelled
-            self._unlock_ui_elements()
-            self._progress_bar.stop()
+        self._unlock_ui_elements()
+        self._progress_bar.stop()
+        self._cancel_button.config(state=tk.DISABLED)
+
+        data = self._tabs.get(self._active_tab_name)
+        if data and data.test_result:
             self._write_to_text_widget("\n")
-            self._write_to_text_widget(self._test_result.get_output_string())
+            self._write_to_text_widget(data.test_result.get_output_string())
             self._coriolis_button.config(state=tk.NORMAL)
-            self._cancel_button.config(state=tk.DISABLED)
             try:
-                self._shield_tester.write_log(self._test_case, self._test_result, self._test_name.get())
+                if not self._test_name.get():
+                    self._shield_tester.write_log(self._test_case, data.test_result)
+                else:
+                    self._shield_tester.write_log(self._test_case, data.test_result, self._test_name.get())
             except Exception as e:
                 print("Error writing logfile")
                 print(e)
@@ -395,9 +441,11 @@ class ShieldTesterUi(tk.Tk):
         messagebox.showwarning("Could not write logfile.", "Could not write logfile.")
 
     def _write_to_text_widget(self, text):
-        self._text_widget.config(state=tk.NORMAL)
-        self._text_widget.insert(tk.END, text)
-        self._text_widget.config(state=tk.DISABLED)
+        text_widget = self._tabs.get(self._active_tab_name, None)
+        if text_widget and text_widget.tab:
+            text_widget.tab.config(state=tk.NORMAL)
+            text_widget.tab.insert(tk.END, text)
+            text_widget.tab.config(state=tk.DISABLED)
 
     def _compute_callback(self, value: int):
         # ensure thread safe communication
@@ -409,7 +457,10 @@ class ShieldTesterUi(tk.Tk):
             self.event_generate(self.EVENT_COMPUTE_CANCELLED, when="tail")
 
     def _compute_background(self):
-        self._test_result = self._shield_tester.compute(self._test_case, callback=self._compute_callback, message_queue=self._message_queue)
+        data = self._tabs.get(self._active_tab_name)
+        test_results = self._shield_tester.compute(self._test_case, callback=self._compute_callback, message_queue=self._message_queue)
+        if data:
+            data.test_result = test_results
         self.event_generate(self.EVENT_COMPUTE_COMPLETE, when="tail")
 
     def _compute(self):
@@ -417,10 +468,13 @@ class ShieldTesterUi(tk.Tk):
         self._coriolis_button.config(state=tk.DISABLED)
 
         # clear old test data
-        self._text_widget.config(state=tk.NORMAL)
-        self._text_widget.delete("1.0", tk.END)
-        self._text_widget.config(state=tk.DISABLED)
-        self._test_result = None
+        self._active_tab_name = self._get_name_for_tab()
+        tab_data = self._add_tab(self._active_tab_name)
+        self._tab_parent.select(tab_data.tab)
+        tab_data.tab.config(state=tk.NORMAL)
+        tab_data.tab.delete("1.0", tk.END)
+        tab_data.tab.config(state=tk.DISABLED)
+        tab_data.test_result = None
 
         # get data from UI
         self._test_case.number_of_boosters_to_test = self._booster_slider.get()
@@ -436,6 +490,9 @@ class ShieldTesterUi(tk.Tk):
 
         steps = int(self._shield_tester.number_of_tests / len(self._test_case.loadout_list) / st.ShieldTester.MP_CHUNK_SIZE) + 1
         self._progress_bar.config(maximum=steps)
+
+        self._write_to_text_widget(self._test_case.get_output_string())
+        self._write_to_text_widget("\n")
 
         self._cancel_button.config(state=tk.NORMAL)
         t = threading.Thread(target=self._compute_background)

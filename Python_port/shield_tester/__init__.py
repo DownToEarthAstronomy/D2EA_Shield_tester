@@ -787,7 +787,8 @@ class ShieldTester(object):
             print("Can't test nothing")
             return
 
-        print(test_case.get_output_string())
+        if not queue:
+            print(test_case.get_output_string())
 
         self.__runtime = time.time()
         output = list()
@@ -809,7 +810,8 @@ class ShieldTester(object):
             message_queue.put("\n".join(output))
             if callback:
                 callback(ShieldTester.CALLBACK_MESSAGE)
-        print("\n".join(output))  # in case there is a console
+        else:
+            print("\n".join(output))  # in case there is a console
         output = list()
 
         best_result = TestResult(best_survival_time=0)
@@ -873,9 +875,9 @@ class ShieldTester(object):
             message_queue.put("\n".join(output))
             if callback:
                 callback(ShieldTester.CALLBACK_MESSAGE)
-        print("\n".join(output))  # in case there is a console
-
-        print(best_result.get_output_string(test_case.guardian_hitpoints))
+        else:
+            print("\n".join(output))  # in case there is a console
+            print(best_result.get_output_string(test_case.guardian_hitpoints))
 
         return best_result
 
