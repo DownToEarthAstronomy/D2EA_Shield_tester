@@ -523,7 +523,7 @@ class TestCase(object):
         self.shield_booster_variants = None  # type: List[ShieldBoosterVariant]
         self.loadout_list = None  # type: List[LoadOut]
         self.number_of_boosters_to_test = 0
-        self.use_prismatics = True
+        self._use_prismatics = True  # set in ShieldTester!
 
     def get_output_string(self) -> str:
         """
@@ -541,7 +541,7 @@ class TestCase(object):
         output.append("         Shield Booster Count: [{0}]".format(self.number_of_boosters_to_test))
         output.append("             Shield Cell Bank: [{}]".format(self.scb_hitpoints))
         output.append("Guardian Shield Reinforcement: [{}]".format(self.guardian_hitpoints))
-        output.append("  Access to Prismatic Shields: [{}]".format("Yes" if self.use_prismatics else "No"))
+        output.append("  Access to Prismatic Shields: [{}]".format("Yes" if self._use_prismatics else "No"))
         output.append("                Explosive DPS: [{}]".format(self.explosive_dps))
         output.append("                  Kinetic DPS: [{}]".format(self.kinetic_dps))
         output.append("                  Thermal DPS: [{}]".format(self.thermal_dps))
@@ -655,14 +655,16 @@ class ShieldTester(object):
     @property
     def use_prismatics(self) -> bool:
         if self.__test_case:
-            return self.__test_case.use_prismatics
+            # noinspection PyProtectedMember
+            return self.__test_case._use_prismatics
         else:
             return True
 
+    # noinspection PyProtectedMember
     @use_prismatics.setter
     def use_prismatics(self, value: bool):
-        if self.__test_case and self.__test_case.use_prismatics != value:
-            self.__test_case.use_prismatics = value
+        if self.__test_case and self.__test_case._use_prismatics != value:
+            self.__test_case._use_prismatics = value
             self.__test_case.loadout_list = copy.deepcopy(self.__create_loadouts())
 
     @property
@@ -717,7 +719,8 @@ class ShieldTester(object):
             shield_generators = list()
             shield_generators += self.__shield_generators.get(ShieldGenerator.TYPE_BIWEAVE).get(module_class)
             shield_generators += self.__shield_generators.get(ShieldGenerator.TYPE_NORMAL).get(module_class)
-            if self.__test_case.use_prismatics:
+            # noinspection PyProtectedMember
+            if self.__test_case._use_prismatics:
                 shield_generators += self.__shield_generators.get(ShieldGenerator.TYPE_PRISMATIC).get(module_class)
 
             for sg in shield_generators:
