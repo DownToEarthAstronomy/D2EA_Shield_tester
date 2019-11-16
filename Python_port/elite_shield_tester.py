@@ -10,32 +10,19 @@ Build to exe using the command: "pyinstaller --noconsole elite_shield_tester.py"
 Don't forget to copy csv files into the exe's directory afterwards.
 """
 
-import csv
 import os
-import sys
-import math
 import re
 import locale
-import time
-import itertools
 import multiprocessing
 import threading
 import queue
 import tkinter as tk
 from tkinter import ttk, messagebox, scrolledtext
-from typing import List, Dict, Tuple
+import shield_tester as st
 
 # Configuration
-VERSION = "0.5"
-
-path = os.pardir
-if re.match(".*elite_shield_tester\.exe", sys.executable):
-    path = os.getcwd()
-FILE_SHIELD_BOOSTER_VARIANTS_SHORT = os.path.join(path, "ShieldBoosterVariants_short.csv")
-FILE_SHIELD_BOOSTER_VARIANTS = os.path.join(path, "ShieldBoosterVariants.csv")
-FILE_SHIELD_GENERATOR_VARIANTS = os.path.join(path, "ShieldGeneratorVariants.csv")
-LOG_DIRECTORY = os.path.join(os.getcwd(), "Logs")
-MP_CHUNK_SIZE = 10000
+VERSION = "1.0 beta"
+DATA_FILE = os.path.join(os.getcwd(), "data.json")
 
 
 class CustomEntry(tk.Entry):
@@ -90,66 +77,7 @@ class TextEntry(CustomEntry):
             return ""
 
 
-class ShieldBoosterVariant:
-    def __init__(self, csv_row):
-        self.id = int(csv_row["ID"])
-        self.engineering = csv_row["Engineering"]
-        self.experimental = csv_row["Experimental"]
-        self.shieldStrengthBonus = float(csv_row["ShieldStrengthBonus"])
-        self.expResBonus = 1.0 - float(csv_row["ExpResBonus"])
-        self.kinResBonus = 1.0 - float(csv_row["KinResBonus"])
-        self.thermResBonus = 1.0 - float(csv_row["ThermResBonus"])
-
-
-class ShieldGeneratorVariant:
-    def __init__(self, csv_row):
-        self.id = int(csv_row["ID"])
-        self.type = csv_row["Type"]
-        self.engineering = csv_row["Engineering"]
-        self.experimental = csv_row["Experimental"]
-        self.shieldStrength = int(csv_row["ShieldStrength"])
-        self.regenRate = float(csv_row["RegenRate"])
-        self.expRes = 1.0 - float(csv_row["ExpRes"])
-        self.kinRes = 1.0 - float(csv_row["KinRes"])
-        self.thermRes = 1.0 - float(csv_row["ThermRes"])
-
-
-class LoadOutStat:
-    def __init__(self, hitpoints: float = 0.0, regen_rate: float = 0.0, explosive_resistance: float = 0.0,
-                 kinetic_resistance: float = 0.0, thermal_resistance: float = 0.0):
-        self.hitPoints = hitpoints
-        self.regenRate = regen_rate
-        self.explosiveResistance = explosive_resistance
-        self.kineticResistance = kinetic_resistance
-        self.thermalResistance = thermal_resistance
-
-
-class ShieldTesterData:
-    def __init__(self):
-        self.number_of_boosters = 0
-        self.damage_effectiveness = 0
-        self.explosive_dps = 0
-        self.kinetic_dps = 0
-        self.thermal_dps = 0
-        self.absolute_dps = 0
-        self.cpu_cores = 0
-        self.scb_hitpoints = 0
-        self.guardian_hitpoints = 0
-        self.shield_generator_variants = None
-        self.shield_booster_variants = None
-        self.usePrismatic = False
-
-
-class TestResult:
-    def __init__(self, best_shield_generator: int = 0, best_shield_booster_loadout: List[int] = None,
-                 best_loadout_stats: LoadOutStat = None, best_survival_time: int = 0):
-        self.best_shield_generator = best_shield_generator
-        self.best_shield_booster_loadout = best_shield_booster_loadout
-        self.best_loadout_stats = best_loadout_stats
-        self.best_survival_time = best_survival_time  # if negative, the ship didn't die
-
-
-class ShieldTester(tk.Tk):
+class ShieldTesterUi(tk.Tk):
     EVENT_COMPUTE_OUTPUT = "<<EventComputeOutput>>"
     EVENT_COMPUTE_COMPLETE = "<<EventComputeComplete>>"
     EVENT_PROGRESS_BAR_STEP = "<<EventProgressBarStep>>"
@@ -160,16 +88,15 @@ class ShieldTester(tk.Tk):
         self.title("Shield Tester v{}".format(VERSION))
         self._runtime = 0
 
+        self._shield_tester = st.ShieldTester()
+        self._test_case = None  # type: st.TestCase
+        self._test_result = None  # type: st.TestResult
+
         self.bind(self.EVENT_COMPUTE_OUTPUT, lambda e: self._event_process_output(e))
         self.bind(self.EVENT_COMPUTE_COMPLETE, lambda e: self._event_compute_complete(e))
         self.bind(self.EVENT_PROGRESS_BAR_STEP, lambda e: self._event_progress_bar_step(e))
         self.bind(self.EVENT_WARNING_WRITE_LOGFILE, lambda e: self._event_show_warning_logfile(e))
         self._message_queue = queue.SimpleQueue()
-        self._shield_booster_variants = None
-        self._shield_generator_variants = None
-
-        self._shield_booster_variants_long = None
-        self._shield_booster_variants_short = None
 
         # add some padding
         tk.Frame(self, width=10, height=10).grid(row=0, column=0, sticky=tk.N)
@@ -190,9 +117,16 @@ class ShieldTester(tk.Tk):
         self._lockable_ui_elements.append(self._test_name)
 
         row += 1
+        tk.Label(self._left_frame, text="Choose a ship").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._ship_select_var = tk.StringVar(self._left_frame)
+        self._ship_select_var.set("no data yet")
+        self._ship_select = tk.OptionMenu(self._left_frame, self._ship_select_var, "", command=self._ship_select_command)
+        self._ship_select.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
+
+        row += 1
         tk.Label(self._left_frame, text="Number of boosters").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
         self._booster_slider = tk.Scale(self._left_frame, from_=0, to=8, orient=tk.HORIZONTAL, length=175, takefocus=True,
-                                        command=self._calculate_number_of_tests_command)
+                                        command=self._set_number_of_boosters_command)
         self._booster_slider.set(7)
         self._booster_slider.grid(row=row, column=1, sticky=tk.E, padx=padding, pady=padding)
         self._lockable_ui_elements.append(self._booster_slider)
@@ -247,7 +181,7 @@ class ShieldTester(tk.Tk):
         tk.Label(self._left_frame, text="Access to prismatic shields").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
         self._usePrismatic = tk.IntVar()
         self._usePrismatic.set(1)
-        self._prismatic_check_button = tk.Checkbutton(self._left_frame, variable=self._usePrismatic, command=self._calculate_number_of_tests_command)
+        self._prismatic_check_button = tk.Checkbutton(self._left_frame, variable=self._usePrismatic, command=self._set_prismatic_shields_command)
         self._prismatic_check_button.grid(row=row, column=1, sticky=tk.W, pady=padding)
         self._lockable_ui_elements.append(self._prismatic_check_button)
 
@@ -255,7 +189,7 @@ class ShieldTester(tk.Tk):
         tk.Label(self._left_frame, text="Use short list").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
         self._use_short_list = tk.IntVar()
         self._use_short_list.set(1)
-        self._use_short_list_check_button = tk.Checkbutton(self._left_frame, variable=self._use_short_list, command=self._short_list_command)
+        self._use_short_list_check_button = tk.Checkbutton(self._left_frame, variable=self._use_short_list, command=self._set_short_list_command)
         self._use_short_list_check_button.grid(row=row, column=1, sticky=tk.W, pady=padding)
         self._lockable_ui_elements.append(self._use_short_list_check_button)
 
@@ -276,7 +210,7 @@ class ShieldTester(tk.Tk):
         self._number_of_tests_label.grid(row=row, column=1, sticky=tk.W, padx=padding, pady=padding)
 
         row += 1
-        self._compute_button = tk.Button(self._left_frame, text="Compute best loadout", command=self.compute)
+        self._compute_button = tk.Button(self._left_frame, text="Compute best loadout", command=self._compute)
         self._compute_button.grid(row=row, columnspan=2, sticky=tk.S, padx=padding, pady=padding)
         self._lockable_ui_elements.append(self._compute_button)
 
@@ -300,74 +234,66 @@ class ShieldTester(tk.Tk):
         self._right_frame.columnconfigure(0, weight=1)
 
         self._lock_ui_elements()
-        self.after(100, self._read_csv_files)
+        self.after(100, self._load_data)
 
         def set_window_size():
             self.minsize(self.winfo_reqwidth(), self.winfo_reqheight())
         self.after(200, set_window_size)
 
-    def _calculate_number_of_tests_command(self, value=""):
-        if not self._shield_booster_variants:
-            return
-        if not value:
-            value = self._booster_slider.get()
-        if not self._usePrismatic.get():
-            shield_generators = len(list(filter(lambda x: x.type != "Prismatic", self._shield_generator_variants.values())))
-        else:
-            shield_generators = len(self._shield_generator_variants)
-        self._number_of_tests_label.config(text="{0:n}".format(self.calculate_number_of_possible_variations(int(value),
-                                                                                                            len(self._shield_booster_variants)) * shield_generators))
+    def _set_number_of_boosters_command(self, value=""):
+        if self._test_case:
+            self._test_case.number_of_boosters_to_test = int(value)
+            self._set_number_of_tests_label()
 
-    def _short_list_command(self, value=None):
-        if self._use_short_list.get():
-            self._shield_booster_variants = self._shield_booster_variants_short
-        else:
-            self._shield_booster_variants = self._shield_booster_variants_long
-        self._calculate_number_of_tests_command()
+    def _set_prismatic_shields_command(self):
+        self._shield_tester.use_prismatics = True if self._usePrismatic.get() else False
+        self._set_number_of_tests_label()
 
-    def _read_csv_files(self):
+    def _set_short_list_command(self):
+        self._shield_tester.use_short_list = True if self._use_short_list.get() else False
+        self._set_number_of_tests_label()
+
+    def _ship_select_command(self, value=None):
+        if self._ship_select_var.get():
+            # select chosen ship
+            self._shield_tester.select_ship(self._ship_select_var.get())
+            # get test case for the chosen ship
+            self._test_case = self._shield_tester.get_test_case()
+            slots = self._test_case.ship.utility_slots
+            self._booster_slider.config(to=slots)
+            self._booster_slider.set(slots)
+
+    def _set_number_of_tests_label(self):
+        self._number_of_tests_label.config(text="{:n}".format(self._shield_tester.number_of_tests))
+
+    def _load_data(self):
         error_occurred = False
-        if os.path.exists(FILE_SHIELD_BOOSTER_VARIANTS) \
-                and os.path.exists(FILE_SHIELD_BOOSTER_VARIANTS_SHORT) \
-                and os.path.exists(FILE_SHIELD_GENERATOR_VARIANTS):
-            try:
-                self._shield_booster_variants_long = dict()
-                with open(FILE_SHIELD_BOOSTER_VARIANTS, "r") as csv_file:
-                    reader = csv.DictReader(csv_file)
-                    for row in reader:
-                        variant = ShieldBoosterVariant(row)
-                        self._shield_booster_variants_long.setdefault(variant.id, variant)
-
-                self._shield_booster_variants_short = dict()
-                with open(FILE_SHIELD_BOOSTER_VARIANTS_SHORT, "r") as csv_file:
-                    reader = csv.DictReader(csv_file)
-                    for row in reader:
-                        variant = ShieldBoosterVariant(row)
-                        self._shield_booster_variants_short.setdefault(variant.id, variant)
-
-                self._shield_generator_variants = dict()
-                with open(FILE_SHIELD_GENERATOR_VARIANTS, "r") as csv_file:
-                    reader = csv.DictReader(csv_file)
-                    for row in reader:
-                        variant = ShieldGeneratorVariant(row)
-                        self._shield_generator_variants.setdefault(variant.id, variant)
-            except Exception as e:
-                print("Exception while reading/parsing CSV files: ")  # in case we have a console window
-                print(e)
-                error_occurred = True
-        else:
+        try:
+            self._shield_tester.load_data(DATA_FILE)
+        except Exception as e:
+            print(e)
             error_occurred = True
 
         if not error_occurred:
             self._unlock_ui_elements()
-            self._shield_booster_variants = self._shield_booster_variants_short  # initialize with short list
+            ship_names = self._shield_tester.ship_names
+            ship_names.sort()
+            # refresh drop down menu
+            self._ship_select["menu"].delete(0, tk.END)
+            for ship_name in ship_names:
+                # noinspection PyProtectedMember
+                self._ship_select["menu"].add_command(label=ship_name, command=tk._setit(self._ship_select_var, ship_name, self._ship_select_command))
+            if "Anaconda" in ship_names:
+                self._ship_select_var.set("Anaconda")
+            else:
+                self._ship_select_var.set(ship_names[0])
+            self._ship_select_command()
+
         else:
             if tk.messagebox.askretrycancel(
-                    "No data", "Could not read CSV files.\nPlease place them in the same directory as this program.\n"
-                    "Required:\n{generator}\n{booster_long}\n{booster_short}".format(generator=os.path.basename(FILE_SHIELD_GENERATOR_VARIANTS),
-                                                                                     booster_long=os.path.basename(FILE_SHIELD_BOOSTER_VARIANTS),
-                                                                                     booster_short=os.path.basename(FILE_SHIELD_BOOSTER_VARIANTS_SHORT))):
-                self._read_csv_files()
+                    "No data", "Could not read JSON file.\nPlease place them in the same directory as this program.\n"
+                    "Required:{data}".format(data=os.path.basename(DATA_FILE))):
+                self._load_data()
 
     def _lock_ui_elements(self):
         for element in self._lockable_ui_elements:
@@ -379,10 +305,7 @@ class ShieldTester(tk.Tk):
 
     def _event_process_output(self, event):
         if not self._message_queue.empty():
-            self._text_widget.config(state=tk.NORMAL)
-            position, message = self._message_queue.get_nowait()
-            self._text_widget.insert(position, message)
-            self._text_widget.config(state=tk.DISABLED)
+            self._write_to_text_widget(self._message_queue.get_nowait())
 
     def _event_progress_bar_step(self, event):
         if self._progress_bar:
@@ -391,98 +314,34 @@ class ShieldTester(tk.Tk):
     def _event_compute_complete(self, event):
         self._unlock_ui_elements()
         self._progress_bar.stop()
-
-    def _event_show_warning_logfile(self, event):
-        messagebox.showwarning("Could not write logfile.", "Could not write logfile.")
-
-    def _compute_background(self, test_data: ShieldTesterData):
-        self._runtime = time.time()
-        output = list()
-        output.append("Shield Booster Count: {0}".format(test_data.number_of_boosters))
-        output.append("Shield Booster Variants: {0}".format(len(self._shield_booster_variants)))
-        output.append("Generating booster loadouts")
-        output.append("")
-        self._message_queue.put((tk.END, "\n".join(output)))
-        output = list()
-        self.event_generate(self.EVENT_COMPUTE_OUTPUT, when="tail")  # thread safe communication
-
-        # use built in itertools and assume booster ids are starting at 1 and that there are no gaps
-        booster_combinations = list(itertools.combinations_with_replacement(range(1, len(self._shield_booster_variants) + 1), test_data.number_of_boosters))
-
-        output.append("Shield loadouts to be tested: [{0:n}]".format(len(booster_combinations) * len(test_data.shield_generator_variants)))
-        output.append("Running calculations. Please wait...")
-        output.append("")
-        self._message_queue.put((tk.END, "\n".join(output)))
-        output = list()
-        self.event_generate(self.EVENT_COMPUTE_OUTPUT, when="tail")  # thread safe communication
-
-        best_result = TestResult(best_survival_time=0)
-
-        def apply_async_callback(r: TestResult):
-            nonlocal best_result
-            if best_result.best_survival_time < 0:
-                if r.best_survival_time < best_result.best_survival_time:
-                    best_result = r
-            else:
-                if r.best_survival_time < 0:
-                    best_result = r
-                elif r.best_survival_time > best_result.best_survival_time:
-                    best_result = r
-            self.event_generate(self.EVENT_PROGRESS_BAR_STEP, when="tail")
-
-        if test_data.cpu_cores > 1 and (len(booster_combinations) * len(test_data.shield_generator_variants)) > MP_CHUNK_SIZE:
-            # 1 core is handling UI and this thread, the rest is working on running the calculations
-            with multiprocessing.Pool(processes=test_data.cpu_cores - 1) as pool:
-                last_i = 0
-                for i in range(MP_CHUNK_SIZE, len(booster_combinations), MP_CHUNK_SIZE):
-                    pool.apply_async(test_case, args=(test_data, booster_combinations[last_i:i]), callback=apply_async_callback)
-                    last_i = i + 1
-                if last_i < len(booster_combinations):
-                    pool.apply_async(test_case, args=(test_data, booster_combinations[last_i:]), callback=apply_async_callback)
-                pool.close()
-                pool.join()
-        else:
-            result = test_case(test_data, booster_combinations)
-            apply_async_callback(result)  # can use the same function here as mp.Pool would
-
-        output.append("Calculations took {:.2f} seconds".format(time.time() - self._runtime))
-        output.append("")
-        output.append("---- TEST RESULTS ----")
-        if best_result.best_survival_time != 0:
-            # sort by survival time and put highest value to start of the list
-            if best_result.best_survival_time > 0:
-                output.append("Survival Time [s]: [{0:.3f}]".format(best_result.best_survival_time))
-            else:
-                output.append("Survival Time [s]: [Didn't die]")
-            shield_generator = self._shield_generator_variants.get(best_result.best_shield_generator)
-            output.append("Shield Generator: [{type}] - [{eng}] - [{exp}]"
-                          .format(type=shield_generator.type, eng=shield_generator.engineering, exp=shield_generator.experimental))
-            output.append("Shield Boosters:")
-            for bestShieldBoosterLoadout in best_result.best_shield_booster_loadout:
-                shield_booster_variant = self._shield_booster_variants.get(bestShieldBoosterLoadout)
-                output.append("  [{eng}] - [{exp}]".format(eng=shield_booster_variant.engineering, exp=shield_booster_variant.experimental))
-
-            output.append("")
-            output.append("Shield Hitpoints: [{0:.3f}]".format(best_result.best_loadout_stats.hitPoints))
-            output.append("Shield Regen: [{0} hp/s]".format(best_result.best_loadout_stats.regenRate))
-            output.append("Explosive Resistance: [{0:.3f}]".format((1.0 - best_result.best_loadout_stats.explosiveResistance) * 100))
-            output.append("Kinetic Resistance: [{0:.3f}]".format((1.0 - best_result.best_loadout_stats.kineticResistance) * 100))
-            output.append("Thermal Resistance: [{0:.3f}]".format((1.0 - best_result.best_loadout_stats.thermalResistance) * 100))
-        else:
-            output.append("No test results. Please change DPS and/or damage effectiveness.")
-
-        output_string = "\n".join(output)
-        self._message_queue.put((tk.END, output_string))
-        self.event_generate(self.EVENT_COMPUTE_OUTPUT, when="tail")  # thread safe communication
-        self.event_generate(self.EVENT_COMPUTE_COMPLETE, when="tail")
+        self._write_to_text_widget("\n")
+        self._write_to_text_widget(self._test_result.get_output_string())
         try:
-            self._write_log(test_data, output_string, self._test_name.get())
+            self._shield_tester.write_log(self._test_case, self._test_result, self._test_name.get())
         except Exception as e:
             print("Error writing logfile")
             print(e)
             self.event_generate(self.EVENT_WARNING_WRITE_LOGFILE, when="tail")
 
-    def compute(self):
+    def _event_show_warning_logfile(self, event):
+        messagebox.showwarning("Could not write logfile.", "Could not write logfile.")
+
+    def _write_to_text_widget(self, text):
+        self._text_widget.config(state=tk.NORMAL)
+        self._text_widget.insert(tk.END, text)
+        self._text_widget.config(state=tk.DISABLED)
+
+    def _compute_callback(self, value: int):
+        if value == st.ShieldTester.CALLBACK_STEP:
+            self.event_generate(self.EVENT_PROGRESS_BAR_STEP, when="tail")
+        elif value == st.ShieldTester.CALLBACK_MESSAGE:
+            self.event_generate(self.EVENT_COMPUTE_OUTPUT, when="tail")
+
+    def _compute_background(self):
+        self._test_result = self._shield_tester.compute(self._test_case, callback=self._compute_callback, message_queue=self._message_queue)
+        self.event_generate(self.EVENT_COMPUTE_COMPLETE, when="tail")
+
+    def _compute(self):
         self._lock_ui_elements()
 
         # clear text widget
@@ -491,137 +350,27 @@ class ShieldTester(tk.Tk):
         self._text_widget.config(state=tk.DISABLED)
 
         # get data from UI
-        ui_data = ShieldTesterData()
-        ui_data.number_of_boosters = self._booster_slider.get()
-        ui_data.damage_effectiveness = self._effectiveness_slider.get() / 100.0
-        ui_data.scb_hitpoints = int(self._scb_hitpoints.get()) if self._scb_hitpoints.get() else 0
-        ui_data.guardian_hitpoints = int(self._guardian_hitpoints.get()) if self._guardian_hitpoints.get() else 0
-        ui_data.explosive_dps = int(self._explosive_dps_entry.get()) if self._explosive_dps_entry.get() else 0
-        ui_data.kinetic_dps = int(self._kinetic_dps_entry.get()) if self._kinetic_dps_entry.get() else 0
-        ui_data.thermal_dps = int(self._thermal_dps_entry.get()) if self._thermal_dps_entry.get() else 0
-        ui_data.absolute_dps = int(self._absolute_dps_entry.get()) if self._absolute_dps_entry.get() else 0
-        ui_data.cpu_cores = self._cores_slider.get()
-        ui_data.usePrismatic = True if self._usePrismatic.get() else False
+        self._test_case.number_of_boosters_to_test = self._booster_slider.get()
+        self._test_case.damage_effectiveness = self._effectiveness_slider.get() / 100.0
+        self._test_case.scb_hitpoints = int(self._scb_hitpoints.get()) if self._scb_hitpoints.get() else 0
+        self._test_case.guardian_hitpoints = int(self._guardian_hitpoints.get()) if self._guardian_hitpoints.get() else 0
+        self._test_case.explosive_dps = int(self._explosive_dps_entry.get()) if self._explosive_dps_entry.get() else 0
+        self._test_case.kinetic_dps = int(self._kinetic_dps_entry.get()) if self._kinetic_dps_entry.get() else 0
+        self._test_case.thermal_dps = int(self._thermal_dps_entry.get()) if self._thermal_dps_entry.get() else 0
+        self._test_case.absolute_dps = int(self._absolute_dps_entry.get()) if self._absolute_dps_entry.get() else 0
+        self._shield_tester.cpu_cores = self._cores_slider.get()
+        self._shield_tester.use_prismatics = True if self._usePrismatic.get() else False
 
-        if ui_data.usePrismatic:
-            ui_data.shield_generator_variants = self._shield_generator_variants
-        else:
-            ui_data.shield_generator_variants = {k: v for k, v in self._shield_generator_variants.items() if v.type != "Prismatic"}
-        ui_data.shield_booster_variants = self._shield_booster_variants
-
-        steps = int(self.calculate_number_of_possible_variations(ui_data.number_of_boosters, len(self._shield_booster_variants)) / MP_CHUNK_SIZE) + 1
+        steps = int(self._shield_tester.number_of_tests / len(self._test_case.loadout_list) / st.ShieldTester.MP_CHUNK_SIZE) + 1
         self._progress_bar.config(maximum=steps)
 
-        t = threading.Thread(target=self._compute_background, args=(ui_data,))
+        t = threading.Thread(target=self._compute_background)
         t.start()
-
-    @staticmethod
-    def _write_log(data: ShieldTesterData, result: str, filename=None):
-        os.makedirs(LOG_DIRECTORY, exist_ok=True)
-        if not filename:
-            filename = time.strftime("%Y-%m-%d %H.%M.%S")
-        with open(os.path.join(LOG_DIRECTORY, filename + ".txt"), "a+") as logfile:
-            logfile.write("Test run at: {}\n".format(time.strftime("%Y-%m-%d %H:%M:%S")))
-            logfile.write("---- TEST SETUP ----\n")
-            logfile.write("Shield Booster Count: [{}]\n".format(data.number_of_boosters))
-            logfile.write("Shield Cell Bank Hit Point Pool: [{}]\n".format(data.scb_hitpoints))
-            logfile.write("Guardian Shield Reinforcement Hit Point Pool: [{}]\n".format(data.guardian_hitpoints))
-            logfile.write("Access to Prismatic Shields: [{}]\n".format("Yes" if data.usePrismatic else "No"))
-            logfile.write("Explosive DPS: [{}]\n".format(data.explosive_dps))
-            logfile.write("Kinetic DPS: [{}]\n".format(data.kinetic_dps))
-            logfile.write("Thermal DPS: [{}]\n".format(data.thermal_dps))
-            logfile.write("Absolute DPS: [{}]\n".format(data.absolute_dps))
-            logfile.write("Damage Effectiveness: [{:.0f}%]\n".format(data.damage_effectiveness * 100))
-            logfile.write(result)
-            logfile.write("\n\n\n")
-            logfile.flush()
-
-    @staticmethod
-    def calculate_number_of_possible_variations(number_of_boosters: int, number_of_booster_variations: int):
-        result = math.factorial(number_of_booster_variations + number_of_boosters - 1)
-        result = result / math.factorial(number_of_booster_variations - 1) / math.factorial(number_of_boosters)
-        return int(result)
-
-
-def calculate_booster_bonuses(shield_booster_variants: Dict[int, ShieldBoosterVariant], booster_loadout: List[int]) -> Tuple[float, float, float, float]:
-    exp_modifier = 1.0
-    kin_modifier = 1.0
-    therm_modifier = 1.0
-    hitpoint_bonus = 1.0
-
-    for booster_id in booster_loadout:
-        booster_stats = shield_booster_variants.get(booster_id)
-
-        exp_modifier *= booster_stats.expResBonus
-        kin_modifier *= booster_stats.kinResBonus
-        therm_modifier *= booster_stats.thermResBonus
-        hitpoint_bonus += booster_stats.shieldStrengthBonus
-
-    # Compensate for diminishing returns
-    if exp_modifier < 0.7:
-        exp_modifier = 0.7 - (0.7 - exp_modifier) / 2
-    if kin_modifier < 0.7:
-        kin_modifier = 0.7 - (0.7 - kin_modifier) / 2
-    if therm_modifier < 0.7:
-        therm_modifier = 0.7 - (0.7 - therm_modifier) / 2
-
-    return exp_modifier, kin_modifier, therm_modifier, hitpoint_bonus
-
-
-def test_case(data: ShieldTesterData, booster_variations) -> TestResult:
-    best_survival_time = 0
-    best_shield_generator = 0
-    best_shield_booster_loadout = None
-    best_loadout_stats = 0
-
-    for booster_variation in booster_variations:
-        exp_modifier, kin_modifier, therm_modifier, hitpoint_bonus = calculate_booster_bonuses(data.shield_booster_variants, booster_variation)
-
-        for shield_generator_variant in data.shield_generator_variants.values():
-            # Calculate the resistance, regen-rate and hitpoints of the current loadout
-            explosive_resistance = shield_generator_variant.expRes * exp_modifier
-            kinetic_resistance = shield_generator_variant.kinRes * kin_modifier
-            thermal_resistance = shield_generator_variant.thermRes * therm_modifier
-
-            # Compute final hitpoints
-            hitpoints = hitpoint_bonus * shield_generator_variant.shieldStrength + data.guardian_hitpoints
-
-            actual_dps = data.damage_effectiveness * (
-                    data.explosive_dps * explosive_resistance +
-                    data.kinetic_dps * kinetic_resistance +
-                    data.thermal_dps * thermal_resistance +
-                    data.absolute_dps) - shield_generator_variant.regenRate * (1.0 - data.damage_effectiveness)
-
-            survival_time = (hitpoints + data.scb_hitpoints) / actual_dps
-
-            if actual_dps > 0 and best_survival_time >= 0:
-                # if another run set best_survival_time to a negative value, then the ship didn't die, therefore the other result is better
-                if survival_time > best_survival_time:
-                    best_shield_generator = shield_generator_variant.id
-                    best_shield_booster_loadout = booster_variation
-                    best_loadout_stats = LoadOutStat(hitpoints=hitpoints,
-                                                     regen_rate=shield_generator_variant.regenRate,
-                                                     explosive_resistance=explosive_resistance,
-                                                     kinetic_resistance=kinetic_resistance,
-                                                     thermal_resistance=thermal_resistance)
-                    best_survival_time = survival_time
-            elif actual_dps < 0:
-                if survival_time < best_survival_time:
-                    best_shield_generator = shield_generator_variant.id
-                    best_shield_booster_loadout = booster_variation
-                    best_loadout_stats = LoadOutStat(hitpoints=hitpoints,
-                                                     regen_rate=shield_generator_variant.regenRate,
-                                                     explosive_resistance=explosive_resistance,
-                                                     kinetic_resistance=kinetic_resistance,
-                                                     thermal_resistance=thermal_resistance)
-                    best_survival_time = survival_time
-
-    return TestResult(best_shield_generator, best_shield_booster_loadout, best_loadout_stats, best_survival_time)
 
 
 def main():
     locale.setlocale(locale.LC_ALL, '')  # Use '' for auto, or force e.g. to 'en_US.UTF-8'
-    shield_tester = ShieldTester()
+    shield_tester = ShieldTesterUi()
     shield_tester.mainloop()
 
 
