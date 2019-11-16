@@ -16,6 +16,7 @@ import locale
 import multiprocessing
 import threading
 import queue
+import webbrowser
 import tkinter as tk
 from tkinter import ttk, messagebox, scrolledtext
 import shield_tester as st
@@ -210,9 +211,24 @@ class ShieldTesterUi(tk.Tk):
         self._number_of_tests_label.grid(row=row, column=1, sticky=tk.W, padx=padding, pady=padding)
 
         row += 1
-        self._compute_button = tk.Button(self._left_frame, text="Compute best loadout", command=self._compute)
-        self._compute_button.grid(row=row, columnspan=2, sticky=tk.S, padx=padding, pady=padding)
+        button_frame = tk.Frame(self._left_frame)
+        button_frame.grid(row=row, columnspan=2, sticky=tk.NSEW, padx=padding, pady=padding)
+        button_frame.columnconfigure(0, weight=1)
+        button_frame.columnconfigure(1, weight=1)
+        button_frame.columnconfigure(2, weight=1)
+        self._compute_button = tk.Button(button_frame, text="Compute best loadout", command=self._compute)
+        self._compute_button.grid(row=0, column=0, sticky=tk.EW, padx=padding, pady=padding)
         self._lockable_ui_elements.append(self._compute_button)
+
+        self._cancel_button = tk.Button(button_frame, text="       Cancel       ", command=self._cancel_command)
+        self._cancel_button.grid(row=0, column=1, sticky=tk.EW, padx=padding, pady=padding)
+        self._cancel_button.config(state=tk.DISABLED)
+        #self._lockable_ui_elements.append(self._cancel_button)
+
+        self._coriolis_button = tk.Button(button_frame, text=" Export to Coriolis ", command=self._open_coriolis_command)
+        self._coriolis_button.grid(row=0, column=2, sticky=tk.E, padx=padding, pady=padding)
+        self._coriolis_button.config(state=tk.DISABLED)
+        #self._lockable_ui_elements.append(self._compute_button)
 
         row += 1
         self._progress_bar = ttk.Progressbar(self._left_frame, orient="horizontal", mode="determinate")
@@ -240,6 +256,10 @@ class ShieldTesterUi(tk.Tk):
             self.minsize(self.winfo_reqwidth(), self.winfo_reqheight())
         self.after(200, set_window_size)
 
+    def _cancel_command(self):
+        # TODO
+        pass
+
     def _set_number_of_boosters_command(self, value=""):
         if self._test_case:
             self._test_case.number_of_boosters_to_test = int(value)
@@ -262,6 +282,10 @@ class ShieldTesterUi(tk.Tk):
             slots = self._test_case.ship.utility_slots
             self._booster_slider.config(to=slots)
             self._booster_slider.set(slots)
+
+    def _open_coriolis_command(self):
+        if self._test_result:
+            webbrowser.open(self._shield_tester.get_coriolis_link(self._test_result.best_loadout))
 
     def _set_number_of_tests_label(self):
         self._number_of_tests_label.config(text="{:n}".format(self._shield_tester.number_of_tests))
@@ -316,6 +340,7 @@ class ShieldTesterUi(tk.Tk):
         self._progress_bar.stop()
         self._write_to_text_widget("\n")
         self._write_to_text_widget(self._test_result.get_output_string())
+        self._coriolis_button.config(state=tk.NORMAL)
         try:
             self._shield_tester.write_log(self._test_case, self._test_result, self._test_name.get())
         except Exception as e:
@@ -343,6 +368,7 @@ class ShieldTesterUi(tk.Tk):
 
     def _compute(self):
         self._lock_ui_elements()
+        self._coriolis_button.config(state=tk.DISABLED)
 
         # clear text widget
         self._text_widget.config(state=tk.NORMAL)
