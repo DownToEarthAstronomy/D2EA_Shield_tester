@@ -638,7 +638,7 @@ class ShieldTester(object):
     def use_short_list(self, value: bool):
         if self.__test_case and self.__use_short_list != value:
             self.__use_short_list = value
-            self.__test_case.shield_booster_variants = self.__find_boosters_to_test()
+            self.__test_case.shield_booster_variants = copy.deepcopy(self.__find_boosters_to_test())
 
     @property
     def cpu_cores(self) -> int:
@@ -653,13 +653,6 @@ class ShieldTester(object):
         return [ship for ship in self.__ships.keys()]
 
     @property
-    def selected_ship(self) -> Optional[StarShip]:
-        if self.__test_case:
-            return copy.deepcopy(self.__test_case.ship)
-        else:
-            return None
-
-    @property
     def use_prismatics(self) -> bool:
         if self.__test_case:
             return self.__test_case.use_prismatics
@@ -670,7 +663,7 @@ class ShieldTester(object):
     def use_prismatics(self, value: bool):
         if self.__test_case and self.__test_case.use_prismatics != value:
             self.__test_case.use_prismatics = value
-            self.__test_case.loadout_list = self.__create_loadouts()
+            self.__test_case.loadout_list = copy.deepcopy(self.__create_loadouts())
 
     @property
     def number_of_tests(self) -> int:
@@ -831,20 +824,20 @@ class ShieldTester(object):
 
     def get_test_case(self) -> Optional[TestCase]:
         """
-        Get a copy of the internal stored test case containing some settings already.
+        Get a the test case containing some settings already.
         Don't forget to add additional attributes like incoming DPS.
         :return: TestCase or None if no ship was selected
         """
         if self.__test_case:
-            return copy.deepcopy(self.__test_case)
+            return self.__test_case
         return None
 
     def select_ship(self, name: str):
         if name in self.__ships:
-            self.__test_case = TestCase(self.__ships.get(name))
-            self.__test_case.loadout_list = self.__create_loadouts()
+            self.__test_case = TestCase(copy.deepcopy(self.__ships.get(name)))
+            self.__test_case.loadout_list = copy.deepcopy(self.__create_loadouts())
             self.__test_case.number_of_boosters_to_test = self.__test_case.ship.utility_slots
-            self.__test_case.shield_booster_variants = self.__find_boosters_to_test()
+            self.__test_case.shield_booster_variants = copy.deepcopy(self.__find_boosters_to_test())
 
     def load_data(self, file: str):
         """
