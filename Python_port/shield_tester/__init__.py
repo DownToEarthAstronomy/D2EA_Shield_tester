@@ -686,31 +686,6 @@ class ShieldTester(object):
             return int(result * len(self.__test_case.loadout_list))
         return 0
 
-    @staticmethod
-    def write_log(test_case: TestCase, result: TestResult, filename=None, coriolis_url: str = None):
-        """
-        Write a log file with the test setup from a TestCase and the results from a TestResult.
-        :param test_case: TestCase for information about setup
-        :param result: TestResult for information about results
-        :param filename: optional filename to append new log (omit file ending)
-        :param coriolis_url: optional link to Coriolis
-        """
-        os.makedirs(ShieldTester.LOG_DIRECTORY, exist_ok=True)
-        if not filename:
-            filename = time.strftime("%Y-%m-%d %H.%M.%S")
-        with open(os.path.join(ShieldTester.LOG_DIRECTORY, filename + ".txt"), "a+") as logfile:
-            logfile.write("Test run at: {}\n".format(time.strftime("%Y-%m-%d %H:%M:%S")))
-            logfile.write(test_case.get_output_string())
-            logfile.write("\n")
-            logfile.write(result.get_output_string(test_case.guardian_hitpoints))
-            if coriolis_url:
-                logfile.write("\n")
-                logfile.write(coriolis_url)
-                logfile.write("\n")
-
-            logfile.write("\n\n\n")
-            logfile.flush()
-
     def __find_boosters_to_test(self) -> List[ShieldBoosterVariant]:
         return copy.deepcopy(list(filter(lambda x: not (x.can_skip and self.__use_short_list), self.__booster_variants)))
 
@@ -734,6 +709,32 @@ class ShieldTester(object):
             for sg in shield_generators:
                 loadouts_to_test.append(LoadOut(sg, self.__test_case.ship))
         return copy.deepcopy(loadouts_to_test)
+
+    def write_log(self, test_case: TestCase, result: TestResult, filename: str = None, time_and_name: bool = False, include_coriolis: bool = False):
+        """
+        Write a log file with the test setup from a TestCase and the results from a TestResult.
+        :param test_case: TestCase for information about setup
+        :param result: TestResult for information about results
+        :param filename: optional filename to append new log (omit file ending)
+        :param include_coriolis: optional link to Coriolis
+        """
+        os.makedirs(ShieldTester.LOG_DIRECTORY, exist_ok=True)
+        if not filename:
+            filename = time.strftime("%Y-%m-%d %H.%M.%S")
+        elif time_and_name:
+            filename = "{name} {time}".format(name=filename, time=time.strftime("%Y-%m-%d %H.%M.%S"))
+        with open(os.path.join(ShieldTester.LOG_DIRECTORY, filename + ".txt"), "a+") as logfile:
+            logfile.write("Test run at: {}\n".format(time.strftime("%Y-%m-%d %H:%M:%S")))
+            logfile.write(test_case.get_output_string())
+            logfile.write("\n")
+            logfile.write(result.get_output_string(test_case.guardian_hitpoints))
+            if include_coriolis:
+                logfile.write("\n")
+                logfile.write(self.get_coriolis_link(result.best_loadout))
+                logfile.write("\n")
+
+            logfile.write("\n\n\n")
+            logfile.flush()
 
     # noinspection PyProtectedMember
     def get_compatible_shield_generator_classes(self) -> Tuple[int, int]:

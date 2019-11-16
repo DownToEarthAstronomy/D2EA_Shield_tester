@@ -429,7 +429,7 @@ class ShieldTesterUi(tk.Tk):
             self._coriolis_button.config(state=tk.NORMAL)
             try:
                 if not self._test_name.get():
-                    self._shield_tester.write_log(self._test_case, data.test_result)
+                    self._shield_tester.write_log(self._test_case, data.test_result, data.test_result.best_loadout.ship_name, time_and_name=True)
                 else:
                     self._shield_tester.write_log(self._test_case, data.test_result, self._test_name.get())
             except Exception as e:
