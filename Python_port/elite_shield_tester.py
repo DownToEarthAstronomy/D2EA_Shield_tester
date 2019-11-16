@@ -107,121 +107,135 @@ class ShieldTesterUi(tk.Tk):
 
         self._lockable_ui_elements = list()
 
-        padding = 5
+        def headline(frame, title, h_row):
+            # headline, use this instead of LabelFrame to keep using the same grid
+            ttk.Separator(frame, orient=tk.HORIZONTAL).grid(row=h_row, columnspan=2, sticky=tk.EW, pady=(3*padding, 0))
+            h_row += 1
+            tk.Label(frame, text=title, justify=tk.CENTER).grid(row=h_row, columnspan=2, sticky=tk.EW)
+            h_row += 1
+            ttk.Separator(frame, orient=tk.HORIZONTAL).grid(row=h_row, columnspan=2, sticky=tk.EW)
+            return h_row
+
+        padding = 3
         # ---------------------------------------------------------------------------------------------------
         # left frame
-        self._left_frame = tk.LabelFrame(self, borderwidth=1, relief=tk.RIDGE, text="Config")
-        self._left_frame.grid(row=1, column=1, sticky=tk.NSEW)
+        left_frame = tk.LabelFrame(self, borderwidth=1, text="Config")
+        left_frame.grid(row=1, column=1, sticky=tk.NSEW)
 
         row = 0
-        tk.Label(self._left_frame, text="Name of test (optional)").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
-        self._test_name = TextEntry(self._left_frame)
+        tk.Label(left_frame, text="Name of test (optional)").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._test_name = TextEntry(left_frame)
         self._test_name.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
         self._lockable_ui_elements.append(self._test_name)
 
         row += 1
-        tk.Label(self._left_frame, text="Choose a ship").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
-        self._ship_select_var = tk.StringVar(self._left_frame)
+        row = headline(left_frame, "[Defender]", row)
+
+        row += 1
+        tk.Label(left_frame, text="Choose a ship").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._ship_select_var = tk.StringVar(self)
         self._ship_select_var.set("no data yet")
-        self._ship_select = tk.OptionMenu(self._left_frame, self._ship_select_var, "", command=self._ship_select_command)
+        self._ship_select = tk.OptionMenu(left_frame, self._ship_select_var, "", command=self._ship_select_command)
         self._ship_select.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
 
         row += 1
-        tk.Label(self._left_frame, text="Class of shield generator").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
-        self._sg_class_slider = tk.Scale(self._left_frame, from_=1, to=8, orient=tk.HORIZONTAL, length=175, takefocus=True,
+        tk.Label(left_frame, text="Class of shield generator").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._sg_class_slider = tk.Scale(left_frame, from_=1, to=8, orient=tk.HORIZONTAL, length=175, takefocus=True,
                                          command=self._set_shield_class_command)
         self._sg_class_slider.config(state=tk.DISABLED)
         self._sg_class_slider.grid(row=row, column=1, sticky=tk.E, padx=padding, pady=padding)
         self._lockable_ui_elements.append(self._sg_class_slider)
 
         row += 1
-        tk.Label(self._left_frame, text="Number of boosters").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
-        self._booster_slider = tk.Scale(self._left_frame, from_=0, to=8, orient=tk.HORIZONTAL, length=175, takefocus=True,
+        tk.Label(left_frame, text="Number of boosters").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._booster_slider = tk.Scale(left_frame, from_=0, to=8, orient=tk.HORIZONTAL, length=175, takefocus=True,
                                         command=self._set_number_of_boosters_command)
         self._booster_slider.set(7)
         self._booster_slider.grid(row=row, column=1, sticky=tk.E, padx=padding, pady=padding)
         self._lockable_ui_elements.append(self._booster_slider)
 
         row += 1
-        tk.Label(self._left_frame, text="Shield cell bank hit point pool").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
-        self._scb_hitpoints = IntegerEntry(self._left_frame)
+        tk.Label(left_frame, text="Shield cell bank hit point pool").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._scb_hitpoints = IntegerEntry(left_frame)
         self._scb_hitpoints.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
         self._lockable_ui_elements.append(self._scb_hitpoints)
 
         row += 1
-        tk.Label(self._left_frame, text="Guardian shield reinforcement hit point pool").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
-        self._guardian_hitpoints = IntegerEntry(self._left_frame)
+        tk.Label(left_frame, text="Guardian shield reinforcement hit point pool").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._guardian_hitpoints = IntegerEntry(left_frame)
         self._guardian_hitpoints.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
         self._lockable_ui_elements.append(self._guardian_hitpoints)
 
         row += 1
-        tk.Label(self._left_frame, text="Explosive DPS").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
-        self._explosive_dps_entry = IntegerEntry(self._left_frame)
+        tk.Label(left_frame, text="Access to prismatic shields").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._usePrismatic = tk.IntVar(self)
+        self._usePrismatic.set(1)
+        self._prismatic_check_button = tk.Checkbutton(left_frame, variable=self._usePrismatic, command=self._set_prismatic_shields_command)
+        self._prismatic_check_button.grid(row=row, column=1, sticky=tk.W, pady=padding)
+        self._lockable_ui_elements.append(self._prismatic_check_button)
+
+        row += 1
+        row = headline(left_frame, "[Attacker]", row)
+
+        row += 1
+        tk.Label(left_frame, text="Explosive DPS").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._explosive_dps_entry = IntegerEntry(left_frame)
         self._explosive_dps_entry.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
         self._lockable_ui_elements.append(self._explosive_dps_entry)
 
         row += 1
-        tk.Label(self._left_frame, text="Kinetic DPS").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
-        self._kinetic_dps_entry = IntegerEntry(self._left_frame)
+        tk.Label(left_frame, text="Kinetic DPS").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._kinetic_dps_entry = IntegerEntry(left_frame)
         self._kinetic_dps_entry.insert(0, 50)
         self._kinetic_dps_entry.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
         self._lockable_ui_elements.append(self._kinetic_dps_entry)
 
         row += 1
-        tk.Label(self._left_frame, text="Thermal DPS").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
-        self._thermal_dps_entry = IntegerEntry(self._left_frame)
+        tk.Label(left_frame, text="Thermal DPS").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._thermal_dps_entry = IntegerEntry(left_frame)
         self._thermal_dps_entry.insert(0, 50)
         self._thermal_dps_entry.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
         self._lockable_ui_elements.append(self._thermal_dps_entry)
 
         row += 1
-        tk.Label(self._left_frame, text="Absolute DPS (Thargoids)").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
-        self._absolute_dps_entry = IntegerEntry(self._left_frame)
+        tk.Label(left_frame, text="Absolute DPS (Thargoids)").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._absolute_dps_entry = IntegerEntry(left_frame)
         self._absolute_dps_entry.insert(0, 10)
         self._absolute_dps_entry.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
         self._lockable_ui_elements.append(self._absolute_dps_entry)
 
         row += 1
-        tk.Label(self._left_frame, text="Damage effectiveness in %").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
-        self._effectiveness_slider = tk.Scale(self._left_frame, from_=1, to=100, orient=tk.HORIZONTAL, length=175, takefocus=True)
+        tk.Label(left_frame, text="Damage effectiveness in %").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._effectiveness_slider = tk.Scale(left_frame, from_=1, to=100, orient=tk.HORIZONTAL, length=175, takefocus=True)
         self._effectiveness_slider.set(65)
         self._effectiveness_slider.grid(row=row, column=1, sticky=tk.E, padx=padding, pady=padding)
         self._lockable_ui_elements.append(self._effectiveness_slider)
 
         row += 1
-        tk.Label(self._left_frame, text="Access to prismatic shields").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
-        self._usePrismatic = tk.IntVar()
-        self._usePrismatic.set(1)
-        self._prismatic_check_button = tk.Checkbutton(self._left_frame, variable=self._usePrismatic, command=self._set_prismatic_shields_command)
-        self._prismatic_check_button.grid(row=row, column=1, sticky=tk.W, pady=padding)
-        self._lockable_ui_elements.append(self._prismatic_check_button)
+        row = headline(left_frame, "[Misc]", row)
 
         row += 1
-        tk.Label(self._left_frame, text="Use short list").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
-        self._use_short_list = tk.IntVar()
+        tk.Label(left_frame, text="Use short list").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._use_short_list = tk.IntVar(self)
         self._use_short_list.set(1)
-        self._use_short_list_check_button = tk.Checkbutton(self._left_frame, variable=self._use_short_list, command=self._set_short_list_command)
+        self._use_short_list_check_button = tk.Checkbutton(left_frame, variable=self._use_short_list, command=self._set_short_list_command)
         self._use_short_list_check_button.grid(row=row, column=1, sticky=tk.W, pady=padding)
         self._lockable_ui_elements.append(self._use_short_list_check_button)
 
-        # empty row
         row += 1
-        tk.Label(self._left_frame, text="").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
-
-        row += 1
-        tk.Label(self._left_frame, text="CPU cores to use").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
-        self._cores_slider = tk.Scale(self._left_frame, from_=1, to=os.cpu_count(), orient=tk.HORIZONTAL, length=175, takefocus=True)
+        tk.Label(left_frame, text="CPU cores to use").grid(row=row, column=0, sticky=tk.SW, padx=padding)
+        self._cores_slider = tk.Scale(left_frame, from_=1, to=os.cpu_count(), orient=tk.HORIZONTAL, length=175, takefocus=True)
         self._cores_slider.set(os.cpu_count())
-        self._cores_slider.grid(row=row, column=1, sticky=tk.E, padx=padding, pady=padding)
+        self._cores_slider.grid(row=row, column=1, sticky=tk.E, padx=padding)
         self._lockable_ui_elements.append(self._cores_slider)
 
         row += 1
-        tk.Label(self._left_frame, text="Shield loadouts to be tested", justify="left").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
-        self._number_of_tests_label = tk.Label(self._left_frame, text="")
+        tk.Label(left_frame, text="Shield loadouts to be tested", justify="left").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._number_of_tests_label = tk.Label(left_frame, text="")
         self._number_of_tests_label.grid(row=row, column=1, sticky=tk.W, padx=padding, pady=padding)
 
         row += 1
-        button_frame = tk.Frame(self._left_frame)
+        button_frame = tk.Frame(left_frame)
         button_frame.grid(row=row, columnspan=2, sticky=tk.NSEW, padx=padding, pady=padding)
         button_frame.columnconfigure(0, weight=1)
         button_frame.columnconfigure(1, weight=1)
@@ -241,23 +255,23 @@ class ShieldTesterUi(tk.Tk):
         #self._lockable_ui_elements.append(self._compute_button)
 
         row += 1
-        self._progress_bar = ttk.Progressbar(self._left_frame, orient="horizontal", mode="determinate")
+        self._progress_bar = ttk.Progressbar(left_frame, orient="horizontal", mode="determinate")
         self._progress_bar.grid(row=row, columnspan=2, sticky=tk.EW, padx=padding, pady=padding)
         self._progress_bar.config(value=0)
 
         # ---------------------------------------------------------------------------------------------------
         # right frame
-        self._right_frame = tk.LabelFrame(self, borderwidth=1, relief=tk.RIDGE, text="Output")
-        self._right_frame.grid(row=1, column=2, sticky=tk.NSEW)
-        self._text_widget = scrolledtext.ScrolledText(self._right_frame, height=27, width=75)
+        right_frame = tk.LabelFrame(self, borderwidth=1, text="Output")
+        right_frame.grid(row=1, column=2, sticky=tk.NSEW)
+        self._text_widget = scrolledtext.ScrolledText(right_frame, height=27, width=75)
         self._text_widget.grid(row=0, column=0, padx=padding, pady=padding, sticky=tk.NSEW)
         self._text_widget.config(state=tk.DISABLED)
 
         # set behaviour for resizing
         self.rowconfigure(1, weight=1)
         self.columnconfigure(2, weight=1)
-        self._right_frame.rowconfigure(0, weight=1)
-        self._right_frame.columnconfigure(0, weight=1)
+        right_frame.rowconfigure(0, weight=1)
+        right_frame.columnconfigure(0, weight=1)
 
         self._lock_ui_elements()
         self.after(100, self._load_data)
