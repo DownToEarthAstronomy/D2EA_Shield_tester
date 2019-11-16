@@ -24,7 +24,7 @@ class ShieldBoosterVariant(object):
         self._kin_res_bonus = ""
         self._therm_res_bonus = ""
         self._can_skip = False
-        self._loadout_template = None
+        self._loadout_template = None  # type: Optional[Dict[str, Any]]
 
     @property
     def engineering(self):
@@ -382,7 +382,7 @@ class LoadOut(object):
     def __init__(self, shield_generator: ShieldGenerator, ship: StarShip):
         self._shield_generator = shield_generator
         self._ship = ship
-        self.boosters = None
+        self.boosters = None  # type: List[ShieldBoosterVariant]
         self._shield_strength = self.__calculate_shield_strength()
 
     @property
@@ -520,8 +520,8 @@ class TestCase(object):
         self.absolute_dps = 0
         self.scb_hitpoints = 0
         self.guardian_hitpoints = 0
-        self.shield_booster_variants = None
-        self.loadout_list = None
+        self.shield_booster_variants = None  # type: List[ShieldBoosterVariant]
+        self.loadout_list = None  # type: List[LoadOut]
         self.number_of_boosters_to_test = 0
         self.use_prismatics = True
 
@@ -624,7 +624,7 @@ class ShieldTester(object):
         self.__shield_generators = dict()  # type: Dict[str, Dict[int, List[ShieldGenerator]]]
         self.__unengineered_shield_generators = dict()
 
-        self.__test_case = None
+        self.__test_case = None  # type: Optional[TestCase]
         self.__use_short_list = True
 
         self.__runtime = 0
