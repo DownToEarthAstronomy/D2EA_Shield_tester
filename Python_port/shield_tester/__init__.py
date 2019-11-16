@@ -616,6 +616,9 @@ class ShieldTester(object):
     LOG_DIRECTORY = os.path.join(os.getcwd(), "Logs")
     CORIOLIS_URL = "https://coriolis.io/import?data={}"
 
+    CALLBACK_MESSAGE = 1
+    CALLBACK_STEP = 2
+
     def __init__(self):
         self.__ships = dict()
         self.__booster_variants = list()
@@ -737,36 +740,40 @@ class ShieldTester(object):
             return copy.deepcopy(self.__unengineered_shield_generators.get(sg_variant.symbol))
         return None
 
-    def compute(self, test_settings: TestCase, callback: function = None, message_queue: queue.Queue = None) -> Optional[TestResult]:
+    def compute(self, test_case: TestCase, callback: function = None, message_queue: queue.SimpleQueue = None) -> Optional[TestResult]:
         """
         Compute best loadout. Best to call this in an extra thread. It might take a while to complete.
-        :param test_settings: settings of test case
-        :param callback: optional callback. Will be called [<number of tests> / MP_CHUNK_SIZE] times if more than 1 core is used.
-                         Will be called only once when only 1 core is used
+        If set, the callback will be called [<number of tests> / test_case.loadout_list / MP_CHUNK_SIZE] times (+2 if queue is set).
+        Callback function will be called with CALLBACK_MESSAGE if there is a new message and
+                                              CALLBACK_STEP is used for each step
+        :param test_case: settings of test case
+        :param callback: optional callback using an int as argument
         :param message_queue: message queue containing some output messages
         """
-        if not test_settings or not test_settings.shield_booster_variants or not test_settings.loadout_list:
+        if not test_case or not test_case.shield_booster_variants or not test_case.loadout_list:
             # nothing to test
             # TODO maybe raise exception
             print("Can't test nothing")
             return
 
-        print(test_settings.get_output_string())
+        print(test_case.get_output_string())
 
         self.__runtime = time.time()
         output = list()
 
         # use built in itertools and assume booster ids are starting at 1 and that there are no gaps
-        booster_combinations = list(itertools.combinations_with_replacement(range(0, len(test_settings.shield_booster_variants)), test_settings.number_of_boosters_to_test))
+        booster_combinations = list(itertools.combinations_with_replacement(range(0, len(test_case.shield_booster_variants)), test_case.number_of_boosters_to_test))
         output.append("------------ TEST RUN ------------")
-        output.append("        Shield Booster Count: [{0}]".format(test_settings.number_of_boosters_to_test))
-        output.append("   Shield Generator Variants: [{0}]".format(len(test_settings.loadout_list)))
+        output.append("        Shield Booster Count: [{0}]".format(test_case.number_of_boosters_to_test))
+        output.append("   Shield Generator Variants: [{0}]".format(len(test_case.loadout_list)))
         output.append("     Shield Booster Variants: [{0}]".format(len(self.__booster_variants)))
-        output.append("Shield loadouts to be tested: [{0:n}]".format(len(booster_combinations) * len(test_settings.loadout_list)))
+        output.append("Shield loadouts to be tested: [{0:n}]".format(len(booster_combinations) * len(test_case.loadout_list)))
         output.append("Running calculations. Please wait...")
         output.append("")
         if message_queue:
             message_queue.put("\n".join(output))
+            if callback:
+                callback(ShieldTester.CALLBACK_MESSAGE)
         print("\n".join(output))  # in case there is a console
         output = list()
 
@@ -783,30 +790,33 @@ class ShieldTester(object):
                 elif r.best_survival_time > best_result.best_survival_time:
                     best_result = r
             if callback:
-                callback()
+                callback(ShieldTester.CALLBACK_STEP)
 
-        if self.__cpu_cores > 1 and (len(booster_combinations) * len(test_settings.loadout_list)) > self.MP_CHUNK_SIZE:
+        def chunks(l, n):
+            for j in range(0, len(l), n):
+                yield l[j:j + n]
+
+        if self.__cpu_cores > 1 and (len(booster_combinations) * len(test_case.loadout_list)) > ShieldTester.MP_CHUNK_SIZE:
             # 1 core is handling UI and this thread, the rest is working on running the calculations
             with multiprocessing.Pool(processes=self.__cpu_cores - 1) as pool:
-                last_i = 0
-                for i in range(self.MP_CHUNK_SIZE, len(booster_combinations), self.MP_CHUNK_SIZE):
-                    pool.apply_async(TestCase.test_case, args=(test_settings, booster_combinations[last_i:i]), callback=apply_async_callback)
-                    last_i = i + 1
-                if last_i < len(booster_combinations):
-                    pool.apply_async(TestCase.test_case, args=(test_settings, booster_combinations[last_i:]), callback=apply_async_callback)
+                for chunk in chunks(booster_combinations, ShieldTester.MP_CHUNK_SIZE):
+                    pool.apply_async(TestCase.test_case, args=(test_case, chunk), callback=apply_async_callback)
                 pool.close()
                 pool.join()
         else:
-            result = TestCase.test_case(test_settings, booster_combinations)
-            apply_async_callback(result)  # can use the same function here as mp.Pool would
+            for chunk in chunks(booster_combinations, ShieldTester.MP_CHUNK_SIZE):
+                result = TestCase.test_case(test_case, chunk)
+                apply_async_callback(result)  # can use the same function here as mp.Pool would
 
         output.append("Calculations took {:.2f} seconds".format(time.time() - self.__runtime))
         output.append("")
         if message_queue:
             message_queue.put("\n".join(output))
+            if callback:
+                callback(ShieldTester.CALLBACK_MESSAGE)
         print("\n".join(output))  # in case there is a console
 
-        print(best_result.get_output_string(test_settings.guardian_hitpoints))
+        print(best_result.get_output_string(test_case.guardian_hitpoints))
 
         return best_result
 
