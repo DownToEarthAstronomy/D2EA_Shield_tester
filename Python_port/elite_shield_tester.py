@@ -23,7 +23,7 @@ from tkinter import ttk, messagebox, scrolledtext
 import shield_tester as st
 
 # Configuration
-VERSION = "1.0 beta"
+VERSION = "1.0"
 DATA_FILE = os.path.join(os.getcwd(), "data.json")
 
 
