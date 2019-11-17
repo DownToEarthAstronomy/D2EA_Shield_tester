@@ -383,7 +383,7 @@ class ShieldTesterUi(tk.Tk):
         else:
             if tk.messagebox.askretrycancel(
                     "No data", "Could not read JSON file.\nPlease place it in the same directory as this program.\n"
-                    "Required:{data}".format(data=os.path.basename(DATA_FILE))):
+                    "Required: {data}".format(data=os.path.basename(DATA_FILE))):
                 self._load_data()
 
     def _lock_ui_elements(self):

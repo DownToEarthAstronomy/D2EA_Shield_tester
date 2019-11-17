@@ -689,25 +689,28 @@ class ShieldTester(object):
     def __find_boosters_to_test(self) -> List[ShieldBoosterVariant]:
         return copy.deepcopy(list(filter(lambda x: not (x.can_skip and self.__use_short_list), self.__booster_variants)))
 
-    def __create_loadouts(self, module_class: int = 0) -> List[LoadOut]:
+    def __create_loadouts(self, module_class: int = 0, test_case: TestCase = None) -> List[LoadOut]:
         """
         Create a list containing all relevant shield generators but no boosters
         """
         loadouts_to_test = list()
 
-        if self.__test_case and self.__test_case.ship:
+        if not test_case:
+            test_case = self.__test_case
+
+        if test_case and test_case.ship:
             if module_class == 0:
-                module_class = self.__test_case.ship.highest_internal
+                module_class = test_case.ship.highest_internal
 
             shield_generators = list()
             shield_generators += self.__shield_generators[ShieldGenerator.TYPE_BIWEAVE][module_class]
             shield_generators += self.__shield_generators[ShieldGenerator.TYPE_NORMAL][module_class]
             # noinspection PyProtectedMember
-            if self.__test_case._use_prismatics:
+            if test_case._use_prismatics:
                 shield_generators += self.__shield_generators[ShieldGenerator.TYPE_PRISMATIC][module_class]
 
             for sg in shield_generators:
-                loadouts_to_test.append(LoadOut(sg, self.__test_case.ship))
+                loadouts_to_test.append(LoadOut(sg, test_case.ship))
         return copy.deepcopy(loadouts_to_test)
 
     def write_log(self, test_case: TestCase, result: TestResult, filename: str = None, time_and_name: bool = False, include_coriolis: bool = False):
@@ -730,35 +733,47 @@ class ShieldTester(object):
             logfile.write(result.get_output_string(test_case.guardian_hitpoints))
             if include_coriolis:
                 logfile.write("\n")
-                logfile.write(self.get_coriolis_link(result.best_loadout))
                 logfile.write("\n")
+                logfile.write(self.get_coriolis_link(result.best_loadout))
 
             logfile.write("\n\n\n")
             logfile.flush()
 
     # noinspection PyProtectedMember
-    def get_compatible_shield_generator_classes(self) -> Tuple[int, int]:
+    def get_compatible_shield_generator_classes(self, test_case: TestCase = None) -> Tuple[int, int]:
         """
         Find classes of shield generators that can be fitted to the selected ship.
+        :param test_case: If left empty, the internal stored TestCase will be used
         :return: tuple: (min class, max class)
         """
-        if self.__test_case and self.__test_case.ship:
+        if not test_case:
+            test_case = self.__test_case
+        if test_case and test_case.ship:
             min_class = 0
             sg_classes = list(self.__shield_generators["normal"].keys())
             sg_classes.sort()  # make sure they are in ascending order
             for sg_class in sg_classes:
-                if self.__shield_generators["normal"][sg_class][0]._maxmass > self.__test_case.ship.hull_mass:
+                if self.__shield_generators["normal"][sg_class][0]._maxmass > test_case.ship.hull_mass:
                     min_class = sg_class
                     break
-            return min_class, self.__test_case.ship.highest_internal
+            return min_class, test_case.ship.highest_internal
         else:
             return 0, 0
 
-    def create_loadouts_for_class(self, module_class: int):
+    def create_loadouts_for_class(self, module_class: int, test_case: TestCase = None):
+        """
+        Create loadouts for the class of shield generator and store them in TestCase.loadout_list
+        :param module_class: class for the shield generator
+        :param test_case: if left empty, the internally store test_case will be used
+        :return:
+        """
+        if not test_case:
+            test_case = self.__test_case
+
         min_class, max_class = self.get_compatible_shield_generator_classes()
         sg_class = max(min_class, min(max_class, module_class))
         if sg_class > 0:
-            self.__test_case.loadout_list = self.__create_loadouts(sg_class)
+            test_case.loadout_list = self.__create_loadouts(sg_class)
 
     def get_default_shield_generator_of_variant(self, sg_variant: ShieldGenerator) -> Optional[ShieldGenerator]:
         """
