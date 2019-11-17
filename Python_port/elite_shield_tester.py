@@ -10,28 +10,21 @@ Build to exe using the command: "pyinstaller --noconsole elite_shield_tester.py"
 Don't forget to copy csv files into the exe's directory afterwards.
 """
 
-import csv
 import os
-import sys
 import re
 import locale
-import time
 import multiprocessing
 import threading
 import queue
+import webbrowser
 import tkinter as tk
+from typing import Dict, List, Optional
 from tkinter import ttk, messagebox, scrolledtext
-from typing import List, Dict
+import shield_tester as st
 
 # Configuration
-VERSION = "0.4"
-
-path = os.pardir
-if re.match(".*elite_shield_tester\.exe", sys.executable):
-    path = os.getcwd()
-FILE_SHIELD_BOOSTER_VARIANTS = os.path.join(path, "ShieldBoosterVariants_short.csv")
-FILE_SHIELD_GENERATOR_VARIANTS = os.path.join(path, "ShieldGeneratorVariants.csv")
-LOG_DIRECTORY = os.path.join(os.getcwd(), "Logs")
+VERSION = "1.0"
+DATA_FILE = os.path.join(os.getcwd(), "data.json")
 
 
 class CustomEntry(tk.Entry):
@@ -86,483 +79,444 @@ class TextEntry(CustomEntry):
             return ""
 
 
-class ShieldBoosterVariant:
-    def __init__(self, csv_row):
-        self.id = int(csv_row["ID"])
-        self.engineering = csv_row["Engineering"]
-        self.experimental = csv_row["Experimental"]
-        self.shieldStrengthBonus = float(csv_row["ShieldStrengthBonus"])
-        self.expResBonus = 1.0 - float(csv_row["ExpResBonus"])
-        self.kinResBonus = 1.0 - float(csv_row["KinResBonus"])
-        self.thermResBonus = 1.0 - float(csv_row["ThermResBonus"])
+class TabData(object):
+    def __init__(self, tab: scrolledtext.ScrolledText = None, test_result: st.TestResult = None):
+        self.tab = tab
+        self.test_result = test_result
 
 
-class ShieldGeneratorVariant:
-    def __init__(self, csv_row):
-        self.id = int(csv_row["ID"])
-        self.type = csv_row["Type"]
-        self.engineering = csv_row["Engineering"]
-        self.experimental = csv_row["Experimental"]
-        self.shieldStrength = int(csv_row["ShieldStrength"])
-        self.regenRate = float(csv_row["RegenRate"])
-        self.expRes = 1.0 - float(csv_row["ExpRes"])
-        self.kinRes = 1.0 - float(csv_row["KinRes"])
-        self.thermRes = 1.0 - float(csv_row["ThermRes"])
-
-
-class LoadOutStat:
-    def __init__(self, hitpoints, regen_rate, explosive_resistance, kinetic_resistance, thermal_resistance):
-        self.hitPoints = hitpoints
-        self.regenRate = regen_rate
-        self.explosiveResistance = explosive_resistance
-        self.kineticResistance = kinetic_resistance
-        self.thermalResistance = thermal_resistance
-
-
-class ShieldTesterData:
-    def __init__(self):
-        self.number_of_boosters = 0
-        self.damage_effectiveness = 0
-        self.explosive_dps = 0
-        self.kinetic_dps = 0
-        self.thermal_dps = 0
-        self.absolute_dps = 0
-        self.cpu_cores = 0
-        self.scb_hitpoints = 0
-        self.guardian_hitpoints = 0
-        self.shield_booster_variants = None
-        self.shield_generator_variants = None
-        self.booster_combinations = None
-        self.usePrismatic = False
-
-
-class TestResult:
-    def __init__(self, best_shield_generator: int=0, best_shield_booster_loadout: List[int]=None,
-                 best_loadout_stats: LoadOutStat=None, best_survival_time: int=0):
-        self.best_shield_generator = best_shield_generator
-        self.best_shield_booster_loadout = best_shield_booster_loadout
-        self.best_loadout_stats = best_loadout_stats
-        self.best_survival_time = best_survival_time  # if negative, the ship didn't die
-
-
-class ShieldTester(tk.Tk):
+class ShieldTesterUi(tk.Tk):
     EVENT_COMPUTE_OUTPUT = "<<EventComputeOutput>>"
     EVENT_COMPUTE_COMPLETE = "<<EventComputeComplete>>"
+    EVENT_COMPUTE_CANCELLED = "<<EventComputeCancelled>>"
     EVENT_PROGRESS_BAR_STEP = "<<EventProgressBarStep>>"
     EVENT_WARNING_WRITE_LOGFILE = "<<EventShowWarningWriteLogfile>>"
+    EVENT_TAB_CHANGED = "<<NotebookTabChanged>>"
 
     def __init__(self):
         super().__init__()
         self.title("Shield Tester v{}".format(VERSION))
         self._runtime = 0
 
-        self.bind(self.EVENT_COMPUTE_OUTPUT, lambda e: self._event_process_output(e))
-        self.bind(self.EVENT_COMPUTE_COMPLETE, lambda e: self._event_compute_complete(e))
-        self.bind(self.EVENT_PROGRESS_BAR_STEP, lambda e: self._event_progress_bar_step(e))
-        self.bind(self.EVENT_WARNING_WRITE_LOGFILE, lambda e: self._event_show_warning_logfile(e))
-        self.message_queue = queue.SimpleQueue()
-        self._shield_booster_variants = None
-        self._shield_generator_variants = None
+        self._shield_tester = st.ShieldTester()
+        self._test_case = None  # type: st.TestCase
+        self._lockable_ui_elements = list()
+
+        # tab_name used as key for tabs
+        self._active_tab_name = ""
+        self._tabs = dict()  # type: Dict[str, TabData]
+
+        self.bind(ShieldTesterUi.EVENT_COMPUTE_OUTPUT, lambda e: self._event_process_output(e))
+        self.bind(ShieldTesterUi.EVENT_COMPUTE_COMPLETE, lambda e: self._event_compute_complete(e))
+        self.bind(ShieldTesterUi.EVENT_COMPUTE_CANCELLED, lambda e: self._event_compute_cancelled(e))
+        self.bind(ShieldTesterUi.EVENT_PROGRESS_BAR_STEP, lambda e: self._event_progress_bar_step(e))
+        self.bind(ShieldTesterUi.EVENT_WARNING_WRITE_LOGFILE, lambda e: self._event_show_warning_logfile(e))
+        self._message_queue = queue.SimpleQueue()
 
         # add some padding
         tk.Frame(self, width=10, height=10).grid(row=0, column=0, sticky=tk.N)
         tk.Frame(self, width=10, height=10).grid(row=2, column=3, sticky=tk.N)
 
-        self._lockable_ui_elements = list()
+        def headline(frame, title, h_row):
+            # headline, use this instead of LabelFrame to keep using the same grid
+            ttk.Separator(frame, orient=tk.HORIZONTAL).grid(row=h_row, columnspan=2, sticky=tk.EW, pady=(3*padding, 0))
+            h_row += 1
+            tk.Label(frame, text=title, justify=tk.CENTER).grid(row=h_row, columnspan=2, sticky=tk.EW)
+            h_row += 1
+            ttk.Separator(frame, orient=tk.HORIZONTAL).grid(row=h_row, columnspan=2, sticky=tk.EW)
+            return h_row
 
-        padding = 5
+        padding = 3
         # ---------------------------------------------------------------------------------------------------
         # left frame
-        self._left_frame = tk.LabelFrame(self, borderwidth=1, relief=tk.RIDGE, text="Config")
-        self._left_frame.grid(row=1, column=1, sticky=tk.NSEW)
+        left_frame = tk.LabelFrame(self, borderwidth=1, text="Config")
+        left_frame.grid(row=1, column=1, sticky=tk.NSEW)
 
         row = 0
-        tk.Label(self._left_frame, text="Name of test (optional)").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
-        self._test_name = TextEntry(self._left_frame)
+        tk.Label(left_frame, text="Name of test (optional)").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._test_name = TextEntry(left_frame)
         self._test_name.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
         self._lockable_ui_elements.append(self._test_name)
 
         row += 1
-        tk.Label(self._left_frame, text="Number of boosters").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
-        self._booster_slider = tk.Scale(self._left_frame, from_=0, to=8, orient=tk.HORIZONTAL, length=175, takefocus=True)
-        self._booster_slider.set(2)
+        row = headline(left_frame, "[Defender]", row)
+
+        row += 1
+        tk.Label(left_frame, text="Choose a ship").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._ship_select_var = tk.StringVar(self)
+        self._ship_select_var.set("no data yet")
+        self._ship_select = tk.OptionMenu(left_frame, self._ship_select_var, "", command=self._ship_select_command)
+        self._ship_select.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
+
+        row += 1
+        tk.Label(left_frame, text="Class of shield generator").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._sg_class_slider = tk.Scale(left_frame, from_=1, to=8, orient=tk.HORIZONTAL, length=175, takefocus=True,
+                                         command=self._set_shield_class_command)
+        self._sg_class_slider.config(state=tk.DISABLED)
+        self._sg_class_slider.grid(row=row, column=1, sticky=tk.E, padx=padding, pady=padding)
+        self._lockable_ui_elements.append(self._sg_class_slider)
+
+        row += 1
+        tk.Label(left_frame, text="Number of boosters").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._booster_slider = tk.Scale(left_frame, from_=0, to=8, orient=tk.HORIZONTAL, length=175, takefocus=True,
+                                        command=self._set_number_of_boosters_command)
+        self._booster_slider.set(7)
         self._booster_slider.grid(row=row, column=1, sticky=tk.E, padx=padding, pady=padding)
         self._lockable_ui_elements.append(self._booster_slider)
 
         row += 1
-        tk.Label(self._left_frame, text="Damage effectiveness in %").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
-        self._effectiveness_slider = tk.Scale(self._left_frame, from_=1, to=100, orient=tk.HORIZONTAL, length=175, takefocus=True)
-        self._effectiveness_slider.set(25)
-        self._effectiveness_slider.grid(row=row, column=1, sticky=tk.E, padx=padding, pady=padding)
-        self._lockable_ui_elements.append(self._effectiveness_slider)
-
-        row += 1
-        tk.Label(self._left_frame, text="Shield cell bank hit point pool").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
-        self._scb_hitpoints = IntegerEntry(self._left_frame)
+        tk.Label(left_frame, text="Shield cell bank hit point pool").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._scb_hitpoints = IntegerEntry(left_frame)
         self._scb_hitpoints.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
         self._lockable_ui_elements.append(self._scb_hitpoints)
 
         row += 1
-        tk.Label(self._left_frame, text="Guardian shield reinforcement hit point pool").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
-        self._guardian_hitpoints = IntegerEntry(self._left_frame)
+        tk.Label(left_frame, text="Guardian shield reinforcement hit point pool").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._guardian_hitpoints = IntegerEntry(left_frame)
         self._guardian_hitpoints.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
         self._lockable_ui_elements.append(self._guardian_hitpoints)
 
         row += 1
-        tk.Label(self._left_frame, text="Explosive DPS").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
-        self._explosive_dps_entry = IntegerEntry(self._left_frame)
+        tk.Label(left_frame, text="Access to prismatic shields").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._usePrismatic = tk.IntVar(self)
+        self._usePrismatic.set(1)
+        self._prismatic_check_button = tk.Checkbutton(left_frame, variable=self._usePrismatic, command=self._set_prismatic_shields_command)
+        self._prismatic_check_button.grid(row=row, column=1, sticky=tk.W, pady=padding)
+        self._lockable_ui_elements.append(self._prismatic_check_button)
+
+        row += 1
+        row = headline(left_frame, "[Attacker]", row)
+
+        row += 1
+        tk.Label(left_frame, text="Explosive DPS").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._explosive_dps_entry = IntegerEntry(left_frame)
         self._explosive_dps_entry.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
         self._lockable_ui_elements.append(self._explosive_dps_entry)
 
         row += 1
-        tk.Label(self._left_frame, text="Kinetic DPS").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
-        self._kinetic_dps_entry = IntegerEntry(self._left_frame)
+        tk.Label(left_frame, text="Kinetic DPS").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._kinetic_dps_entry = IntegerEntry(left_frame)
         self._kinetic_dps_entry.insert(0, 50)
         self._kinetic_dps_entry.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
         self._lockable_ui_elements.append(self._kinetic_dps_entry)
 
         row += 1
-        tk.Label(self._left_frame, text="Thermal DPS").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
-        self._thermal_dps_entry = IntegerEntry(self._left_frame)
+        tk.Label(left_frame, text="Thermal DPS").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._thermal_dps_entry = IntegerEntry(left_frame)
         self._thermal_dps_entry.insert(0, 50)
         self._thermal_dps_entry.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
         self._lockable_ui_elements.append(self._thermal_dps_entry)
 
         row += 1
-        tk.Label(self._left_frame, text="Absolute DPS (Thargoids)").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
-        self._absolute_dps_entry = IntegerEntry(self._left_frame)
+        tk.Label(left_frame, text="Absolute DPS (Thargoids)").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._absolute_dps_entry = IntegerEntry(left_frame)
+        self._absolute_dps_entry.insert(0, 10)
         self._absolute_dps_entry.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
         self._lockable_ui_elements.append(self._absolute_dps_entry)
 
         row += 1
-        tk.Label(self._left_frame, text="Access to prismatic shields").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
-        self._usePrismatic = tk.IntVar()
-        self._usePrismatic.set(1)
-        self._prismatic_check_button = tk.Checkbutton(self._left_frame, variable=self._usePrismatic)
-        self._prismatic_check_button.grid(row=row, column=1, sticky=tk.W, pady=padding)
-        self._lockable_ui_elements.append(self._prismatic_check_button)
-
-        # empty row
-        row += 1
-        tk.Label(self._left_frame, text="").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        tk.Label(left_frame, text="Damage effectiveness in %").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._effectiveness_slider = tk.Scale(left_frame, from_=1, to=100, orient=tk.HORIZONTAL, length=175, takefocus=True)
+        self._effectiveness_slider.set(65)
+        self._effectiveness_slider.grid(row=row, column=1, sticky=tk.E, padx=padding, pady=padding)
+        self._lockable_ui_elements.append(self._effectiveness_slider)
 
         row += 1
-        tk.Label(self._left_frame, text="CPU cores to use").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
-        self._cores_slider = tk.Scale(self._left_frame, from_=1, to=os.cpu_count(), orient=tk.HORIZONTAL, length=175, takefocus=True)
+        row = headline(left_frame, "[Misc]", row)
+
+        row += 1
+        tk.Label(left_frame, text="Use short list").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._use_short_list = tk.IntVar(self)
+        self._use_short_list.set(1)
+        self._use_short_list_check_button = tk.Checkbutton(left_frame, variable=self._use_short_list, command=self._set_short_list_command)
+        self._use_short_list_check_button.grid(row=row, column=1, sticky=tk.W, pady=padding)
+        self._lockable_ui_elements.append(self._use_short_list_check_button)
+
+        row += 1
+        tk.Label(left_frame, text="CPU cores to use").grid(row=row, column=0, sticky=tk.SW, padx=padding)
+        self._cores_slider = tk.Scale(left_frame, from_=1, to=os.cpu_count(), orient=tk.HORIZONTAL, length=175, takefocus=True)
         self._cores_slider.set(os.cpu_count())
-        self._cores_slider.grid(row=row, column=1, sticky=tk.E, padx=padding, pady=padding)
+        self._cores_slider.grid(row=row, column=1, sticky=tk.E, padx=padding)
         self._lockable_ui_elements.append(self._cores_slider)
 
         row += 1
-        self._compute_button = tk.Button(self._left_frame, text="Compute best loadout", command=self.compute)
-        self._compute_button.grid(row=row, columnspan=2, sticky=tk.S, padx=padding, pady=padding)
-        self._lockable_ui_elements.append(self._compute_button)
+        tk.Label(left_frame, text="Shield loadouts to be tested", justify="left").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._number_of_tests_label = tk.Label(left_frame, text="")
+        self._number_of_tests_label.grid(row=row, column=1, sticky=tk.W, padx=padding, pady=padding)
 
         row += 1
-        self._progress_bar = ttk.Progressbar(self._left_frame, orient="horizontal", mode="determinate")
+        button_frame = tk.Frame(left_frame)
+        button_frame.grid(row=row, columnspan=2, sticky=tk.NSEW, padx=padding, pady=padding)
+        button_frame.columnconfigure(0, weight=1)
+        button_frame.columnconfigure(1, weight=1)
+        button_frame.columnconfigure(2, weight=1)
+        self._compute_button = tk.Button(button_frame, text="Compute best loadout", command=self._compute)
+        self._compute_button.grid(row=0, column=0, sticky=tk.EW, padx=padding, pady=padding)
+        self._lockable_ui_elements.append(self._compute_button)
+
+        self._cancel_button = tk.Button(button_frame, text="       Cancel       ", command=self._cancel_command)
+        self._cancel_button.grid(row=0, column=1, sticky=tk.EW, padx=padding, pady=padding)
+        self._cancel_button.config(state=tk.DISABLED)
+        #self._lockable_ui_elements.append(self._cancel_button)
+
+        self._coriolis_button = tk.Button(button_frame, text=" Export to Coriolis ", command=self._open_coriolis_command)
+        self._coriolis_button.grid(row=0, column=2, sticky=tk.E, padx=padding, pady=padding)
+        self._coriolis_button.config(state=tk.DISABLED)
+        #self._lockable_ui_elements.append(self._compute_button)
+
+        row += 1
+        self._progress_bar = ttk.Progressbar(left_frame, orient="horizontal", mode="determinate")
         self._progress_bar.grid(row=row, columnspan=2, sticky=tk.EW, padx=padding, pady=padding)
         self._progress_bar.config(value=0)
 
         # ---------------------------------------------------------------------------------------------------
         # right frame
-        self._right_frame = tk.LabelFrame(self, borderwidth=1, relief=tk.RIDGE, text="Output")
-        self._right_frame.grid(row=1, column=2, sticky=tk.NSEW)
-        self._text_widget = scrolledtext.ScrolledText(self._right_frame, height=27, width=75)
-        self._text_widget.grid(row=0, column=0, padx=padding, pady=padding, sticky=tk.NSEW)
-        self._text_widget.config(state=tk.DISABLED)
+        right_frame = tk.LabelFrame(self, borderwidth=1, text="Output")
+        right_frame.grid(row=1, column=2, sticky=tk.NSEW)
+
+        self._tab_parent = ttk.Notebook(right_frame)
+        self._tab_parent.grid(row=0, column=0, padx=padding, pady=padding, sticky=tk.NSEW)
+        self._tab_parent.rowconfigure(0, weight=1)
+        self._tab_parent.columnconfigure(0, weight=1)
+        self._tab_parent.bind(ShieldTesterUi.EVENT_TAB_CHANGED, self._event_tab_changed)
+        # self._tab_parent.bind("<Button-3>", self._event_close_tab)  # do this when lock and unlocking UI
+
+        self._text_widget_placeholder = scrolledtext.ScrolledText(self._tab_parent, height=27, width=75)
+        self._text_widget_placeholder.config(state=tk.DISABLED)
+        self._text_widget_placeholder.grid(row=0, column=0, padx=padding, pady=padding, sticky=tk.NSEW)
 
         # set behaviour for resizing
         self.rowconfigure(1, weight=1)
         self.columnconfigure(2, weight=1)
-        self._right_frame.rowconfigure(0, weight=1)
-        self._right_frame.columnconfigure(0, weight=1)
+        right_frame.rowconfigure(0, weight=1)
+        right_frame.columnconfigure(0, weight=1)
 
         self._lock_ui_elements()
-        self.after(100, self._read_csv_files)
+        self.after(100, self._load_data)
 
         def set_window_size():
             self.minsize(self.winfo_reqwidth(), self.winfo_reqheight())
+
         self.after(200, set_window_size)
 
-    def _read_csv_files(self):
-        error_occurred = False
-        if os.path.exists(FILE_SHIELD_BOOSTER_VARIANTS) and os.path.exists(FILE_SHIELD_GENERATOR_VARIANTS):
-            try:
-                self._shield_booster_variants = dict()
-                with open(FILE_SHIELD_BOOSTER_VARIANTS, "r") as csv_file:
-                    reader = csv.DictReader(csv_file)
-                    for row in reader:
-                        variant = ShieldBoosterVariant(row)
-                        self._shield_booster_variants.setdefault(variant.id, variant)
+    def _add_tab(self, name: str) -> TabData:
+        if name not in self._tabs:
+            if len(self._tabs) == 0:
+                self._text_widget_placeholder.grid_remove()  # remove placeholder
+            new_tab = scrolledtext.ScrolledText(self._tab_parent, height=27, width=75)
+            new_tab.config(state=tk.DISABLED)
+            self._tab_parent.add(new_tab, text=name)
+            return self._tabs.setdefault(name, TabData(new_tab))
 
-                self._shield_generator_variants = dict()
-                with open(FILE_SHIELD_GENERATOR_VARIANTS, "r") as csv_file:
-                    reader = csv.DictReader(csv_file)
-                    for row in reader:
-                        variant = ShieldGeneratorVariant(row)
-                        self._shield_generator_variants.setdefault(variant.id, variant)
-            except Exception as e:
-                print("Exception while reading/parsing CSV files: ")  # in case we have a console window
-                print(e)
-                error_occurred = True
-        else:
+        return self._tabs[name]
+
+    def _get_name_for_tab(self):
+        """ Either use the entered test name or use the ship's name"""
+        return self._test_name.get() if self._test_name.get() else self._test_case.ship.name
+
+    def _cancel_command(self):
+        t = threading.Thread(target=self._shield_tester.cancel)
+        t.start()
+
+    def _set_shield_class_command(self, value=""):
+        if value:
+            self._shield_tester.create_loadouts_for_class(int(value))
+
+    def _set_number_of_boosters_command(self, value=""):
+        if self._test_case:
+            self._test_case.number_of_boosters_to_test = int(value)
+            self._set_number_of_tests_label()
+
+    def _set_prismatic_shields_command(self):
+        self._shield_tester.use_prismatics = True if self._usePrismatic.get() else False
+        self._set_number_of_tests_label()
+
+    def _set_short_list_command(self):
+        self._shield_tester.use_short_list = True if self._use_short_list.get() else False
+        self._set_number_of_tests_label()
+
+    def _ship_select_command(self, value=None):
+        if self._ship_select_var.get():
+            # select chosen ship
+            if self._shield_tester.select_ship(self._ship_select_var.get()):
+                # get test case for the chosen ship
+                self._test_case = self._shield_tester.get_test_case()
+                slots = self._test_case.ship.utility_slots
+                self._booster_slider.config(to=slots)
+                self._booster_slider.set(slots)
+                min_class, max_class = self._shield_tester.get_compatible_shield_generator_classes()
+                self._sg_class_slider.config(from_=min_class, to=max_class)
+                self._sg_class_slider.set(max_class)
+
+    def _open_coriolis_command(self):
+        data = self._tabs.get(self._active_tab_name, None)
+        if data and data.test_result:
+            webbrowser.open(self._shield_tester.get_coriolis_link(data.test_result.best_loadout))
+
+    def _set_number_of_tests_label(self):
+        self._number_of_tests_label.config(text="{:n}".format(self._shield_tester.number_of_tests))
+
+    def _load_data(self):
+        error_occurred = False
+        try:
+            self._shield_tester.load_data(DATA_FILE)
+        except Exception as e:
+            print(e)
             error_occurred = True
 
         if not error_occurred:
             self._unlock_ui_elements()
+            ship_names = self._shield_tester.ship_names
+            ship_names.sort()
+            # refresh drop down menu
+            self._ship_select["menu"].delete(0, tk.END)
+            for ship_name in ship_names:
+                # noinspection PyProtectedMember
+                self._ship_select["menu"].add_command(label=ship_name, command=tk._setit(self._ship_select_var, ship_name, self._ship_select_command))
+            if "Anaconda" in ship_names:
+                self._ship_select_var.set("Anaconda")
+            else:
+                self._ship_select_var.set(ship_names[0])
+            self._ship_select.config(takefocus=True)
+            self._ship_select_command()
+
         else:
-            if tk.messagebox.askretrycancel("No data", "Could not read CSV files.\nPlease place them in the same directory as this program.\n"
-                                                       "Required:\n{generator}\n{booster}".format(generator=os.path.basename(FILE_SHIELD_GENERATOR_VARIANTS),
-                                                                                                  booster=os.path.basename(FILE_SHIELD_BOOSTER_VARIANTS))):
-                self._read_csv_files()
+            if tk.messagebox.askretrycancel(
+                    "No data", "Could not read JSON file.\nPlease place it in the same directory as this program.\n"
+                    "Required: {data}".format(data=os.path.basename(DATA_FILE))):
+                self._load_data()
 
     def _lock_ui_elements(self):
         for element in self._lockable_ui_elements:
             element.config(state=tk.DISABLED)
+        self._tab_parent.unbind("<Button-3>")
 
     def _unlock_ui_elements(self):
         for element in self._lockable_ui_elements:
             element.config(state=tk.NORMAL)
+        self._tab_parent.bind("<Button-3>", self._event_close_tab)
+
+    def _event_tab_changed(self, event):
+        selected_tab = event.widget.select()
+        if selected_tab:
+            self._active_tab_name = event.widget.tab(selected_tab, "text")
+            data = self._tabs.get(self._active_tab_name, None)
+            if data and data.test_result:
+                self._coriolis_button.config(state=tk.NORMAL)
+            else:
+                self._coriolis_button.config(state=tk.DISABLED)
+
+    def _event_close_tab(self, event):
+        # noinspection PyProtectedMember
+        clicked_tab = self._tab_parent.tk.call(self._tab_parent._w, "identify", "tab", event.x, event.y)
+        if clicked_tab != "":
+            tab_name = event.widget.tab(clicked_tab, "text")
+            self._tab_parent.forget(clicked_tab)
+            self._tabs.pop(tab_name)
+        if len(self._tabs) == 0:
+            self._coriolis_button.config(state=tk.DISABLED)
 
     def _event_process_output(self, event):
-        self._text_widget.config(state=tk.NORMAL)
-        position, message = self.message_queue.get_nowait()
-        self._text_widget.insert(position, message)
-        self._text_widget.config(state=tk.DISABLED)
+        if not self._message_queue.empty():
+            self._write_to_text_widget(self._message_queue.get_nowait())
 
     def _event_progress_bar_step(self, event):
         if self._progress_bar:
             self._progress_bar.step()
 
+    def _event_compute_cancelled(self, event):
+        self._unlock_ui_elements()
+        self._progress_bar.stop()
+        self._write_to_text_widget("\n")
+        self._write_to_text_widget("Cancelled")
+        self._coriolis_button.config(state=tk.DISABLED)
+        self._cancel_button.config(state=tk.DISABLED)
+
     def _event_compute_complete(self, event):
         self._unlock_ui_elements()
+        self._progress_bar.stop()
+        self._cancel_button.config(state=tk.DISABLED)
+
+        data = self._tabs.get(self._active_tab_name)
+        if data and data.test_result:
+            self._write_to_text_widget("\n")
+            self._write_to_text_widget(data.test_result.get_output_string())
+            self._coriolis_button.config(state=tk.NORMAL)
+            try:
+                if not self._test_name.get():
+                    self._shield_tester.write_log(self._test_case, data.test_result, data.test_result.best_loadout.ship_name, time_and_name=True)
+                else:
+                    self._shield_tester.write_log(self._test_case, data.test_result, self._test_name.get())
+            except Exception as e:
+                print("Error writing logfile")
+                print(e)
+                self.event_generate(self.EVENT_WARNING_WRITE_LOGFILE, when="tail")
 
     def _event_show_warning_logfile(self, event):
         messagebox.showwarning("Could not write logfile.", "Could not write logfile.")
 
-    def _generate_booster_variations(self, number_of_boosters: int, variations_list: List[List[int]],
-                                     current_booster: int = 1, current_variation: int = 1, variations: List[int] = list()):
-        # Generate all possible booster combinations recursively and append them to the given variationsList.
-        if current_booster <= number_of_boosters:
-            while current_variation <= len(self._shield_booster_variants):
-                current_variation_list = variations.copy()
-                current_variation_list.append(current_variation)
-                self._generate_booster_variations(number_of_boosters, variations_list, current_booster + 1, current_variation, current_variation_list)
-                current_variation += 1
-        else:
-            # Append to list. Variable is a reference and lives in main function. Therefore it is safe to append lists of booster IDs to it.
-            variations_list.append(variations)
+    def _write_to_text_widget(self, text):
+        text_widget = self._tabs.get(self._active_tab_name, None)
+        if text_widget and text_widget.tab:
+            text_widget.tab.config(state=tk.NORMAL)
+            text_widget.tab.insert(tk.END, text)
+            text_widget.tab.config(state=tk.DISABLED)
 
-    def _compute_background(self, test_data: ShieldTesterData):
-        self._runtime = time.time()
-        output = list()
-        output.append("Shield Booster Count: {0}".format(test_data.number_of_boosters))
-        output.append("Shield Booster Variants: {0}".format(len(self._shield_booster_variants)))
-        output.append("Generating list of booster loadouts")
-        output.append("")
-        self.message_queue.put((tk.END, "\n".join(output)))
-        output = list()
-        self.event_generate(self.EVENT_COMPUTE_OUTPUT)  # thread safe communication
+    def _compute_callback(self, value: int):
+        # ensure thread safe communication
+        if value == st.ShieldTester.CALLBACK_STEP:
+            self.event_generate(self.EVENT_PROGRESS_BAR_STEP, when="tail")
+        elif value == st.ShieldTester.CALLBACK_MESSAGE:
+            self.event_generate(self.EVENT_COMPUTE_OUTPUT, when="tail")
+        elif value == st.ShieldTester.CALLBACK_CANCELLED:
+            self.event_generate(self.EVENT_COMPUTE_CANCELLED, when="tail")
 
-        variations_list = list()  # list of all possible booster variations
-        self._generate_booster_variations(test_data.number_of_boosters, variations_list)
-        test_data.booster_combinations = variations_list
+    def _compute_background(self):
+        data = self._tabs.get(self._active_tab_name)
+        test_results = self._shield_tester.compute(self._test_case, callback=self._compute_callback, message_queue=self._message_queue)
+        if data:
+            data.test_result = test_results
+        self.event_generate(self.EVENT_COMPUTE_COMPLETE, when="tail")
 
-        output.append("Shield loadouts to be tested: [{0:n}]".format(len(variations_list) * len(test_data.shield_generator_variants)))
-        output.append("Running calculations. Please wait...")
-        output.append("")
-        self.message_queue.put((tk.END, "\n".join(output)))
-        output = list()
-        self.event_generate(self.EVENT_COMPUTE_OUTPUT)  # thread safe communication
-
-        best_result = TestResult(best_survival_time=0)
-
-        def apply_async_callback(r: TestResult):
-            nonlocal best_result
-            if best_result.best_survival_time < 0:
-                if r.best_survival_time < best_result.best_survival_time:
-                    best_result = r
-            else:
-                if r.best_survival_time < 0:
-                    best_result = r
-                elif r.best_survival_time > best_result.best_survival_time:
-                    best_result = r
-            self.event_generate(self.EVENT_PROGRESS_BAR_STEP)
-
-        if test_data.cpu_cores > 1 and (len(variations_list) * len(test_data.shield_generator_variants)) > 1000:
-            # 1 core is handling UI and this thread, the rest is working on running the calculations
-            with multiprocessing.Pool(processes=test_data.cpu_cores - 1) as pool:
-                for shield_generator_variant in test_data.shield_generator_variants.values():
-                    pool.apply_async(test_case, args=(test_data, shield_generator_variant), callback=apply_async_callback)
-                pool.close()
-                pool.join()
-        else:
-            for shield_generator_variant in test_data.shield_generator_variants.values():
-                result = test_case(test_data, shield_generator_variant)
-                apply_async_callback(result)  # can use the same function here as mp.Pool would
-
-        output.append("Calculations took {:.2f} seconds".format(time.time() - self._runtime))
-        output.append("")
-        output.append("---- TEST RESULTS ----")
-        if best_result.best_survival_time != 0:
-            # sort by survival time and put highest value to start of the list
-            if best_result.best_survival_time > 0:
-                output.append("Survival Time [s]: [{0:.3f}]".format(best_result.best_survival_time))
-            else:
-                output.append("Survival Time [s]: [Didn't die]")
-            shield_generator = self._shield_generator_variants.get(best_result.best_shield_generator)
-            output.append("Shield Generator: [{type}] - [{eng}] - [{exp}]"
-                          .format(type=shield_generator.type, eng=shield_generator.engineering, exp=shield_generator.experimental))
-            output.append("Shield Boosters:")
-            for bestShieldBoosterLoadout in best_result.best_shield_booster_loadout:
-                shield_booster_variant = self._shield_booster_variants.get(bestShieldBoosterLoadout)
-                output.append("  [{eng}] - [{exp}]".format(eng=shield_booster_variant.engineering, exp=shield_booster_variant.experimental))
-
-            output.append("")
-            output.append("Shield Hitpoints: [{0:.3f}]".format(best_result.best_loadout_stats.hitPoints))
-            output.append("Shield Regen: [{0} hp/s]".format(best_result.best_loadout_stats.regenRate))
-            output.append("Explosive Resistance: [{0:.3f}]".format((1.0 - best_result.best_loadout_stats.explosiveResistance) * 100))
-            output.append("Kinetic Resistance: [{0:.3f}]".format((1.0 - best_result.best_loadout_stats.kineticResistance) * 100))
-            output.append("Thermal Resistance: [{0:.3f}]".format((1.0 - best_result.best_loadout_stats.thermalResistance) * 100))
-        else:
-            output.append("No test results. Please change DPS and/or damage effectiveness.")
-
-        output_string = "\n".join(output)
-        self.message_queue.put((tk.END, output_string))
-        self.event_generate(self.EVENT_COMPUTE_OUTPUT)  # thread safe communication
-        self.event_generate(self.EVENT_COMPUTE_COMPLETE)
-        try:
-            self._write_log(test_data, output_string, self._test_name.get())
-        except Exception as e:
-            print("Error writing logfile")
-            print(e)
-            self.event_generate(self.EVENT_WARNING_WRITE_LOGFILE)
-
-    def compute(self):
+    def _compute(self):
         self._lock_ui_elements()
+        self._coriolis_button.config(state=tk.DISABLED)
 
-        # clear text widget
-        self._text_widget.config(state=tk.NORMAL)
-        self._text_widget.delete("1.0", tk.END)
-        self._text_widget.config(state=tk.DISABLED)
+        # clear old test data
+        self._active_tab_name = self._get_name_for_tab()
+        tab_data = self._add_tab(self._active_tab_name)
+        self._tab_parent.select(tab_data.tab)
+        tab_data.tab.config(state=tk.NORMAL)
+        tab_data.tab.delete("1.0", tk.END)
+        tab_data.tab.config(state=tk.DISABLED)
+        tab_data.test_result = None
 
         # get data from UI
-        ui_data = ShieldTesterData()
-        ui_data.number_of_boosters = self._booster_slider.get()
-        ui_data.damage_effectiveness = self._effectiveness_slider.get() / 100.0
-        ui_data.scb_hitpoints = int(self._scb_hitpoints.get()) if self._scb_hitpoints.get() else 0
-        ui_data.guardian_hitpoints = int(self._guardian_hitpoints.get()) if self._guardian_hitpoints.get() else 0
-        ui_data.explosive_dps = int(self._explosive_dps_entry.get()) if self._explosive_dps_entry.get() else 0
-        ui_data.kinetic_dps = int(self._kinetic_dps_entry.get()) if self._kinetic_dps_entry.get() else 0
-        ui_data.thermal_dps = int(self._thermal_dps_entry.get()) if self._thermal_dps_entry.get() else 0
-        ui_data.absolute_dps = int(self._absolute_dps_entry.get()) if self._absolute_dps_entry.get() else 0
-        ui_data.cpu_cores = self._cores_slider.get()
-        ui_data.usePrismatic = True if self._usePrismatic.get() else False
+        self._test_case.number_of_boosters_to_test = self._booster_slider.get()
+        self._test_case.damage_effectiveness = self._effectiveness_slider.get() / 100.0
+        self._test_case.scb_hitpoints = int(self._scb_hitpoints.get()) if self._scb_hitpoints.get() else 0
+        self._test_case.guardian_hitpoints = int(self._guardian_hitpoints.get()) if self._guardian_hitpoints.get() else 0
+        self._test_case.explosive_dps = int(self._explosive_dps_entry.get()) if self._explosive_dps_entry.get() else 0
+        self._test_case.kinetic_dps = int(self._kinetic_dps_entry.get()) if self._kinetic_dps_entry.get() else 0
+        self._test_case.thermal_dps = int(self._thermal_dps_entry.get()) if self._thermal_dps_entry.get() else 0
+        self._test_case.absolute_dps = int(self._absolute_dps_entry.get()) if self._absolute_dps_entry.get() else 0
+        self._shield_tester.cpu_cores = self._cores_slider.get()
+        self._shield_tester.use_prismatics = True if self._usePrismatic.get() else False
 
-        if ui_data.usePrismatic:
-            ui_data.shield_generator_variants = self._shield_generator_variants
-        else:
-            ui_data.shield_generator_variants = {k: v for k, v in self._shield_generator_variants.items() if v.type != "Prismatic"}
-        ui_data.shield_booster_variants = self._shield_booster_variants
+        steps = int(self._shield_tester.number_of_tests / len(self._test_case.loadout_list) / st.ShieldTester.MP_CHUNK_SIZE) + 1
+        self._progress_bar.config(maximum=steps)
 
-        self._progress_bar.config(maximum=len(ui_data.shield_generator_variants))
+        self._write_to_text_widget(self._test_case.get_output_string())
+        self._write_to_text_widget("\n")
 
-        t = threading.Thread(target=self._compute_background, args=(ui_data,))
+        self._cancel_button.config(state=tk.NORMAL)
+        t = threading.Thread(target=self._compute_background)
         t.start()
-
-    @staticmethod
-    def _write_log(data: ShieldTesterData, result: str, filename=None):
-        os.makedirs(LOG_DIRECTORY, exist_ok=True)
-        if not filename:
-            filename = time.strftime("%Y-%m-%d %H.%M.%S")
-        with open(os.path.join(LOG_DIRECTORY, filename + ".txt"), "a+") as logfile:
-            logfile.write("Test run at: {}\n".format(time.strftime("%Y-%m-%d %H:%M:%S")))
-            logfile.write("---- TEST SETUP ----\n")
-            logfile.write("Shield Booster Count: [{}]\n".format(data.number_of_boosters))
-            logfile.write("Shield Cell Bank Hit Point Pool: [{}]\n".format(data.scb_hitpoints))
-            logfile.write("Guardian Shield Reinforcement Hit Point Pool: [{}]\n".format(data.guardian_hitpoints))
-            logfile.write("Access to Prismatic Shields: [{}]\n".format("Yes" if data.usePrismatic else "No"))
-            logfile.write("Explosive DPS: [{}]\n".format(data.explosive_dps))
-            logfile.write("Kinetic DPS: [{}]\n".format(data.kinetic_dps))
-            logfile.write("Thermal DPS: [{}]\n".format(data.thermal_dps))
-            logfile.write("Absolute DPS: [{}]\n".format(data.absolute_dps))
-            logfile.write("Damage Effectiveness: [{:.0f}%]\n".format(data.damage_effectiveness * 100))
-            logfile.write(result)
-            logfile.write("\n\n\n")
-            logfile.flush()
-
-
-def test_case(data: ShieldTesterData, shield_generator_variant: ShieldGeneratorVariant) -> TestResult:
-    best_survival_time = 0
-    best_shield_generator = 0
-    best_shield_booster_loadout = None
-    best_loadout_stats = 0
-
-    for booster_variation in data.booster_combinations:
-        # Calculate the resistance, regen-rate and hitpoints of the current loadout
-        loadout_stats = calculate_loadout_stats(data, shield_generator_variant, booster_variation)
-
-        actual_dps = data.damage_effectiveness * (
-                data.explosive_dps * loadout_stats.explosiveResistance +
-                data.kinetic_dps * loadout_stats.kineticResistance +
-                data.thermal_dps * loadout_stats.thermalResistance +
-                data.absolute_dps) - loadout_stats.regenRate * (1.0 - data.damage_effectiveness)
-
-        survival_time = (loadout_stats.hitPoints + data.scb_hitpoints) / actual_dps
-
-        if actual_dps > 0 and best_survival_time >= 0:
-            # if another run set best_survival_time to a negative value, then the ship didn't die, therefore the other result is better
-            if survival_time > best_survival_time:
-                best_shield_generator = shield_generator_variant.id
-                best_shield_booster_loadout = booster_variation
-                best_loadout_stats = loadout_stats
-                best_survival_time = survival_time
-        elif actual_dps < 0:
-            if survival_time < best_survival_time:
-                best_shield_generator = shield_generator_variant.id
-                best_shield_booster_loadout = booster_variation
-                best_loadout_stats = loadout_stats
-                best_survival_time = survival_time
-
-    return TestResult(best_shield_generator, best_shield_booster_loadout, best_loadout_stats, best_survival_time)
-
-
-def calculate_loadout_stats(data: ShieldTesterData, shield_generator_variant: ShieldGeneratorVariant, shield_booster_loadout: List[int]) -> LoadOutStat:
-    exp_modifier = 1.0
-    kin_modifier = 1.0
-    therm_modifier = 1.0
-    hitpoint_bonus = 1.0
-
-    for booster_id in shield_booster_loadout:
-        booster_stats = data.shield_booster_variants.get(booster_id)
-
-        exp_modifier *= booster_stats.expResBonus
-        kin_modifier *= booster_stats.kinResBonus
-        therm_modifier *= booster_stats.thermResBonus
-        hitpoint_bonus += booster_stats.shieldStrengthBonus
-
-    # Compensate for diminishing returns
-    if exp_modifier < 0.7:
-        exp_modifier = 0.7 - (0.7 - exp_modifier) / 2
-    if kin_modifier < 0.7:
-        kin_modifier = 0.7 - (0.7 - kin_modifier) / 2
-    if therm_modifier < 0.7:
-        therm_modifier = 0.7 - (0.7 - therm_modifier) / 2
-
-    # Compute final resistance
-    exp_res = shield_generator_variant.expRes * exp_modifier
-    kin_res = shield_generator_variant.kinRes * kin_modifier
-    therm_res = shield_generator_variant.thermRes * therm_modifier
-
-    # Compute final hitpoints
-    hitpoints = hitpoint_bonus * shield_generator_variant.shieldStrength + data.guardian_hitpoints
-
-    return LoadOutStat(hitpoints, shield_generator_variant.regenRate, exp_res, kin_res, therm_res)
 
 
 def main():
     locale.setlocale(locale.LC_ALL, '')  # Use '' for auto, or force e.g. to 'en_US.UTF-8'
-    shield_tester = ShieldTester()
+    shield_tester = ShieldTesterUi()
     shield_tester.mainloop()
 
 
