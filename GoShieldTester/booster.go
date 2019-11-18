@@ -55,8 +55,11 @@ func loadboosterVariants() []boosterT {
 		booster.experimental = record[2]
 		booster.shieldStrengthBonus, err = strconv.ParseFloat(record[3], 64)
 		booster.expResBonus, err = strconv.ParseFloat(record[4], 64)
+		booster.expResBonus = 1.0 - booster.expResBonus
 		booster.kinResBonus, err = strconv.ParseFloat(record[5], 64)
+		booster.kinResBonus = 1.0 - booster.kinResBonus
 		booster.thermResBonus, err = strconv.ParseFloat(record[6], 64)
+		booster.thermResBonus = 1.0 - booster.thermResBonus
 
 		boosterVariants = append(boosterVariants, booster)
 	}

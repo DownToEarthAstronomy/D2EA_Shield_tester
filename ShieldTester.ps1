@@ -6,9 +6,9 @@ $LogFilePath = $('{0}\ShieldTestResults_{1}.txt' -f $LogfolderPath, $(Get-date -
 Start-Transcript $LogFilePath
 Write-host $('Test Started at: [{0}]' -f $(Get-date -format 'yyy-MM-dd HH:mm:ss'))
 
-$ShieldGeneratorPath = $('{0}\ShieldGeneratorVariants.csv' -f $PSScriptRoot)
-#$ShieldBoosterPath = $('{0}\ShieldBoosterVariants.csv' -f $PSScriptRoot)
-$ShieldBoosterPath = $('{0}\ShieldBoosterVariants_short.csv' -f $PSScriptRoot)
+$ShieldGeneratorPath = $('{0}\lib\ShieldGeneratorVariants.csv' -f $PSScriptRoot)
+#$ShieldBoosterPath = $('{0}\lib\ShieldBoosterVariants.csv' -f $PSScriptRoot)
+$ShieldBoosterPath = $('{0}\lib\ShieldBoosterVariants_short.csv' -f $PSScriptRoot)
 
 # Get number of Logical Processors. This will be used to determine the number of parallel threads we will run
 $NumberOfLogicalProcessors = $(Get-WmiObject -class Win32_processor).NumberOfLogicalProcessors
@@ -19,6 +19,15 @@ write-host 'Loading modules'
 . $PSScriptRoot\lib\One-Up.ps1
 . $PSScriptRoot\lib\Test-Case.ps1 # loading $TestCase Script block used in parallel processing
 
+#Test if we have ship data.
+$ShipStat = Import-csv $('{0}\lib\ShipStats.csv' -f $PSScriptRoot) | Where-Object{$_.ShipName -eq $ShipName}
+If(!$ShipStat){
+    Throw $('The ship [{0}] is not supported in the version' -f $ShipName)
+}
+
+IF($ShieldGeneratorSize -gt 8 -or $ShieldGeneratorSize -lt 1){
+    Throw $('Only shield genetators size 1 to 8 suppored [{0}]' -f $ShieldGeneratorSize)
+}
 
 write-host 'Load shield generator variants'
 If(Test-path $ShieldGeneratorPath){
@@ -46,7 +55,6 @@ Write-host $('Number of parallel threads: [{0}] ' -f $NumberOfLogicalProcessors)
 Foreach($ShieldGenerator in $ShieldGeneratorVariantList){
     Write-host $('Starting test [{0}] of [{1}]' -f $ShieldGenerator.ID, $ShieldGeneratorVariantList.Count)
 
-    #Starting a new parallel Job
     Start-Job -ScriptBlock $TestCase -Name $ShieldGenerator.ID -ArgumentList @($ShieldGenerator, $ShieldBoosterVariantList, $ShieldBoosterLoadoutList, $PSScriptRoot) | out-null
 
     # We will now wait until we have room to start more jobs
@@ -90,6 +98,8 @@ $ShieldGeneratorExperimental = $($ShieldGeneratorVariantList | Where-Object{$_.I
 
 Write-host ''
 Write-host '---- TEST SETUP ----'
+Write-host $('Ship Type: [{0}]' -f $ShipName)
+Write-host $('Shield Generator Size: [{0}]' -f $ShieldGeneratorSize)
 Write-host $('Shield Booster Count: [{0}]' -f $ShieldBoosterCount)
 Write-host $('Shield Cell Bank Hit Point Pool: [{0}]' -f $SCBHitPoint)
 Write-host $('Guardian Shield Reinforcement Hit Point Pool: [{0}]' -f $GuardianShieldHitPoint)
@@ -112,6 +122,7 @@ Foreach($ShieldBooster in $ShieldBoosterLoadoutList[$BestResult.BestShieldBooste
 Write-host ''
 Write-host $('Shield Hitpoints: [{0}]' -f $($BestResult.BestLoadoutStats.HitPoints - $SCBHitPoint)) # We do not include SCB hip point in the shield health (only when testing)
 Write-host $('Shield Regen: [{0} hp/s]' -f $BestResult.BestLoadoutStats.RegenRate)
+Write-host $('Shield Regen Time (from 50%): [{0} s]' -f $(($BestResult.BestLoadoutStats.HitPoints - $SCBHitPoint) / (2 * $BestResult.BestLoadoutStats.RegenRate)))
 Write-host $('ExplosivecResistance: [{0}]' -f $($BestResult.BestLoadoutStats.ExplosiveResistance * 100))
 Write-host $('Kinetic Resistance: [{0}]' -f $($BestResult.BestLoadoutStats.KineticResistance * 100))
 Write-host $('Thermal Resistance: [{0}]' -f $($BestResult.BestLoadoutStats.ThermalResistance * 100))

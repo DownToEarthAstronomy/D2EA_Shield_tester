@@ -63,8 +63,11 @@ func loadGenerators() []generatorT {
 		generator.shieldStrength, err = strconv.ParseFloat(record[4], 64)
 		generator.regenRate, err = strconv.ParseFloat(record[5], 64)
 		generator.expRes, err = strconv.ParseFloat(record[6], 64)
+		generator.expRes = 1.0 - generator.expRes
 		generator.kinRes, err = strconv.ParseFloat(record[7], 64)
+		generator.kinRes = 1.0 - generator.kinRes
 		generator.thermRes, err = strconv.ParseFloat(record[8], 64)
+		generator.thermRes = 1.0 - generator.thermRes
 
 		generators = append(generators, generator)
 	}

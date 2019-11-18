@@ -1,0 +1,39 @@
+ID,ShipName,HullMass,baseShieldStrength
+1,Adder,35,60
+34,Alliance Challenger,450,220
+33,Alliance Chieftain,400,200
+36,Alliance Crusader,500,200
+2,Anaconda,400,350
+3,Asp Explorer,280,140
+24,Asp Scout,150,120
+30,Beluga Liner,950,280
+4,Cobra Mk III,180,80
+29,Cobra Mk IV,210,120
+5,Diamondback Explorer,260,150
+6,Diamondback Scout,170,120
+31,Dolphin,140,110
+7,Eagle,50,60
+8,Federal Assault Ship,480,200
+25,Federal Corvette,900,555
+9,Federal Dropship,580,200
+10,Federal Gunship,580,250
+11,Fer-de-Lance,250,300
+12,Hauler,14,50
+13,Imperial Clipper,400,180
+14,Imperial Courier,35,200
+26,Imperial Cutter,1100,600
+15,Imperial Eagle,50,80
+27,Keelback,180,135
+35,Krait Mk II,320,220
+37,Krait Phantom,270,200
+38,Mamba,250,270
+16,Orca,290,220
+17,Python,350,260
+18,Sidewinder,25,40
+32,Type-10 Defender,1200,320
+19,Type-6 Transporter,155,90
+20,Type-7 Transporter,350,155
+21,Type-9 Heavy,850,240
+22,Viper,50,105
+28,Viper Mk IV,190,150
+23,Vulture,230,240
