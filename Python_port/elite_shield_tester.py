@@ -281,7 +281,7 @@ class ShieldTesterUi(tk.Tk):
         self._tab_parent.bind(ShieldTesterUi.EVENT_TAB_CHANGED, self._event_tab_changed)
         # self._tab_parent.bind("<Button-3>", self._event_close_tab)  # do this when lock and unlocking UI
 
-        self._text_widget_placeholder = scrolledtext.ScrolledText(self._tab_parent, height=27, width=75)
+        self._text_widget_placeholder = scrolledtext.ScrolledText(self._tab_parent, height=27, width=85)
         self._text_widget_placeholder.config(state=tk.DISABLED)
         self._text_widget_placeholder.grid(row=0, column=0, padx=padding, pady=padding, sticky=tk.NSEW)
 
@@ -303,7 +303,7 @@ class ShieldTesterUi(tk.Tk):
         if name not in self._tabs:
             if len(self._tabs) == 0:
                 self._text_widget_placeholder.grid_remove()  # remove placeholder
-            new_tab = scrolledtext.ScrolledText(self._tab_parent, height=27, width=75)
+            new_tab = scrolledtext.ScrolledText(self._tab_parent, height=27, width=85)
             new_tab.config(state=tk.DISABLED)
             self._tab_parent.add(new_tab, text=name)
             return self._tabs.setdefault(name, TabData(new_tab))
