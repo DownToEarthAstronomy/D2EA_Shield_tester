@@ -16,6 +16,7 @@ import locale
 import multiprocessing
 import threading
 import queue
+import copy
 import webbrowser
 import tkinter as tk
 from typing import Dict, List, Optional
@@ -23,7 +24,7 @@ from tkinter import ttk, messagebox, scrolledtext
 import shield_tester as st
 
 # Configuration
-VERSION = "1.0"
+VERSION = "1.1 beta"
 DATA_FILE = os.path.join(os.getcwd(), "data.json")
 
 
@@ -92,6 +93,8 @@ class ShieldTesterUi(tk.Tk):
     EVENT_PROGRESS_BAR_STEP = "<<EventProgressBarStep>>"
     EVENT_WARNING_WRITE_LOGFILE = "<<EventShowWarningWriteLogfile>>"
     EVENT_TAB_CHANGED = "<<NotebookTabChanged>>"
+
+    PRELIMINARY_FILTERING = 10  # set preliminary filtering to 10 which should find almost always the same result
 
     def __init__(self):
         super().__init__()
@@ -233,6 +236,15 @@ class ShieldTesterUi(tk.Tk):
         self._lockable_ui_elements.append(self._use_short_list_check_button)
 
         row += 1
+        tk.Label(left_frame, text="Preliminary filtering of shield generators\n"
+                                  "(might not find the best loadout)", justify="left").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        self._use_filtering = tk.IntVar(self)
+        self._use_filtering.set(0)
+        self._use_filtering_check_button = tk.Checkbutton(left_frame, variable=self._use_filtering, command=self._set_filtering_command)
+        self._use_filtering_check_button.grid(row=row, column=1, sticky=tk.W, pady=padding)
+        self._lockable_ui_elements.append(self._use_filtering_check_button)
+
+        row += 1
         tk.Label(left_frame, text="CPU cores to use").grid(row=row, column=0, sticky=tk.SW, padx=padding)
         self._cores_slider = tk.Scale(left_frame, from_=1, to=os.cpu_count(), orient=tk.HORIZONTAL, length=175, takefocus=True)
         self._cores_slider.set(os.cpu_count())
@@ -331,6 +343,9 @@ class ShieldTesterUi(tk.Tk):
         self._generate_new_loadouts()
         self._update_number_of_tests_label()
 
+    def _set_filtering_command(self):
+        self._update_number_of_tests_label()
+
     def _set_short_list_command(self):
         self._shield_tester.set_boosters_to_test(self._test_case, short_list=True if self._use_short_list.get() else False)
         self._update_number_of_tests_label()
@@ -368,8 +383,12 @@ class ShieldTesterUi(tk.Tk):
 
         self._shield_tester.set_loadouts_for_class(self._test_case, module_class=shield_class, prismatics=use_prismatics)
 
-    def _update_number_of_tests_label(self):
-        self._number_of_tests_label.config(text="{:n}".format(self._shield_tester.calculate_number_of_tests(self._test_case)))
+    def _update_number_of_tests_label(self, prelim: int = None):
+        use_prelim = self._use_filtering.get()
+        if use_prelim:
+            self._number_of_tests_label.config(text=f"{self._shield_tester.calculate_number_of_tests(self._test_case, ShieldTesterUi.PRELIMINARY_FILTERING):n}")
+        else:
+            self._number_of_tests_label.config(text=f"{self._shield_tester.calculate_number_of_tests(self._test_case):n}")
 
     def _load_data(self):
         error_occurred = False
@@ -486,9 +505,14 @@ class ShieldTesterUi(tk.Tk):
         elif value == st.ShieldTester.CALLBACK_CANCELLED:
             self.event_generate(self.EVENT_COMPUTE_CANCELLED, when="tail")
 
-    def _compute_background(self):
+    def _compute_background(self, use_prelim: int = 0):
         data = self._tabs.get(self._active_tab_name)
-        test_results = self._shield_tester.compute(self._test_case, callback=self._compute_callback, message_queue=self._message_queue)
+        test_case = copy.deepcopy(self._test_case)
+        if use_prelim:
+            test_results = self._shield_tester.compute(test_case, callback=self._compute_callback, message_queue=self._message_queue,
+                                                       prelim=ShieldTesterUi.PRELIMINARY_FILTERING)
+        else:
+            test_results = self._shield_tester.compute(test_case, callback=self._compute_callback, message_queue=self._message_queue)
         if data:
             data.test_result = test_results
         self.event_generate(self.EVENT_COMPUTE_COMPLETE, when="tail")
@@ -518,14 +542,22 @@ class ShieldTesterUi(tk.Tk):
         self._shield_tester.cpu_cores = self._cores_slider.get()
         self._shield_tester.use_prismatics = True if self._usePrismatic.get() else False
 
-        steps = int(self._shield_tester.calculate_number_of_tests(self._test_case) / len(self._test_case.loadout_list) / st.ShieldTester.MP_CHUNK_SIZE) + 1
+        use_prelim = self._use_filtering.get()
+        if use_prelim:
+            steps = int(self._shield_tester.calculate_number_of_tests(self._test_case, ShieldTesterUi.PRELIMINARY_FILTERING)
+                        / ShieldTesterUi.PRELIMINARY_FILTERING
+                        / st.ShieldTester.MP_CHUNK_SIZE) + 1
+        else:
+            steps = int(self._shield_tester.calculate_number_of_tests(self._test_case)
+                        / len(self._test_case.loadout_list)
+                        / st.ShieldTester.MP_CHUNK_SIZE) + 1
         self._progress_bar.config(maximum=steps)
 
         self._write_to_text_widget(self._test_case.get_output_string())
         self._write_to_text_widget("\n")
 
         self._cancel_button.config(state=tk.NORMAL)
-        t = threading.Thread(target=self._compute_background)
+        t = threading.Thread(target=self._compute_background, args=(use_prelim,))
         t.start()
 
 
