@@ -320,41 +320,56 @@ class ShieldTesterUi(tk.Tk):
 
     def _set_shield_class_command(self, value=""):
         if value:
-            self._shield_tester.create_loadouts_for_class(int(value))
+            self._generate_new_loadouts(int(value))
 
     def _set_number_of_boosters_command(self, value=""):
         if self._test_case:
             self._test_case.number_of_boosters_to_test = int(value)
-            self._set_number_of_tests_label()
+            self._update_number_of_tests_label()
 
     def _set_prismatic_shields_command(self):
-        self._shield_tester.use_prismatics = True if self._usePrismatic.get() else False
-        self._set_number_of_tests_label()
+        self._generate_new_loadouts()
+        self._update_number_of_tests_label()
 
     def _set_short_list_command(self):
-        self._shield_tester.use_short_list = True if self._use_short_list.get() else False
-        self._set_number_of_tests_label()
+        self._shield_tester.set_boosters_to_test(self._test_case, short_list=True if self._use_short_list.get() else False)
+        self._update_number_of_tests_label()
 
     def _ship_select_command(self, value=None):
         if self._ship_select_var.get():
-            # select chosen ship
-            if self._shield_tester.select_ship(self._ship_select_var.get()):
-                # get test case for the chosen ship
-                self._test_case = self._shield_tester.get_test_case()
+            test_case = self._shield_tester.select_ship(self._ship_select_var.get())
+            if test_case:
+                self._test_case = test_case
                 slots = self._test_case.ship.utility_slots
                 self._booster_slider.config(to=slots)
                 self._booster_slider.set(slots)
-                min_class, max_class = self._shield_tester.get_compatible_shield_generator_classes()
+                min_class, max_class = self._shield_tester.get_compatible_shield_generator_classes(test_case)
                 self._sg_class_slider.config(from_=min_class, to=max_class)
                 self._sg_class_slider.set(max_class)
+                self._shield_tester.set_loadouts_for_class(self._test_case, max_class)
+
+                # set attributes
+                # commands of UI elements only trigger when their value changes
+                self._test_case.number_of_boosters_to_test = slots
+                self._generate_new_loadouts(max_class)
+                self._set_short_list_command()
+
+                self._update_number_of_tests_label()
 
     def _open_coriolis_command(self):
         data = self._tabs.get(self._active_tab_name, None)
         if data and data.test_result:
             webbrowser.open(self._shield_tester.get_coriolis_link(data.test_result.best_loadout))
 
-    def _set_number_of_tests_label(self):
-        self._number_of_tests_label.config(text="{:n}".format(self._shield_tester.number_of_tests))
+    def _generate_new_loadouts(self, shield_class: int = 0):
+        use_prismatics = True if self._usePrismatic.get() else False
+        if shield_class == 0:
+            shield_class = int(self._sg_class_slider.get())
+
+        self._shield_tester.set_loadouts_for_class(self._test_case, module_class=shield_class, prismatics=use_prismatics)
+
+    def _update_number_of_tests_label(self):
+        self._number_of_tests_label.config(text="{:n}".format(self._shield_tester.calculate_number_of_tests(self._test_case)))
 
     def _load_data(self):
         error_occurred = False
@@ -503,7 +518,7 @@ class ShieldTesterUi(tk.Tk):
         self._shield_tester.cpu_cores = self._cores_slider.get()
         self._shield_tester.use_prismatics = True if self._usePrismatic.get() else False
 
-        steps = int(self._shield_tester.number_of_tests / len(self._test_case.loadout_list) / st.ShieldTester.MP_CHUNK_SIZE) + 1
+        steps = int(self._shield_tester.calculate_number_of_tests(self._test_case) / len(self._test_case.loadout_list) / st.ShieldTester.MP_CHUNK_SIZE) + 1
         self._progress_bar.config(maximum=steps)
 
         self._write_to_text_widget(self._test_case.get_output_string())
