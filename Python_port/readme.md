@@ -76,10 +76,13 @@ The short list contains only 12 instead of 20 items. That makes the calculations
 #### CPU cores to use
 Using more cores can speed up the program by a considerable amount.
 
-#### Buttons
-When you are ready to go, press `Compute best loadout`. As soon as the calculations start, the `Cancel`button will become available. This can be really helpful in case you started a test with almost 100 million loadouts on just 1 core.
+#### Preliminary filtering of shield generators
+Check this when you want the program to search for the best possible shield generators before running the time intensive calculations. This can have a huge impact on runtime with the disadvantage of not always finding the best possible loadout.
 
-Once the results become available, you can press the `Export to Coriolis` button to open the test result's ship loadout. The shield generator will always be fitted into the highest class slot even if you chose a smaller one. Just drag and drop it on Coriolis where you want to have it. The itnernal modules will be non-engineered default ones.\
+#### Buttons
+When you are ready to go, press `Compute best loadout`. As soon as the calculations start, the `Cancel` button will become available. This can be really helpful in case you started a test with almost 100 million loadouts on just 1 core.
+
+Once the results become available, you can press the `Export to Coriolis` button to export the test result's ship loadout if your current tab to Coriolis. The shield generator will always be fitted into the highest class slot even if you chose a smaller one. Just drag and drop it on Coriolis where you want to have it. The internal modules will be non-engineered default ones.\
 Import from Coriolis is not available at this time.
 
 ### Output

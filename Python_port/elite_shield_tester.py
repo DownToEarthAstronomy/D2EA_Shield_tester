@@ -26,6 +26,7 @@ import shield_tester as st
 # Configuration
 VERSION = "1.1 beta"
 DATA_FILE = os.path.join(os.getcwd(), "data.json")
+QUICK_GUIDE_FILE = os.path.join(os.getcwd(), "quick_guide.txt")
 
 
 class CustomEntry(tk.Entry):
@@ -95,6 +96,8 @@ class ShieldTesterUi(tk.Tk):
     EVENT_TAB_CHANGED = "<<NotebookTabChanged>>"
 
     PRELIMINARY_FILTERING = 10  # set preliminary filtering to 10 which should find almost always the same result
+
+    KEY_QUICK_GUIDE = "Quick Guide"
 
     def __init__(self):
         super().__init__()
@@ -293,9 +296,11 @@ class ShieldTesterUi(tk.Tk):
         self._tab_parent.bind(ShieldTesterUi.EVENT_TAB_CHANGED, self._event_tab_changed)
         # self._tab_parent.bind("<Button-3>", self._event_close_tab)  # do this when lock and unlocking UI
 
-        self._text_widget_placeholder = scrolledtext.ScrolledText(self._tab_parent, height=27, width=85)
-        self._text_widget_placeholder.config(state=tk.DISABLED)
-        self._text_widget_placeholder.grid(row=0, column=0, padx=padding, pady=padding, sticky=tk.NSEW)
+        quick_guide = scrolledtext.ScrolledText(self._tab_parent, height=27, width=85)
+        quick_guide.insert(tk.END, "\u2191 You can close this tab by right clicking.")
+        quick_guide.config(state=tk.DISABLED)
+        self._tabs.setdefault(ShieldTesterUi.KEY_QUICK_GUIDE, TabData(tab=quick_guide))
+        self._tab_parent.add(quick_guide, text=ShieldTesterUi.KEY_QUICK_GUIDE)
 
         # set behaviour for resizing
         self.rowconfigure(1, weight=1)
@@ -305,6 +310,7 @@ class ShieldTesterUi(tk.Tk):
 
         self._lock_ui_elements()
         self.after(100, self._load_data)
+        self.after(120, self._load_quick_guide)
 
         def set_window_size():
             self.minsize(self.winfo_reqwidth(), self.winfo_reqheight())
@@ -313,8 +319,6 @@ class ShieldTesterUi(tk.Tk):
 
     def _add_tab(self, name: str) -> TabData:
         if name not in self._tabs:
-            if len(self._tabs) == 0:
-                self._text_widget_placeholder.grid_remove()  # remove placeholder
             new_tab = scrolledtext.ScrolledText(self._tab_parent, height=27, width=85)
             new_tab.config(state=tk.DISABLED)
             self._tab_parent.add(new_tab, text=name)
@@ -389,6 +393,12 @@ class ShieldTesterUi(tk.Tk):
             self._number_of_tests_label.config(text=f"{self._shield_tester.calculate_number_of_tests(self._test_case, ShieldTesterUi.PRELIMINARY_FILTERING):n}")
         else:
             self._number_of_tests_label.config(text=f"{self._shield_tester.calculate_number_of_tests(self._test_case):n}")
+
+    def _load_quick_guide(self):
+        if os.path.exists(QUICK_GUIDE_FILE):
+            with open(QUICK_GUIDE_FILE, "r") as file:
+                for line in file:
+                    self._write_to_text_widget(line, ShieldTesterUi.KEY_QUICK_GUIDE)
 
     def _load_data(self):
         error_occurred = False
@@ -489,8 +499,11 @@ class ShieldTesterUi(tk.Tk):
     def _event_show_warning_logfile(self, event):
         messagebox.showwarning("Could not write logfile.", "Could not write logfile.")
 
-    def _write_to_text_widget(self, text):
-        text_widget = self._tabs.get(self._active_tab_name, None)
+    def _write_to_text_widget(self, text: str, widget_name: str = ""):
+        if not widget_name:
+            text_widget = self._tabs.get(self._active_tab_name, None)
+        else:
+            text_widget = self._tabs.get(widget_name, None)
         if text_widget and text_widget.tab:
             text_widget.tab.config(state=tk.NORMAL)
             text_widget.tab.insert(tk.END, text)
