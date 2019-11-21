@@ -374,7 +374,7 @@ class ShieldTesterUi(tk.Tk):
     def _open_coriolis_command(self):
         data = self._tabs.get(self._active_tab_name, None)
         if data and data.test_result:
-            webbrowser.open(self._shield_tester.get_coriolis_link(data.test_result.best_loadout))
+            webbrowser.open(self._shield_tester.get_coriolis_link(data.test_result.loadout))
 
     def _generate_new_loadouts(self, shield_class: int = 0):
         use_prismatics = True if self._usePrismatic.get() else False
@@ -478,7 +478,7 @@ class ShieldTesterUi(tk.Tk):
             self._coriolis_button.config(state=tk.NORMAL)
             try:
                 if not self._test_name.get():
-                    self._shield_tester.write_log(self._test_case, data.test_result, data.test_result.best_loadout.ship_name, time_and_name=True)
+                    self._shield_tester.write_log(self._test_case, data.test_result, data.test_result.loadout.ship_name, time_and_name=True)
                 else:
                     self._shield_tester.write_log(self._test_case, data.test_result, self._test_name.get())
             except Exception as e:
