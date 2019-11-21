@@ -3,6 +3,14 @@ This is an implementation in Python 3 of [Down to Earth Astronomy's](https://git
 
 You can find pre-compiled executables at [Thurion's Fork](https://github.com/Thurion/D2EA_Shield_tester/releases) if you don't want to run it from source. Feel free to open an issue for bugs or feature requests for the Python version over there.
 
+## Requirements when running from source
+* Required
+  * [Python 3.7+](https://www.python.org/downloads) 
+  * Tkinter (is bundled in installer for Windows and MacOs)
+* Optional
+  * Python modules (run `pip install <module name>`)
+     * "psutil" to set priority of child processes to below normal 
+
 ## Abstract
 Many of us run many different ships, with many stored shield generators and modules with many forms of engineering. It might be tempting to just put on Heavy Duty / Deep plating, but is that really the best alternative? How do you choose the best loadout? 
 
