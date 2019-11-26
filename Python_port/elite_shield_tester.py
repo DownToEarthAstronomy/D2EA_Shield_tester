@@ -14,6 +14,7 @@ import os
 import re
 import locale
 import multiprocessing
+import sys
 import threading
 import queue
 import copy
@@ -297,7 +298,7 @@ class ShieldTesterUi(tk.Tk):
         # self._tab_parent.bind("<Button-3>", self._event_close_tab)  # do this when lock and unlocking UI
 
         quick_guide = scrolledtext.ScrolledText(self._tab_parent, height=27, width=85)
-        quick_guide.insert(tk.END, "\u2191 You can close this tab by right clicking.")
+        quick_guide.insert(tk.END, f"\u2191 You can close this tab by {'pressing the middle mouse button' if sys.platform == 'darwin' else 'right clicking'}.")
         quick_guide.config(state=tk.DISABLED)
         self._tabs.setdefault(ShieldTesterUi.KEY_QUICK_GUIDE, TabData(tab=quick_guide))
         self._tab_parent.add(quick_guide, text=ShieldTesterUi.KEY_QUICK_GUIDE)
