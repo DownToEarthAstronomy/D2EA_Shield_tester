@@ -359,11 +359,18 @@ class ShieldTesterUi(tk.Tk):
         if self._ship_select_var.get():
             test_case = self._shield_tester.select_ship(self._ship_select_var.get())
             if test_case:
+                min_class, max_class = self._shield_tester.get_compatible_shield_generator_classes(test_case)
+                if min_class == 0 or max_class == 0:
+                    messagebox.showinfo("No available slots", f"No free slots to fit shield generator in {test_case.ship.name}")
+                    self._lock_ui_elements()
+                    self._ship_select.config(state=tk.NORMAL)
+                    return
+
+                self._unlock_ui_elements()  # can't change values of locked elements
                 self._test_case = test_case
                 slots = self._test_case.ship.utility_slots
                 self._booster_slider.config(to=slots)
                 self._booster_slider.set(slots)
-                min_class, max_class = self._shield_tester.get_compatible_shield_generator_classes(test_case)
                 self._sg_class_slider.config(from_=min_class, to=max_class)
                 self._sg_class_slider.set(max_class)
                 self._shield_tester.set_loadouts_for_class(self._test_case, max_class)
@@ -379,7 +386,10 @@ class ShieldTesterUi(tk.Tk):
     def _open_coriolis_command(self):
         data = self._tabs.get(self._active_tab_name, None)
         if data and data.test_result:
-            webbrowser.open(self._shield_tester.get_coriolis_link(data.test_result.loadout))
+            try:
+                webbrowser.open(self._shield_tester.get_coriolis_link(data.test_result.loadout))
+            except RuntimeError as e:
+                messagebox.showerror("Could not create link.", e)
 
     def _generate_new_loadouts(self, shield_class: int = 0):
         use_prismatics = True if self._usePrismatic.get() else False
@@ -402,15 +412,9 @@ class ShieldTesterUi(tk.Tk):
                     self._write_to_text_widget(line, ShieldTesterUi.KEY_QUICK_GUIDE)
 
     def _load_data(self):
-        error_occurred = False
         try:
             self._shield_tester.load_data(DATA_FILE)
-        except Exception as e:
-            print(e)
-            error_occurred = True
-
-        if not error_occurred:
-            self._unlock_ui_elements()
+            self._ship_select.config(state=tk.NORMAL)
             ship_names = self._shield_tester.ship_names
             ship_names.sort()
             # refresh drop down menu
@@ -425,11 +429,13 @@ class ShieldTesterUi(tk.Tk):
             self._ship_select.config(takefocus=True)
             self._ship_select_command()
 
-        else:
+        except Exception as e:
+            print(e)
             if tk.messagebox.askretrycancel(
                     "No data", "Could not read JSON file.\nPlease place it in the same directory as this program.\n"
                     "Required: {data}".format(data=os.path.basename(DATA_FILE))):
                 self._load_data()
+
 
     def _lock_ui_elements(self):
         for element in self._lockable_ui_elements:
