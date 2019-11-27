@@ -20,7 +20,7 @@ import queue
 import copy
 import webbrowser
 import tkinter as tk
-from typing import Dict, List, Optional
+from typing import Dict
 from tkinter import ttk, messagebox, scrolledtext
 import shield_tester as st
 
@@ -100,6 +100,8 @@ class ShieldTesterUi(tk.Tk):
 
     KEY_QUICK_GUIDE = "Quick Guide"
 
+    PADDING = 3
+
     def __init__(self):
         super().__init__()
         self.title("Shield Tester v{}".format(VERSION))
@@ -124,165 +126,176 @@ class ShieldTesterUi(tk.Tk):
         tk.Frame(self, width=10, height=10).grid(row=0, column=0, sticky=tk.N)
         tk.Frame(self, width=10, height=10).grid(row=2, column=3, sticky=tk.N)
 
+        # ---------------------------------------------------------------------------------------------------
+        # menu
+        menu_bar = tk.Menu(self, tearoff=False)
+        self.config(menu=menu_bar)
+
+        ship_menu = tk.Menu(self, tearoff=False)
+        ship_menu.add_command(label="Import...", command=self._open_import_window)
+        menu_bar.add_cascade(label="Ship", menu=ship_menu)
+
         def headline(frame, title, h_row):
             # headline, use this instead of LabelFrame to keep using the same grid
-            ttk.Separator(frame, orient=tk.HORIZONTAL).grid(row=h_row, columnspan=2, sticky=tk.EW, pady=(3*padding, 0))
+            ttk.Separator(frame, orient=tk.HORIZONTAL).grid(row=h_row, columnspan=2, sticky=tk.EW, pady=(3*ShieldTesterUi.PADDING, 0))
             h_row += 1
             tk.Label(frame, text=title, justify=tk.CENTER).grid(row=h_row, columnspan=2, sticky=tk.EW)
             h_row += 1
             ttk.Separator(frame, orient=tk.HORIZONTAL).grid(row=h_row, columnspan=2, sticky=tk.EW)
             return h_row
 
-        padding = 3
         # ---------------------------------------------------------------------------------------------------
         # left frame
         left_frame = tk.LabelFrame(self, borderwidth=1, text="Config")
         left_frame.grid(row=1, column=1, sticky=tk.NSEW)
 
         row = 0
-        tk.Label(left_frame, text="Name of test (optional)").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        tk.Label(left_frame, text="Name of test (optional)").grid(row=row, column=0, sticky=tk.SW, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
         self._test_name = TextEntry(left_frame)
-        self._test_name.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
+        self._test_name.grid(row=row, column=1, sticky=tk.EW, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
         self._lockable_ui_elements.append(self._test_name)
 
         row += 1
         row = headline(left_frame, "[Defender]", row)
 
         row += 1
-        tk.Label(left_frame, text="Choose a ship").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        tk.Label(left_frame, text="Choose a ship").grid(row=row, column=0, sticky=tk.SW, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
         self._ship_select_var = tk.StringVar(self)
         self._ship_select_var.set("no data yet")
         self._ship_select = tk.OptionMenu(left_frame, self._ship_select_var, "", command=self._ship_select_command)
-        self._ship_select.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
+        self._ship_select.grid(row=row, column=1, sticky=tk.EW, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
 
         row += 1
-        tk.Label(left_frame, text="Class of shield generator").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        tk.Label(left_frame, text="Class of shield generator").grid(row=row, column=0, sticky=tk.SW, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
         self._sg_class_slider = tk.Scale(left_frame, from_=1, to=8, orient=tk.HORIZONTAL, length=175, takefocus=True,
                                          command=self._set_shield_class_command)
         self._sg_class_slider.config(state=tk.DISABLED)
-        self._sg_class_slider.grid(row=row, column=1, sticky=tk.E, padx=padding, pady=padding)
+        self._sg_class_slider.grid(row=row, column=1, sticky=tk.E, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
         self._lockable_ui_elements.append(self._sg_class_slider)
 
         row += 1
-        tk.Label(left_frame, text="Number of boosters").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        tk.Label(left_frame, text="Number of boosters").grid(row=row, column=0, sticky=tk.SW, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
         self._booster_slider = tk.Scale(left_frame, from_=0, to=8, orient=tk.HORIZONTAL, length=175, takefocus=True,
                                         command=self._set_number_of_boosters_command)
         self._booster_slider.set(7)
-        self._booster_slider.grid(row=row, column=1, sticky=tk.E, padx=padding, pady=padding)
+        self._booster_slider.grid(row=row, column=1, sticky=tk.E, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
         self._lockable_ui_elements.append(self._booster_slider)
 
         row += 1
-        tk.Label(left_frame, text="Shield cell bank hit point pool").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        tk.Label(left_frame, text="Shield cell bank hit point pool").grid(row=row, column=0, sticky=tk.SW, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
         self._scb_hitpoints = IntegerEntry(left_frame)
-        self._scb_hitpoints.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
+        self._scb_hitpoints.grid(row=row, column=1, sticky=tk.EW, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
         self._lockable_ui_elements.append(self._scb_hitpoints)
 
         row += 1
-        tk.Label(left_frame, text="Guardian shield reinforcement hit point pool").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        tk.Label(left_frame, text="Guardian shield reinforcement hit point pool").grid(row=row, column=0, sticky=tk.SW,
+                                                                                       padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
         self._guardian_hitpoints = IntegerEntry(left_frame)
-        self._guardian_hitpoints.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
+        self._guardian_hitpoints.grid(row=row, column=1, sticky=tk.EW, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
         self._lockable_ui_elements.append(self._guardian_hitpoints)
 
         row += 1
-        tk.Label(left_frame, text="Access to prismatic shields").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        tk.Label(left_frame, text="Access to prismatic shields").grid(row=row, column=0, sticky=tk.SW, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
         self._usePrismatic = tk.IntVar(self)
         self._usePrismatic.set(1)
         self._prismatic_check_button = tk.Checkbutton(left_frame, variable=self._usePrismatic, command=self._set_prismatic_shields_command)
-        self._prismatic_check_button.grid(row=row, column=1, sticky=tk.W, pady=padding)
+        self._prismatic_check_button.grid(row=row, column=1, sticky=tk.W, pady=ShieldTesterUi.PADDING)
         self._lockable_ui_elements.append(self._prismatic_check_button)
 
         row += 1
         row = headline(left_frame, "[Attacker]", row)
 
         row += 1
-        tk.Label(left_frame, text="Explosive DPS").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        tk.Label(left_frame, text="Explosive DPS").grid(row=row, column=0, sticky=tk.SW, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
         self._explosive_dps_entry = IntegerEntry(left_frame)
-        self._explosive_dps_entry.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
+        self._explosive_dps_entry.grid(row=row, column=1, sticky=tk.EW, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
         self._lockable_ui_elements.append(self._explosive_dps_entry)
 
         row += 1
-        tk.Label(left_frame, text="Kinetic DPS").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        tk.Label(left_frame, text="Kinetic DPS").grid(row=row, column=0, sticky=tk.SW, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
         self._kinetic_dps_entry = IntegerEntry(left_frame)
         self._kinetic_dps_entry.insert(0, 50)
-        self._kinetic_dps_entry.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
+        self._kinetic_dps_entry.grid(row=row, column=1, sticky=tk.EW, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
         self._lockable_ui_elements.append(self._kinetic_dps_entry)
 
         row += 1
-        tk.Label(left_frame, text="Thermal DPS").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        tk.Label(left_frame, text="Thermal DPS").grid(row=row, column=0, sticky=tk.SW, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
         self._thermal_dps_entry = IntegerEntry(left_frame)
         self._thermal_dps_entry.insert(0, 50)
-        self._thermal_dps_entry.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
+        self._thermal_dps_entry.grid(row=row, column=1, sticky=tk.EW, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
         self._lockable_ui_elements.append(self._thermal_dps_entry)
 
         row += 1
-        tk.Label(left_frame, text="Absolute DPS (Thargoids)").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        tk.Label(left_frame, text="Absolute DPS (Thargoids)").grid(row=row, column=0, sticky=tk.SW, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
         self._absolute_dps_entry = IntegerEntry(left_frame)
         self._absolute_dps_entry.insert(0, 10)
-        self._absolute_dps_entry.grid(row=row, column=1, sticky=tk.EW, padx=padding, pady=padding)
+        self._absolute_dps_entry.grid(row=row, column=1, sticky=tk.EW, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
         self._lockable_ui_elements.append(self._absolute_dps_entry)
 
         row += 1
-        tk.Label(left_frame, text="Damage effectiveness in %").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        tk.Label(left_frame, text="Damage effectiveness in %").grid(row=row, column=0, sticky=tk.SW, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
         self._effectiveness_slider = tk.Scale(left_frame, from_=1, to=100, orient=tk.HORIZONTAL, length=175, takefocus=True)
         self._effectiveness_slider.set(65)
-        self._effectiveness_slider.grid(row=row, column=1, sticky=tk.E, padx=padding, pady=padding)
+        self._effectiveness_slider.grid(row=row, column=1, sticky=tk.E, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
         self._lockable_ui_elements.append(self._effectiveness_slider)
 
         row += 1
         row = headline(left_frame, "[Misc]", row)
 
         row += 1
-        tk.Label(left_frame, text="Use short list").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        tk.Label(left_frame, text="Use short list").grid(row=row, column=0, sticky=tk.SW, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
         self._use_short_list = tk.IntVar(self)
         self._use_short_list.set(1)
         self._use_short_list_check_button = tk.Checkbutton(left_frame, variable=self._use_short_list, command=self._set_short_list_command)
-        self._use_short_list_check_button.grid(row=row, column=1, sticky=tk.W, pady=padding)
+        self._use_short_list_check_button.grid(row=row, column=1, sticky=tk.W, pady=ShieldTesterUi.PADDING)
         self._lockable_ui_elements.append(self._use_short_list_check_button)
 
         row += 1
         tk.Label(left_frame, text="Preliminary filtering of shield generators\n"
-                                  "(might not find the best loadout)", justify="left").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+                                  "(might not find the best loadout)", justify="left").grid(row=row, column=0, sticky=tk.SW,
+                                                                                            padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
         self._use_filtering = tk.IntVar(self)
         self._use_filtering.set(0)
         self._use_filtering_check_button = tk.Checkbutton(left_frame, variable=self._use_filtering, command=self._set_filtering_command)
-        self._use_filtering_check_button.grid(row=row, column=1, sticky=tk.W, pady=padding)
+        self._use_filtering_check_button.grid(row=row, column=1, sticky=tk.W, pady=ShieldTesterUi.PADDING)
         self._lockable_ui_elements.append(self._use_filtering_check_button)
 
         row += 1
-        tk.Label(left_frame, text="CPU cores to use").grid(row=row, column=0, sticky=tk.SW, padx=padding)
+        tk.Label(left_frame, text="CPU cores to use").grid(row=row, column=0, sticky=tk.SW, padx=ShieldTesterUi.PADDING)
         self._cores_slider = tk.Scale(left_frame, from_=1, to=os.cpu_count(), orient=tk.HORIZONTAL, length=175, takefocus=True)
         self._cores_slider.set(os.cpu_count())
-        self._cores_slider.grid(row=row, column=1, sticky=tk.E, padx=padding)
+        self._cores_slider.grid(row=row, column=1, sticky=tk.E, padx=ShieldTesterUi.PADDING)
         self._lockable_ui_elements.append(self._cores_slider)
 
         row += 1
-        tk.Label(left_frame, text="Shield loadouts to be tested", justify="left").grid(row=row, column=0, sticky=tk.SW, padx=padding, pady=padding)
+        tk.Label(left_frame, text="Shield loadouts to be tested", justify="left").grid(row=row, column=0, sticky=tk.SW,
+                                                                                       padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
         self._number_of_tests_label = tk.Label(left_frame, text="")
-        self._number_of_tests_label.grid(row=row, column=1, sticky=tk.W, padx=padding, pady=padding)
+        self._number_of_tests_label.grid(row=row, column=1, sticky=tk.W, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
 
         row += 1
         button_frame = tk.Frame(left_frame)
-        button_frame.grid(row=row, columnspan=2, sticky=tk.NSEW, padx=padding, pady=padding)
+        button_frame.grid(row=row, columnspan=2, sticky=tk.NSEW, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
         button_frame.columnconfigure(0, weight=1)
         button_frame.columnconfigure(1, weight=1)
         button_frame.columnconfigure(2, weight=1)
         self._compute_button = tk.Button(button_frame, text="Compute best loadout", command=self._compute)
-        self._compute_button.grid(row=0, column=0, sticky=tk.EW, padx=padding, pady=padding)
+        self._compute_button.grid(row=0, column=0, sticky=tk.EW, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
         self._lockable_ui_elements.append(self._compute_button)
 
         self._cancel_button = tk.Button(button_frame, text="       Cancel       ", command=self._cancel_command)
-        self._cancel_button.grid(row=0, column=1, sticky=tk.EW, padx=padding, pady=padding)
+        self._cancel_button.grid(row=0, column=1, sticky=tk.EW, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
         self._cancel_button.config(state=tk.DISABLED)
         #self._lockable_ui_elements.append(self._cancel_button)
 
         self._coriolis_button = tk.Button(button_frame, text=" Export to Coriolis ", command=self._open_coriolis_command)
-        self._coriolis_button.grid(row=0, column=2, sticky=tk.E, padx=padding, pady=padding)
+        self._coriolis_button.grid(row=0, column=2, sticky=tk.E, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
         self._coriolis_button.config(state=tk.DISABLED)
         #self._lockable_ui_elements.append(self._compute_button)
 
         row += 1
         self._progress_bar = ttk.Progressbar(left_frame, orient="horizontal", mode="determinate")
-        self._progress_bar.grid(row=row, columnspan=2, sticky=tk.EW, padx=padding, pady=padding)
+        self._progress_bar.grid(row=row, columnspan=2, sticky=tk.EW, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
         self._progress_bar.config(value=0)
 
         # ---------------------------------------------------------------------------------------------------
@@ -291,7 +304,7 @@ class ShieldTesterUi(tk.Tk):
         right_frame.grid(row=1, column=2, sticky=tk.NSEW)
 
         self._tab_parent = ttk.Notebook(right_frame)
-        self._tab_parent.grid(row=0, column=0, padx=padding, pady=padding, sticky=tk.NSEW)
+        self._tab_parent.grid(row=0, column=0, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING, sticky=tk.NSEW)
         self._tab_parent.rowconfigure(0, weight=1)
         self._tab_parent.columnconfigure(0, weight=1)
         self._tab_parent.bind(ShieldTesterUi.EVENT_TAB_CHANGED, self._event_tab_changed)
@@ -317,6 +330,49 @@ class ShieldTesterUi(tk.Tk):
             self.minsize(self.winfo_reqwidth(), self.winfo_reqheight())
 
         self.after(200, set_window_size)
+
+    def _open_import_window(self):
+        window = tk.Toplevel(self)
+        window.grab_set()
+
+        label_text = ("Accepted imports are:\n"
+                      "  \u2022 A single loadout event as json spanning over multiple lines\n"
+                      "  \u2022 One or multiple of the following, each spanning over one line:\n"
+                      "    \u25E6 Loadout event as json\n"
+                      "    \u25E6 Coriolis or EDSY import URL")
+        label = tk.Label(window, text=label_text, justify="left")
+        label.pack(padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING, side=tk.TOP, anchor=tk.W)
+
+        text_container = tk.Frame(window, borderwidth=1, relief=tk.SUNKEN)
+        text = tk.Text(text_container, height=27, width=85, wrap=tk.NONE, borderwidth=0)
+        text_vsb = tk.Scrollbar(text_container, orient=tk.VERTICAL, command=text.yview)
+        text_hsb = tk.Scrollbar(text_container, orient=tk.HORIZONTAL, command=text.xview)
+        text.configure(yscrollcommand=text_vsb.set, xscrollcommand=text_hsb.set)
+
+        text.grid(row=0, column=0, sticky=tk.NSEW)
+        text_vsb.grid(row=0, column=1, sticky=tk.NS)
+        text_hsb.grid(row=1, column=0, sticky=tk.EW)
+
+        text_container.grid_rowconfigure(0, weight=1)
+        text_container.grid_columnconfigure(0, weight=1)
+
+        text_container.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+
+        def ok():
+            nonlocal text
+            try:
+                import_text = text.get("1.0", tk.END).strip()
+                if import_text:
+                    loadouts = st.Utility.get_loadouts_from_string(import_text)
+                    for loadout in loadouts:
+                        self._shield_tester.import_loadout(loadout)
+                    self._refresh_ship_names()
+                window.destroy()
+            except Exception as e:
+                messagebox.showerror("Import failed", e)
+
+        b = tk.Button(window, text="Import", command=ok)
+        b.pack(pady=5, anchor=tk.S)
 
     def _add_tab(self, name: str) -> TabData:
         if name not in self._tabs:
@@ -411,21 +467,22 @@ class ShieldTesterUi(tk.Tk):
                 for line in file:
                     self._write_to_text_widget(line, ShieldTesterUi.KEY_QUICK_GUIDE)
 
+    def _refresh_ship_names(self, preselect=False):
+        ship_names = self._shield_tester.ship_names
+        # refresh drop down menu
+        self._ship_select["menu"].delete(0, tk.END)
+        for ship_name in ship_names:
+            # noinspection PyProtectedMember
+            self._ship_select["menu"].add_command(label=ship_name, command=tk._setit(self._ship_select_var, ship_name, self._ship_select_command))
+        if preselect and "Anaconda" in ship_names:
+            self._ship_select_var.set("Anaconda")
+
+
     def _load_data(self):
         try:
             self._shield_tester.load_data(DATA_FILE)
+            self._refresh_ship_names(preselect=True)
             self._ship_select.config(state=tk.NORMAL)
-            ship_names = self._shield_tester.ship_names
-            ship_names.sort()
-            # refresh drop down menu
-            self._ship_select["menu"].delete(0, tk.END)
-            for ship_name in ship_names:
-                # noinspection PyProtectedMember
-                self._ship_select["menu"].add_command(label=ship_name, command=tk._setit(self._ship_select_var, ship_name, self._ship_select_command))
-            if "Anaconda" in ship_names:
-                self._ship_select_var.set("Anaconda")
-            else:
-                self._ship_select_var.set(ship_names[0])
             self._ship_select.config(takefocus=True)
             self._ship_select_command()
 
@@ -435,7 +492,6 @@ class ShieldTesterUi(tk.Tk):
                     "No data", "Could not read JSON file.\nPlease place it in the same directory as this program.\n"
                     "Required: {data}".format(data=os.path.basename(DATA_FILE))):
                 self._load_data()
-
 
     def _lock_ui_elements(self):
         for element in self._lockable_ui_elements:
@@ -495,7 +551,10 @@ class ShieldTesterUi(tk.Tk):
             self._coriolis_button.config(state=tk.NORMAL)
             try:
                 if not self._test_name.get():
-                    self._shield_tester.write_log(self._test_case, data.test_result, data.test_result.loadout.ship_name, time_and_name=True)
+                    if data.test_result.loadout.ship.custom_name:
+                        self._shield_tester.write_log(self._test_case, data.test_result, data.test_result.loadout.ship.custom_name, time_and_name=True)
+                    else:
+                        self._shield_tester.write_log(self._test_case, data.test_result, data.test_result.loadout.ship.name, time_and_name=True)
                 else:
                     self._shield_tester.write_log(self._test_case, data.test_result, self._test_name.get().strip())
             except Exception as e:
