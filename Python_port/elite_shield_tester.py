@@ -70,7 +70,7 @@ class IntegerEntry(CustomEntry):
 class TextEntry(CustomEntry):
     def __init__(self, master, **kw):
         super().__init__(master, **kw)
-        self._regex = re.compile("^([A-Za-z0-9,._-]*|[A-Za-z0-9,.-_]+[A-Za-z0-9,._ -]*)$")
+        self._regex = re.compile("^[A-Za-z0-9,._\(\)\[\] -]+$")
 
     def validate(self, value):
         if value:
@@ -497,7 +497,7 @@ class ShieldTesterUi(tk.Tk):
                 if not self._test_name.get():
                     self._shield_tester.write_log(self._test_case, data.test_result, data.test_result.loadout.ship_name, time_and_name=True)
                 else:
-                    self._shield_tester.write_log(self._test_case, data.test_result, self._test_name.get())
+                    self._shield_tester.write_log(self._test_case, data.test_result, self._test_name.get().strip())
             except Exception as e:
                 print("Error writing logfile")
                 print(e)
