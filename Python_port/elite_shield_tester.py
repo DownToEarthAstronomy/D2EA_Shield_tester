@@ -268,35 +268,26 @@ class ShieldTesterUi(tk.Tk):
         self._lockable_ui_elements.append(self._cores_slider)
 
         row += 1
-        tk.Label(left_frame, text="Shield loadouts to be tested", justify="left").grid(row=row, column=0, sticky=tk.SW,
+        tk.Label(left_frame, text="Shield loadouts to be tested", justify="left").grid(row=row, column=0, sticky=tk.NW,
                                                                                        padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
         self._number_of_tests_label = tk.Label(left_frame, text="")
-        self._number_of_tests_label.grid(row=row, column=1, sticky=tk.W, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
+        self._number_of_tests_label.grid(row=row, column=1, sticky=tk.NW, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
+        left_frame.rowconfigure(row, weight=1)
 
         row += 1
+        left_frame.rowconfigure(row, weight=0)
         button_frame = tk.Frame(left_frame)
         button_frame.grid(row=row, columnspan=2, sticky=tk.NSEW, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
         button_frame.columnconfigure(0, weight=1)
         button_frame.columnconfigure(1, weight=1)
-        button_frame.columnconfigure(2, weight=1)
         self._compute_button = tk.Button(button_frame, text="Compute best loadout", command=self._compute)
         self._compute_button.grid(row=0, column=0, sticky=tk.EW, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
         self._lockable_ui_elements.append(self._compute_button)
 
-        self._cancel_button = tk.Button(button_frame, text="       Cancel       ", command=self._cancel_command)
+        self._cancel_button = tk.Button(button_frame, text="Cancel", command=self._cancel_command)
         self._cancel_button.grid(row=0, column=1, sticky=tk.EW, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
         self._cancel_button.config(state=tk.DISABLED)
         #self._lockable_ui_elements.append(self._cancel_button)
-
-        self._coriolis_button = tk.Button(button_frame, text=" Export to Coriolis ", command=self._open_coriolis_command)
-        self._coriolis_button.grid(row=0, column=2, sticky=tk.E, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
-        self._coriolis_button.config(state=tk.DISABLED)
-        #self._lockable_ui_elements.append(self._compute_button)
-
-        row += 1
-        self._progress_bar = ttk.Progressbar(left_frame, orient="horizontal", mode="determinate")
-        self._progress_bar.grid(row=row, columnspan=2, sticky=tk.EW, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
-        self._progress_bar.config(value=0)
 
         # ---------------------------------------------------------------------------------------------------
         # right frame
@@ -316,6 +307,24 @@ class ShieldTesterUi(tk.Tk):
         self._tabs.setdefault(ShieldTesterUi.KEY_QUICK_GUIDE, TabData(tab=quick_guide))
         self._tab_parent.add(quick_guide, text=ShieldTesterUi.KEY_QUICK_GUIDE)
 
+        export_frame = tk.Frame(right_frame)
+        export_frame.grid(row=1, column=0, sticky=tk.NSEW, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
+        export_frame.columnconfigure(0, weight=1)
+
+        self._progress_bar = ttk.Progressbar(export_frame, orient="horizontal", mode="determinate")
+        self._progress_bar.grid(row=0, column=0, sticky=tk.NSEW, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
+        self._progress_bar.config(value=0)
+
+        self._export_button = tk.Button(export_frame, text="Export to", command=self._export_command, width=10)
+        self._export_button.grid(row=0, column=1, sticky=tk.E, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
+        self._export_button.config(state=tk.DISABLED)
+
+        self._export_select_var = tk.StringVar(self)
+        self._export_select_var.set(st.ShieldTester.SERVICE_NAMES[0])
+        self._export_select = tk.OptionMenu(export_frame, self._export_select_var, *st.ShieldTester.SERVICE_NAMES)
+        self._export_select.config(width=10)
+        self._export_select.grid(row=0, column=2, sticky=tk.EW, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
+
         # set behaviour for resizing
         self.rowconfigure(1, weight=1)
         self.columnconfigure(2, weight=1)
@@ -327,9 +336,9 @@ class ShieldTesterUi(tk.Tk):
         self.after(120, self._load_quick_guide)
 
         def set_window_size():
-            self.minsize(self.winfo_reqwidth(), self.winfo_reqheight())
+            self.minsize(self.winfo_reqwidth(), self.winfo_reqheight() + 40)  # TODO remove hack
 
-        self.after(200, set_window_size)
+        self.after(100, set_window_size)
 
     def _open_import_window(self):
         window = tk.Toplevel(self)
@@ -374,6 +383,11 @@ class ShieldTesterUi(tk.Tk):
         b = tk.Button(window, text="Import", command=ok)
         b.pack(pady=5, anchor=tk.S)
 
+        def set_window_size():
+            window.minsize(window.winfo_reqwidth(), window.winfo_reqheight())
+
+        window.after(200, set_window_size)
+
     def _add_tab(self, name: str) -> TabData:
         if name not in self._tabs:
             new_tab = scrolledtext.ScrolledText(self._tab_parent, height=27, width=85)
@@ -415,7 +429,7 @@ class ShieldTesterUi(tk.Tk):
         if self._ship_select_var.get():
             test_case = self._shield_tester.select_ship(self._ship_select_var.get())
             if test_case:
-                min_class, max_class = self._shield_tester.get_compatible_shield_generator_classes(test_case)
+                min_class, max_class = self._shield_tester.get_compatible_shield_generator_classes(test_case.ship)
                 if min_class == 0 or max_class == 0:
                     messagebox.showinfo("No available slots", f"No free slots to fit shield generator in {test_case.ship.name}")
                     self._lock_ui_elements()
@@ -439,11 +453,12 @@ class ShieldTesterUi(tk.Tk):
 
                 self._update_number_of_tests_label()
 
-    def _open_coriolis_command(self):
+    def _export_command(self):
         data = self._tabs.get(self._active_tab_name, None)
         if data and data.test_result:
             try:
-                webbrowser.open(self._shield_tester.get_coriolis_link(data.test_result.loadout))
+                index = st.ShieldTester.SERVICE_NAMES.index(self._export_select_var.get())
+                webbrowser.open(self._shield_tester.get_export_link(data.test_result.loadout, service=index))
             except RuntimeError as e:
                 messagebox.showerror("Could not create link.", e)
 
@@ -509,9 +524,9 @@ class ShieldTesterUi(tk.Tk):
             self._active_tab_name = event.widget.tab(selected_tab, "text")
             data = self._tabs.get(self._active_tab_name, None)
             if data and data.test_result:
-                self._coriolis_button.config(state=tk.NORMAL)
+                self._export_button.config(state=tk.NORMAL)
             else:
-                self._coriolis_button.config(state=tk.DISABLED)
+                self._export_button.config(state=tk.DISABLED)
 
     def _event_close_tab(self, event):
         # noinspection PyProtectedMember
@@ -521,7 +536,7 @@ class ShieldTesterUi(tk.Tk):
             self._tab_parent.forget(clicked_tab)
             self._tabs.pop(tab_name)
         if len(self._tabs) == 0:
-            self._coriolis_button.config(state=tk.DISABLED)
+            self._export_button.config(state=tk.DISABLED)
 
     def _event_process_output(self, event):
         if not self._message_queue.empty():
@@ -536,7 +551,7 @@ class ShieldTesterUi(tk.Tk):
         self._progress_bar.stop()
         self._write_to_text_widget("\n")
         self._write_to_text_widget("Cancelled")
-        self._coriolis_button.config(state=tk.DISABLED)
+        self._export_button.config(state=tk.DISABLED)
         self._cancel_button.config(state=tk.DISABLED)
 
     def _event_compute_complete(self, event):
@@ -548,7 +563,7 @@ class ShieldTesterUi(tk.Tk):
         if data and data.test_result:
             self._write_to_text_widget("\n")
             self._write_to_text_widget(data.test_result.get_output_string())
-            self._coriolis_button.config(state=tk.NORMAL)
+            self._export_button.config(state=tk.NORMAL)
             try:
                 if not self._test_name.get():
                     if data.test_result.loadout.ship.custom_name:
@@ -598,7 +613,7 @@ class ShieldTesterUi(tk.Tk):
 
     def _compute(self):
         self._lock_ui_elements()
-        self._coriolis_button.config(state=tk.DISABLED)
+        self._export_button.config(state=tk.DISABLED)
 
         # clear old test data
         self._active_tab_name = self._get_name_for_tab()
