@@ -371,11 +371,18 @@ class ShieldTesterUi(tk.Tk):
             nonlocal text
             try:
                 import_text = text.get("1.0", tk.END).strip()
+                imported = list()
                 if import_text:
                     loadouts = st.Utility.get_loadouts_from_string(import_text)
                     for loadout in loadouts:
-                        self._shield_tester.import_loadout(loadout)
+                        name = self._shield_tester.import_loadout(loadout)
+                        if name:
+                            imported.append(name)
                     self._refresh_ship_names()
+
+                if len(imported) > 0:
+                    imported.sort()
+                    messagebox.showinfo("Import successful.", "You can find the following builds in the ship choices:\n" + "\n".join(imported))
                 window.destroy()
             except Exception as e:
                 messagebox.showerror("Import failed", e)
