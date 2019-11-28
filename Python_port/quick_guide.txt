@@ -1,5 +1,9 @@
 
 
+# Import
+Import your ship from the "Ship" menu on top. See readme for a more detailed
+description of the feature.
+
 # Name of test (optional):
 This will determine the name of the log file and tab in the interface.
 Because this affects the file only letters, numbers, and some symbols are
@@ -39,5 +43,5 @@ huge impact on runtime with the disadvantage of not always finding the best
 possible loadout.
 
 # Buttons
-Start or cancel calculations and when you have a result, you can open it the
-result of the current selected tab on Coriolis.
+Start or cancel calculations and when you have a result, you can open the
+result of the current selected tab on Coriolis or EDSY.
