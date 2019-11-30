@@ -19,9 +19,10 @@ import threading
 import queue
 import copy
 import webbrowser
+from pathlib import Path
 import tkinter as tk
 from typing import Dict
-from tkinter import ttk, messagebox, scrolledtext
+from tkinter import ttk, messagebox, scrolledtext, filedialog
 import shield_tester as st
 
 # Configuration
@@ -133,6 +134,7 @@ class ShieldTesterUi(tk.Tk):
 
         ship_menu = tk.Menu(self, tearoff=False)
         ship_menu.add_command(label="Import...", command=self._open_import_window)
+        ship_menu.add_command(label="Load journal...", command=self._load_journal_log)
         menu_bar.add_cascade(label="Ship", menu=ship_menu)
 
         def headline(frame, title, h_row):
@@ -339,6 +341,32 @@ class ShieldTesterUi(tk.Tk):
             self.minsize(self.winfo_reqwidth(), self.winfo_reqheight() + 40)  # TODO remove hack
 
         self.after(100, set_window_size)
+
+    def _load_journal_log(self):
+        path = os.path.join(str(Path.home()), "Saved Games", "Frontier Developments", "Elite Dangerous")
+        if not os.path.exists(path):
+            path = str(Path.home())
+        file_names = sorted(filedialog.askopenfilenames(initialdir=path, title="Select journal file", filetypes=(("log files", "*.log"), ("all files", "*.*"))))
+        try:
+            imported = set()
+            if file_names:
+                for filename in file_names:
+                    with open(filename, "r") as file:
+                        for line in file:
+                            event = json.loads(line)
+                            if event["event"] == "Loadout":
+                                ship_name = self._shield_tester.import_loadout(event)
+                                if ship_name:
+                                    imported.add(ship_name)
+                if len(imported) > 0:
+                    self._refresh_ship_names()
+                    messagebox.showinfo("Import successful.", "You can find the following builds in the ship choices:\n" + "\n".join(sorted(imported)))
+                else:
+                    messagebox.showinfo("Nothing imported.", f"Could not find any loadout events in the provided logfile{'s' if len(file_names) > 1 else ''}.")
+        except (json.decoder.JSONDecodeError, KeyError):
+            messagebox.showerror("Could not read log file", "Is it a log file of Elite Dangerous?")
+        except Exception as e:
+            messagebox.showerror("Could not read log file", e)
 
     def _open_import_window(self):
         window = tk.Toplevel(self)

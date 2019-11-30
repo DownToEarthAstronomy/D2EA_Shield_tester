@@ -2,7 +2,7 @@
 This is an implementation in Python 3 of [Down to Earth Astronomy's](https://github.com/DownToEarthAstronomy/D2EA_Shield_tester) Power Shell script.
 
 You can find pre-compiled executables at [Thurion's Fork](https://github.com/Thurion/D2EA_Shield_tester/releases) if you don't want to run it from source. 
-Feel free to open an issue for bugs or feature requests for the Python version over there.
+Feel free to open an issue for bugs or feature requests for the Python version over [there](https://github.com/Thurion/D2EA_Shield_tester/issues).
 
 ## Requirements when running from source
 * Required
@@ -112,6 +112,9 @@ When you don't fill in a name, the tab name will be the same as the ship (e.g. A
 You can close tabs by right clicking it. However, on Linux or Mac the button might be a different one.
 
 ### Import
+There are two ways to import a loadout: Either via a JSON formatted string or by loading a journal log file.
+
+#### JSON formatted string
 You can import your ship loadout. This will affect the class of the shield generators you can choose and the number of boosters as well as the export to Coriolis or EDSY.
 Ships without a shield generator fitted or the room to fit one, won't be imported.\
 To import a loadout, go to the menu and select "Ship" / "Import..." to open a new window. You have a couple of choices here:
@@ -130,6 +133,9 @@ To import a loadout, go to the menu and select "Ship" / "Import..." to open a ne
 Every consecutive import of a ship with the same name will overwrite the previous import. Outfitting links that don't contain a name for the ship and will be named
 like this:
 "Anaconda (Imported)"
+
+#### Journals
+To load one or multiple journal logs select "Ship" / "Load journal..." from the menu, navigate to the directory that contains the journals.
      
 ## Information for programmers
 You can find more information [here](https://github.com/Thurion/shield_tester).
