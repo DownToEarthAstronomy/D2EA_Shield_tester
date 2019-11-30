@@ -9,7 +9,7 @@ This is just an implementation in Python of his program featuring a user interfa
 Build to exe using the command: "pyinstaller --noconsole elite_shield_tester.py"
 Don't forget to copy csv files into the exe's directory afterwards.
 """
-
+import json
 import os
 import re
 import locale
@@ -70,7 +70,7 @@ class IntegerEntry(CustomEntry):
 class TextEntry(CustomEntry):
     def __init__(self, master, **kw):
         super().__init__(master, **kw)
-        self._regex = re.compile("^[A-Za-z0-9,._\(\)\[\] -]+$")
+        self._regex = re.compile("^[A-Za-z0-9,._()\[\] -]+$")
 
     def validate(self, value):
         if value:
@@ -320,8 +320,8 @@ class ShieldTesterUi(tk.Tk):
         self._export_button.config(state=tk.DISABLED)
 
         self._export_select_var = tk.StringVar(self)
-        self._export_select_var.set(st.ShieldTester.SERVICE_NAMES[0])
-        self._export_select = tk.OptionMenu(export_frame, self._export_select_var, *st.ShieldTester.SERVICE_NAMES)
+        self._export_select_var.set(list(st.ShieldTester.EXPORT_SERVICES.keys())[0])
+        self._export_select = tk.OptionMenu(export_frame, self._export_select_var, *st.ShieldTester.EXPORT_SERVICES.keys())
         self._export_select.config(width=10)
         self._export_select.grid(row=0, column=2, sticky=tk.EW, padx=ShieldTesterUi.PADDING, pady=ShieldTesterUi.PADDING)
 
@@ -346,6 +346,7 @@ class ShieldTesterUi(tk.Tk):
 
         label_text = ("Accepted imports are:\n"
                       "  \u2022 A single loadout event as json spanning over multiple lines\n"
+                      "  \u2022 A single SLEF formatted json spanning over a single or multiple lines\n"
                       "  \u2022 One or multiple of the following, each spanning over one line:\n"
                       "    \u25E6 Loadout event as json\n"
                       "    \u25E6 Coriolis or EDSY import URL")
@@ -369,23 +370,39 @@ class ShieldTesterUi(tk.Tk):
 
         def ok():
             nonlocal text
+            # noinspection PyBroadException
             try:
                 import_text = text.get("1.0", tk.END).strip()
-                imported = list()
+                imported = set()
+                not_imported = 0
                 if import_text:
-                    loadouts = st.Utility.get_loadouts_from_string(import_text)
-                    for loadout in loadouts:
-                        name = self._shield_tester.import_loadout(loadout)
+                    entries = st.Utility.get_loadouts_from_string(import_text)
+                    for entry in entries:
+                        if "data" in entry:
+                            # SLEF
+                            name = self._shield_tester.import_loadout(entry["data"])
+                        else:
+                            name = self._shield_tester.import_loadout(entry)
                         if name:
-                            imported.append(name)
+                            imported.add(name)
+                        else:
+                            not_imported += 1
                     self._refresh_ship_names()
 
                 if len(imported) > 0:
-                    imported.sort()
-                    messagebox.showinfo("Import successful.", "You can find the following builds in the ship choices:\n" + "\n".join(imported))
-                window.destroy()
-            except Exception as e:
-                messagebox.showerror("Import failed", e)
+                    if not_imported == 0:
+                        messagebox.showinfo("Import successful.", "You can find the following builds in the ship choices:\n" + "\n".join(sorted(imported)))
+                    else:
+                        messagebox.showinfo("Import partially successful.", f"Could not import {not_imported} loadouts but\n"
+                                                                            "you can find the following builds in the ship choices:\n" + "\n".join(sorted(imported)))
+                    window.destroy()
+                elif import_text == "":
+                    window.destroy()
+                else:
+                    messagebox.showwarning("Nothing imported", "Nothing was imported.\nPlease make sure there is a shield generator\n"
+                                                               "fitted or room to fit one.")
+            except Exception:
+                messagebox.showerror("Import failed", "Import failed. Please make sure your input is correct.\nYou can check the readme for further details.")
 
         b = tk.Button(window, text="Import", command=ok)
         b.pack(pady=5, anchor=tk.S)
@@ -464,8 +481,16 @@ class ShieldTesterUi(tk.Tk):
         data = self._tabs.get(self._active_tab_name, None)
         if data and data.test_result:
             try:
-                index = st.ShieldTester.SERVICE_NAMES.index(self._export_select_var.get())
-                webbrowser.open(self._shield_tester.get_export_link(data.test_result.loadout, service=index))
+                export = self._shield_tester.get_export(data.test_result.loadout, service=self._export_select_var.get())
+                if "slef" in self._export_select_var.get().lower():
+                    self.clipboard_clear()
+                    self.clipboard_append(json.dumps([{"header": {"appName": "Elite Shield Tester",
+                                                                  "appVersion": VERSION},
+                                                       "data": export}]))
+                    self.update()
+                    messagebox.showinfo("SLEF", "SLEF data has been copied to your clipboard.")
+                else:
+                    webbrowser.open(export)
             except RuntimeError as e:
                 messagebox.showerror("Could not create link.", e)
 
@@ -498,7 +523,6 @@ class ShieldTesterUi(tk.Tk):
             self._ship_select["menu"].add_command(label=ship_name, command=tk._setit(self._ship_select_var, ship_name, self._ship_select_command))
         if preselect and "Anaconda" in ship_names:
             self._ship_select_var.set("Anaconda")
-
 
     def _load_data(self):
         try:

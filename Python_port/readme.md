@@ -116,6 +116,7 @@ You can import your ship loadout. This will affect the class of the shield gener
 Ships without a shield generator fitted or the room to fit one, won't be imported.\
 To import a loadout, go to the menu and select "Ship" / "Import..." to open a new window. You have a couple of choices here:
   * Import a single loadout event spanning over multiple lines.
+  * Import a single or multiple loadouts from a Ship Loadout Exchange Format (SLEF) formatted json spanning over a single or multiple lines
   * Import a single or multiple loadouts at the same time each spanning over only one line.\
     They can be either JSON formatted loadout events or Coriolis and EDSY import links. 
     Here's an incomplete example:
@@ -126,7 +127,8 @@ To import a loadout, go to the menu and select "Ship" / "Import..." to open a ne
     https://edsy.org/#/I=H4sIAAAAAAAAA%2B2bW5ObOhKA%2 ...
     ```
 
-Every consecutive import of a ship with the same name will overwrite the previous import. Outfitting links on EDSM don't contain a name and will be named like this:
+Every consecutive import of a ship with the same name will overwrite the previous import. Outfitting links that don't contain a name for the ship and will be named
+like this:
 "Anaconda (Imported)"
      
 ## Information for programmers

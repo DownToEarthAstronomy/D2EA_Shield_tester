@@ -44,4 +44,6 @@ possible loadout.
 
 # Buttons
 Start or cancel calculations and when you have a result, you can open the
-result of the current selected tab on Coriolis or EDSY.
+result of the current selected tab on Coriolis or EDSY. Or you can copy your
+loadout as Ship Loadout Exchange Format (SLEF) to your clipboard and import it
+to other services (EDSY, inara) that support that format.
