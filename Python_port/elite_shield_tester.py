@@ -451,7 +451,8 @@ class ShieldTesterUi(tk.Tk):
 
     def _get_name_for_tab(self):
         """ Either use the entered test name or use the ship's name"""
-        return self._test_name.get() if self._test_name.get() else self._test_case.ship.name
+        name = self._test_case.ship.custom_name or self._test_case.ship.name
+        return self._test_name.get() if self._test_name.get() else name
 
     def _cancel_command(self):
         t = threading.Thread(target=self._shield_tester.cancel)
