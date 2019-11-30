@@ -21,7 +21,7 @@ import copy
 import webbrowser
 from pathlib import Path
 import tkinter as tk
-from typing import Dict
+from typing import Dict, Set
 from tkinter import ttk, messagebox, scrolledtext, filedialog
 import shield_tester as st
 
@@ -359,7 +359,7 @@ class ShieldTesterUi(tk.Tk):
                                 if ship_name:
                                     imported.add(ship_name)
                 if len(imported) > 0:
-                    self._refresh_ship_names()
+                    self._refresh_ship_names(imported_ships=imported)
                     messagebox.showinfo("Import successful.", "You can find the following builds in the ship choices:\n" + "\n".join(sorted(imported)))
                 else:
                     messagebox.showinfo("Nothing imported.", f"Could not find any loadout events in the provided logfile{'s' if len(file_names) > 1 else ''}.")
@@ -415,7 +415,7 @@ class ShieldTesterUi(tk.Tk):
                             imported.add(name)
                         else:
                             not_imported += 1
-                    self._refresh_ship_names()
+                    self._refresh_ship_names(imported_ships=imported)
 
                 if len(imported) > 0:
                     if not_imported == 0:
@@ -542,7 +542,7 @@ class ShieldTesterUi(tk.Tk):
                 for line in file:
                     self._write_to_text_widget(line, ShieldTesterUi.KEY_QUICK_GUIDE)
 
-    def _refresh_ship_names(self, preselect=False):
+    def _refresh_ship_names(self, preselect=False, imported_ships: Set[str] = set()):
         ship_names = self._shield_tester.ship_names
         # refresh drop down menu
         self._ship_select["menu"].delete(0, tk.END)
@@ -551,6 +551,8 @@ class ShieldTesterUi(tk.Tk):
             self._ship_select["menu"].add_command(label=ship_name, command=tk._setit(self._ship_select_var, ship_name, self._ship_select_command))
         if preselect and "Anaconda" in ship_names:
             self._ship_select_var.set("Anaconda")
+        elif self._ship_select_var.get() in imported_ships:
+            self._ship_select_command()  # trigger select to force update of UI
 
     def _load_data(self):
         try:
