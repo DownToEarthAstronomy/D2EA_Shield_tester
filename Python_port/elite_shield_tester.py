@@ -26,7 +26,7 @@ from tkinter import ttk, messagebox, scrolledtext, filedialog
 import shield_tester as st
 
 # Configuration
-VERSION = "1.1 beta"
+VERSION = "1.1"
 DATA_FILE = os.path.join(os.getcwd(), "data.json")
 QUICK_GUIDE_FILE = os.path.join(os.getcwd(), "quick_guide.txt")
 
