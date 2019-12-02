@@ -2,3 +2,6 @@
 	path = RustShieldTester
 	url = https://github.com/Freaky/elite_shield_tester.git
 	branch = master
+[submodule "Python_port/shield_tester"]
+	path = Python_port/shield_tester
+	url = https://github.com/Thurion/shield_tester

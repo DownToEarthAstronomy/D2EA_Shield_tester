@@ -1,0 +1,49 @@
+
+
+# Import
+Import your ship from the "Ship" menu on top. See readme for a more detailed
+description of the feature.
+
+# Name of test (optional):
+This will determine the name of the log file and tab in the interface.
+Because this affects the file only letters, numbers, and some symbols are
+permitted.
+
+# Defender
+Set up your ship here by selecting what to use, the class of your shield
+generator and the number of boosters.
+Put in numbers for shield cell banks and guardian shield reinforcements if
+you want to take those into consideration.
+
+If you don't have access to prismatic shields or just don't want to include
+them in the tests, uncheck it.
+
+# Attacker
+Set up incoming DPS. Don't worry if you don't know exact values.
+Experiment a bit and look up some values on Coriolis.
+
+## Damage effectiveness
+This is percentage of time you'll be taking fire. Shields can only recharge,
+when you are not being shot. A low damage effectiveness will give your shields
+more time to recharge.
+
+# Misc
+This section describes some settings that affect performance of the calculations.
+
+## Use short list
+Don't use explosive resistance focused boosters to decrease number of combinations
+
+## CPU cores to use
+Using more cores can speed up the program by a considerable amount.
+
+## Preliminary filtering of shield generators
+Check this when you want the program to search for the best possible shield
+generators before running the time intensive calculations. This can have a
+huge impact on runtime with the disadvantage of not always finding the best
+possible loadout.
+
+# Buttons
+Start or cancel calculations and when you have a result, you can open the
+result of the current selected tab on Coriolis or EDSY. Or you can copy your
+loadout as Ship Loadout Exchange Format (SLEF) to your clipboard and import it
+to other services (EDSY, inara) that support that format.

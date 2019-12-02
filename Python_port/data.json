@@ -72,7 +72,34 @@
       "baseShieldStrength": 60,
       "hullMass": 35,
       "utility_slots": 2,
-      "highest_internal": 3
+      "highest_internal": 3,
+      "slot_layout": {
+        "standard": [
+          3,
+          3,
+          3,
+          1,
+          2,
+          3,
+          3
+        ],
+        "hardpoints": [
+          2,
+          1,
+          1,
+          0,
+          0
+        ],
+        "internal": [
+          3,
+          3,
+          2,
+          2,
+          1,
+          1,
+          1
+        ]
+      }
     },
     {
       "ship": "Alliance Challenger",
@@ -146,7 +173,79 @@
       "baseShieldStrength": 220,
       "hullMass": 450,
       "utility_slots": 4,
-      "highest_internal": 6
+      "highest_internal": 6,
+      "slot_layout": {
+        "standard": [
+          6,
+          6,
+          5,
+          5,
+          6,
+          4,
+          4
+        ],
+        "hardpoints": [
+          3,
+          2,
+          2,
+          2,
+          1,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "internal": [
+          6,
+          6,
+          3,
+          3,
+          2,
+          2,
+          {
+            "class": 4,
+            "name": "Military",
+            "eligible": {
+              "mahr": 1,
+              "hr": 1,
+              "scb": 1,
+              "mrp": 1,
+              "gsrp": 1,
+              "gmrp": 1,
+              "ghrp": 1
+            }
+          },
+          {
+            "class": 4,
+            "name": "Military",
+            "eligible": {
+              "mahr": 1,
+              "hr": 1,
+              "scb": 1,
+              "mrp": 1,
+              "gsrp": 1,
+              "gmrp": 1,
+              "ghrp": 1
+            }
+          },
+          {
+            "class": 4,
+            "name": "Military",
+            "eligible": {
+              "mahr": 1,
+              "hr": 1,
+              "scb": 1,
+              "mrp": 1,
+              "gsrp": 1,
+              "gmrp": 1,
+              "ghrp": 1
+            }
+          },
+          1
+        ]
+      }
     },
     {
       "ship": "Alliance Chieftain",
@@ -220,7 +319,77 @@
       "baseShieldStrength": 200,
       "hullMass": 400,
       "utility_slots": 4,
-      "highest_internal": 6
+      "highest_internal": 6,
+      "slot_layout": {
+        "standard": [
+          6,
+          6,
+          5,
+          5,
+          6,
+          4,
+          4
+        ],
+        "hardpoints": [
+          3,
+          3,
+          2,
+          1,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "internal": [
+          6,
+          5,
+          4,
+          2,
+          2,
+          {
+            "class": 4,
+            "name": "Military",
+            "eligible": {
+              "mahr": 1,
+              "hr": 1,
+              "scb": 1,
+              "mrp": 1,
+              "gsrp": 1,
+              "gmrp": 1,
+              "ghrp": 1
+            }
+          },
+          {
+            "class": 4,
+            "name": "Military",
+            "eligible": {
+              "mahr": 1,
+              "hr": 1,
+              "scb": 1,
+              "mrp": 1,
+              "gsrp": 1,
+              "gmrp": 1,
+              "ghrp": 1
+            }
+          },
+          {
+            "class": 4,
+            "name": "Military",
+            "eligible": {
+              "mahr": 1,
+              "hr": 1,
+              "scb": 1,
+              "mrp": 1,
+              "gsrp": 1,
+              "gmrp": 1,
+              "ghrp": 1
+            }
+          },
+          1
+        ]
+      }
     },
     {
       "ship": "Alliance Crusader",
@@ -294,7 +463,78 @@
       "baseShieldStrength": 200,
       "hullMass": 500,
       "utility_slots": 4,
-      "highest_internal": 6
+      "highest_internal": 6,
+      "slot_layout": {
+        "standard": [
+          6,
+          6,
+          5,
+          5,
+          6,
+          4,
+          4
+        ],
+        "hardpoints": [
+          3,
+          2,
+          2,
+          1,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "internal": [
+          6,
+          5,
+          3,
+          3,
+          2,
+          2,
+          {
+            "class": 4,
+            "name": "Military",
+            "eligible": {
+              "mahr": 1,
+              "hr": 1,
+              "scb": 1,
+              "mrp": 1,
+              "gsrp": 1,
+              "gmrp": 1,
+              "ghrp": 1
+            }
+          },
+          {
+            "class": 4,
+            "name": "Military",
+            "eligible": {
+              "mahr": 1,
+              "hr": 1,
+              "scb": 1,
+              "mrp": 1,
+              "gsrp": 1,
+              "gmrp": 1,
+              "ghrp": 1
+            }
+          },
+          {
+            "class": 4,
+            "name": "Military",
+            "eligible": {
+              "mahr": 1,
+              "hr": 1,
+              "scb": 1,
+              "mrp": 1,
+              "gsrp": 1,
+              "gmrp": 1,
+              "ghrp": 1
+            }
+          },
+          1
+        ]
+      }
     },
     {
       "ship": "Anaconda",
@@ -368,7 +608,63 @@
       "baseShieldStrength": 350,
       "hullMass": 400,
       "utility_slots": 8,
-      "highest_internal": 7
+      "highest_internal": 7,
+      "slot_layout": {
+        "standard": [
+          8,
+          7,
+          6,
+          5,
+          8,
+          8,
+          5
+        ],
+        "hardpoints": [
+          4,
+          3,
+          3,
+          3,
+          2,
+          2,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "internal": [
+          7,
+          6,
+          6,
+          6,
+          5,
+          5,
+          5,
+          {
+            "class": 5,
+            "name": "Military",
+            "eligible": {
+              "mahr": 1,
+              "hr": 1,
+              "scb": 1,
+              "mrp": 1,
+              "gsrp": 1,
+              "gmrp": 1,
+              "ghrp": 1
+            }
+          },
+          4,
+          4,
+          4,
+          2,
+          1
+        ]
+      }
     },
     {
       "ship": "Asp Explorer",
@@ -442,7 +738,40 @@
       "baseShieldStrength": 140,
       "hullMass": 280,
       "utility_slots": 4,
-      "highest_internal": 6
+      "highest_internal": 6,
+      "slot_layout": {
+        "standard": [
+          5,
+          5,
+          5,
+          4,
+          4,
+          5,
+          5
+        ],
+        "hardpoints": [
+          2,
+          2,
+          1,
+          1,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "internal": [
+          6,
+          5,
+          3,
+          3,
+          3,
+          2,
+          2,
+          1
+        ]
+      }
     },
     {
       "ship": "Asp Scout",
@@ -516,7 +845,35 @@
       "baseShieldStrength": 120,
       "hullMass": 150,
       "utility_slots": 2,
-      "highest_internal": 5
+      "highest_internal": 5,
+      "slot_layout": {
+        "standard": [
+          4,
+          4,
+          4,
+          3,
+          4,
+          4,
+          4
+        ],
+        "hardpoints": [
+          2,
+          2,
+          1,
+          1,
+          0,
+          0
+        ],
+        "internal": [
+          5,
+          4,
+          3,
+          3,
+          2,
+          2,
+          1
+        ]
+      }
     },
     {
       "ship": "Beluga Liner",
@@ -590,17 +947,55 @@
       "baseShieldStrength": 280,
       "hullMass": 950,
       "utility_slots": 6,
-      "highest_internal": 6
+      "highest_internal": 6,
+      "slot_layout": {
+        "standard": [
+          6,
+          7,
+          7,
+          8,
+          6,
+          5,
+          7
+        ],
+        "hardpoints": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "internal": [
+          6,
+          6,
+          6,
+          6,
+          5,
+          5,
+          4,
+          3,
+          3,
+          3,
+          3,
+          1
+        ]
+      }
     },
     {
       "ship": "Cobra Mk III",
-      "symbol": null,
+      "symbol": "CobraMkIII",
       "loadout_template": {
         "event": "Loadout",
-        "Ship": null,
+        "Ship": "CobraMkIII",
         "Modules": [
           {
-            "Item": "None_armour_grade1",
+            "Item": "CobraMkIII_armour_grade1",
             "Slot": "armour",
             "On": true,
             "Priority": 0
@@ -664,17 +1059,46 @@
       "baseShieldStrength": 80,
       "hullMass": 180,
       "utility_slots": 2,
-      "highest_internal": 4
+      "highest_internal": 4,
+      "slot_layout": {
+        "standard": [
+          4,
+          4,
+          4,
+          3,
+          3,
+          3,
+          4
+        ],
+        "hardpoints": [
+          2,
+          2,
+          1,
+          1,
+          0,
+          0
+        ],
+        "internal": [
+          4,
+          4,
+          4,
+          2,
+          2,
+          2,
+          1,
+          1
+        ]
+      }
     },
     {
       "ship": "Cobra Mk IV",
-      "symbol": null,
+      "symbol": "CobraMkIV",
       "loadout_template": {
         "event": "Loadout",
-        "Ship": null,
+        "Ship": "CobraMkIV",
         "Modules": [
           {
-            "Item": "None_armour_grade1",
+            "Item": "CobraMkIV_armour_grade1",
             "Slot": "armour",
             "On": true,
             "Priority": 0
@@ -738,7 +1162,39 @@
       "baseShieldStrength": 120,
       "hullMass": 210,
       "utility_slots": 2,
-      "highest_internal": 4
+      "highest_internal": 4,
+      "slot_layout": {
+        "standard": [
+          4,
+          4,
+          4,
+          3,
+          3,
+          3,
+          4
+        ],
+        "hardpoints": [
+          2,
+          2,
+          1,
+          1,
+          1,
+          0,
+          0
+        ],
+        "internal": [
+          4,
+          4,
+          4,
+          4,
+          3,
+          3,
+          2,
+          2,
+          1,
+          1
+        ]
+      }
     },
     {
       "ship": "Diamondback Explorer",
@@ -812,7 +1268,37 @@
       "baseShieldStrength": 150,
       "hullMass": 260,
       "utility_slots": 4,
-      "highest_internal": 4
+      "highest_internal": 4,
+      "slot_layout": {
+        "standard": [
+          4,
+          4,
+          5,
+          3,
+          4,
+          3,
+          5
+        ],
+        "hardpoints": [
+          3,
+          2,
+          2,
+          0,
+          0,
+          0,
+          0
+        ],
+        "internal": [
+          4,
+          4,
+          3,
+          3,
+          2,
+          2,
+          1,
+          1
+        ]
+      }
     },
     {
       "ship": "Diamondback Scout",
@@ -886,7 +1372,36 @@
       "baseShieldStrength": 120,
       "hullMass": 170,
       "utility_slots": 4,
-      "highest_internal": 3
+      "highest_internal": 3,
+      "slot_layout": {
+        "standard": [
+          4,
+          4,
+          4,
+          2,
+          3,
+          2,
+          4
+        ],
+        "hardpoints": [
+          2,
+          2,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "internal": [
+          3,
+          3,
+          3,
+          2,
+          1,
+          1
+        ]
+      }
     },
     {
       "ship": "Dolphin",
@@ -960,7 +1475,36 @@
       "baseShieldStrength": 110,
       "hullMass": 140,
       "utility_slots": 3,
-      "highest_internal": 5
+      "highest_internal": 5,
+      "slot_layout": {
+        "standard": [
+          4,
+          5,
+          4,
+          4,
+          3,
+          3,
+          4
+        ],
+        "hardpoints": [
+          1,
+          1,
+          0,
+          0,
+          0
+        ],
+        "internal": [
+          5,
+          4,
+          4,
+          3,
+          2,
+          2,
+          2,
+          1,
+          1
+        ]
+      }
     },
     {
       "ship": "Eagle",
@@ -1034,7 +1578,45 @@
       "baseShieldStrength": 60,
       "hullMass": 50,
       "utility_slots": 1,
-      "highest_internal": 3
+      "highest_internal": 3,
+      "slot_layout": {
+        "standard": [
+          2,
+          3,
+          3,
+          1,
+          2,
+          2,
+          2
+        ],
+        "hardpoints": [
+          1,
+          1,
+          1,
+          0
+        ],
+        "internal": [
+          3,
+          2,
+          {
+            "class": 2,
+            "name": "Military",
+            "eligible": {
+              "mahr": 1,
+              "hr": 1,
+              "scb": 1,
+              "mrp": 1,
+              "gsrp": 1,
+              "gmrp": 1,
+              "ghrp": 1
+            }
+          },
+          1,
+          1,
+          1,
+          1
+        ]
+      }
     },
     {
       "ship": "Federal Assault Ship",
@@ -1108,7 +1690,63 @@
       "baseShieldStrength": 200,
       "hullMass": 480,
       "utility_slots": 4,
-      "highest_internal": 5
+      "highest_internal": 5,
+      "slot_layout": {
+        "standard": [
+          6,
+          6,
+          5,
+          5,
+          6,
+          4,
+          4
+        ],
+        "hardpoints": [
+          3,
+          3,
+          2,
+          2,
+          0,
+          0,
+          0,
+          0
+        ],
+        "internal": [
+          5,
+          5,
+          4,
+          {
+            "class": 4,
+            "name": "Military",
+            "eligible": {
+              "mahr": 1,
+              "hr": 1,
+              "scb": 1,
+              "mrp": 1,
+              "gsrp": 1,
+              "gmrp": 1,
+              "ghrp": 1
+            }
+          },
+          {
+            "class": 4,
+            "name": "Military",
+            "eligible": {
+              "mahr": 1,
+              "hr": 1,
+              "scb": 1,
+              "mrp": 1,
+              "gsrp": 1,
+              "gmrp": 1,
+              "ghrp": 1
+            }
+          },
+          3,
+          2,
+          2,
+          1
+        ]
+      }
     },
     {
       "ship": "Federal Corvette",
@@ -1182,7 +1820,74 @@
       "baseShieldStrength": 555,
       "hullMass": 900,
       "utility_slots": 8,
-      "highest_internal": 7
+      "highest_internal": 7,
+      "slot_layout": {
+        "standard": [
+          8,
+          7,
+          6,
+          5,
+          8,
+          8,
+          5
+        ],
+        "hardpoints": [
+          4,
+          4,
+          3,
+          2,
+          2,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "internal": [
+          7,
+          7,
+          7,
+          6,
+          6,
+          5,
+          5,
+          {
+            "class": 5,
+            "name": "Military",
+            "eligible": {
+              "mahr": 1,
+              "hr": 1,
+              "scb": 1,
+              "mrp": 1,
+              "gsrp": 1,
+              "gmrp": 1,
+              "ghrp": 1
+            }
+          },
+          {
+            "class": 5,
+            "name": "Military",
+            "eligible": {
+              "mahr": 1,
+              "hr": 1,
+              "scb": 1,
+              "mrp": 1,
+              "gsrp": 1,
+              "gmrp": 1,
+              "ghrp": 1
+            }
+          },
+          4,
+          4,
+          3,
+          1
+        ]
+      }
     },
     {
       "ship": "Federal Dropship",
@@ -1256,7 +1961,65 @@
       "baseShieldStrength": 200,
       "hullMass": 580,
       "utility_slots": 4,
-      "highest_internal": 6
+      "highest_internal": 6,
+      "slot_layout": {
+        "standard": [
+          6,
+          6,
+          5,
+          5,
+          6,
+          4,
+          4
+        ],
+        "hardpoints": [
+          3,
+          2,
+          2,
+          2,
+          2,
+          0,
+          0,
+          0,
+          0
+        ],
+        "internal": [
+          6,
+          5,
+          5,
+          4,
+          {
+            "class": 4,
+            "name": "Military",
+            "eligible": {
+              "mahr": 1,
+              "hr": 1,
+              "scb": 1,
+              "mrp": 1,
+              "gsrp": 1,
+              "gmrp": 1,
+              "ghrp": 1
+            }
+          },
+          {
+            "class": 4,
+            "name": "Military",
+            "eligible": {
+              "mahr": 1,
+              "hr": 1,
+              "scb": 1,
+              "mrp": 1,
+              "gsrp": 1,
+              "gmrp": 1,
+              "ghrp": 1
+            }
+          },
+          3,
+          3,
+          2,
+          1
+        ]
+      }
     },
     {
       "ship": "Federal Gunship",
@@ -1330,7 +2093,78 @@
       "baseShieldStrength": 250,
       "hullMass": 580,
       "utility_slots": 4,
-      "highest_internal": 6
+      "highest_internal": 6,
+      "slot_layout": {
+        "standard": [
+          6,
+          6,
+          5,
+          5,
+          7,
+          5,
+          4
+        ],
+        "hardpoints": [
+          3,
+          2,
+          2,
+          2,
+          2,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "internal": [
+          6,
+          6,
+          5,
+          {
+            "class": 4,
+            "name": "Military",
+            "eligible": {
+              "mahr": 1,
+              "hr": 1,
+              "scb": 1,
+              "mrp": 1,
+              "gsrp": 1,
+              "gmrp": 1,
+              "ghrp": 1
+            }
+          },
+          {
+            "class": 4,
+            "name": "Military",
+            "eligible": {
+              "mahr": 1,
+              "hr": 1,
+              "scb": 1,
+              "mrp": 1,
+              "gsrp": 1,
+              "gmrp": 1,
+              "ghrp": 1
+            }
+          },
+          {
+            "class": 4,
+            "name": "Military",
+            "eligible": {
+              "mahr": 1,
+              "hr": 1,
+              "scb": 1,
+              "mrp": 1,
+              "gsrp": 1,
+              "gmrp": 1,
+              "ghrp": 1
+            }
+          },
+          2,
+          2,
+          1
+        ]
+      }
     },
     {
       "ship": "Fer-de-Lance",
@@ -1404,7 +2238,39 @@
       "baseShieldStrength": 300,
       "hullMass": 250,
       "utility_slots": 6,
-      "highest_internal": 5
+      "highest_internal": 5,
+      "slot_layout": {
+        "standard": [
+          6,
+          5,
+          4,
+          4,
+          6,
+          4,
+          3
+        ],
+        "hardpoints": [
+          4,
+          2,
+          2,
+          2,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "internal": [
+          5,
+          4,
+          4,
+          2,
+          1,
+          1
+        ]
+      }
     },
     {
       "ship": "Hauler",
@@ -1478,7 +2344,31 @@
       "baseShieldStrength": 50,
       "hullMass": 14,
       "utility_slots": 2,
-      "highest_internal": 3
+      "highest_internal": 3,
+      "slot_layout": {
+        "standard": [
+          2,
+          2,
+          2,
+          1,
+          1,
+          1,
+          2
+        ],
+        "hardpoints": [
+          1,
+          0,
+          0
+        ],
+        "internal": [
+          3,
+          3,
+          2,
+          1,
+          1,
+          1
+        ]
+      }
     },
     {
       "ship": "Imperial Clipper",
@@ -1552,7 +2442,39 @@
       "baseShieldStrength": 180,
       "hullMass": 400,
       "utility_slots": 4,
-      "highest_internal": 7
+      "highest_internal": 7,
+      "slot_layout": {
+        "standard": [
+          6,
+          6,
+          5,
+          5,
+          6,
+          5,
+          4
+        ],
+        "hardpoints": [
+          3,
+          3,
+          2,
+          2,
+          0,
+          0,
+          0,
+          0
+        ],
+        "internal": [
+          7,
+          6,
+          4,
+          4,
+          3,
+          3,
+          2,
+          2,
+          1
+        ]
+      }
     },
     {
       "ship": "Imperial Courier",
@@ -1626,7 +2548,37 @@
       "baseShieldStrength": 200,
       "hullMass": 35,
       "utility_slots": 4,
-      "highest_internal": 3
+      "highest_internal": 3,
+      "slot_layout": {
+        "standard": [
+          4,
+          3,
+          3,
+          1,
+          3,
+          2,
+          3
+        ],
+        "hardpoints": [
+          2,
+          2,
+          2,
+          0,
+          0,
+          0,
+          0
+        ],
+        "internal": [
+          3,
+          3,
+          2,
+          2,
+          2,
+          1,
+          1,
+          1
+        ]
+      }
     },
     {
       "ship": "Imperial Cutter",
@@ -1700,7 +2652,73 @@
       "baseShieldStrength": 600,
       "hullMass": 1100,
       "utility_slots": 8,
-      "highest_internal": 8
+      "highest_internal": 8,
+      "slot_layout": {
+        "standard": [
+          8,
+          8,
+          7,
+          7,
+          7,
+          7,
+          6
+        ],
+        "hardpoints": [
+          4,
+          3,
+          3,
+          2,
+          2,
+          2,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "internal": [
+          8,
+          8,
+          6,
+          6,
+          6,
+          5,
+          5,
+          {
+            "class": 5,
+            "name": "Military",
+            "eligible": {
+              "mahr": 1,
+              "hr": 1,
+              "scb": 1,
+              "mrp": 1,
+              "gsrp": 1,
+              "gmrp": 1,
+              "ghrp": 1
+            }
+          },
+          {
+            "class": 5,
+            "name": "Military",
+            "eligible": {
+              "mahr": 1,
+              "hr": 1,
+              "scb": 1,
+              "mrp": 1,
+              "gsrp": 1,
+              "gmrp": 1,
+              "ghrp": 1
+            }
+          },
+          4,
+          3,
+          1
+        ]
+      }
     },
     {
       "ship": "Imperial Eagle",
@@ -1774,7 +2792,45 @@
       "baseShieldStrength": 80,
       "hullMass": 50,
       "utility_slots": 1,
-      "highest_internal": 3
+      "highest_internal": 3,
+      "slot_layout": {
+        "standard": [
+          3,
+          3,
+          3,
+          1,
+          2,
+          2,
+          2
+        ],
+        "hardpoints": [
+          2,
+          1,
+          1,
+          0
+        ],
+        "internal": [
+          3,
+          2,
+          {
+            "class": 2,
+            "name": "Military",
+            "eligible": {
+              "mahr": 1,
+              "hr": 1,
+              "scb": 1,
+              "mrp": 1,
+              "gsrp": 1,
+              "gmrp": 1,
+              "ghrp": 1
+            }
+          },
+          1,
+          1,
+          1,
+          1
+        ]
+      }
     },
     {
       "ship": "Keelback",
@@ -1848,17 +2904,46 @@
       "baseShieldStrength": 135,
       "hullMass": 180,
       "utility_slots": 3,
-      "highest_internal": 5
+      "highest_internal": 5,
+      "slot_layout": {
+        "standard": [
+          4,
+          4,
+          4,
+          1,
+          3,
+          2,
+          4
+        ],
+        "hardpoints": [
+          2,
+          2,
+          1,
+          1,
+          0,
+          0,
+          0
+        ],
+        "internal": [
+          5,
+          5,
+          4,
+          3,
+          2,
+          2,
+          1
+        ]
+      }
     },
     {
       "ship": "Krait Mk II",
-      "symbol": null,
+      "symbol": "Krait_MkII",
       "loadout_template": {
         "event": "Loadout",
-        "Ship": null,
+        "Ship": "Krait_MkII",
         "Modules": [
           {
-            "Item": "None_armour_grade1",
+            "Item": "Krait_MkII_armour_grade1",
             "Slot": "armour",
             "On": true,
             "Priority": 0
@@ -1922,7 +3007,40 @@
       "baseShieldStrength": 220,
       "hullMass": 320,
       "utility_slots": 4,
-      "highest_internal": 6
+      "highest_internal": 6,
+      "slot_layout": {
+        "standard": [
+          7,
+          6,
+          5,
+          4,
+          7,
+          6,
+          5
+        ],
+        "hardpoints": [
+          3,
+          3,
+          3,
+          2,
+          2,
+          0,
+          0,
+          0,
+          0
+        ],
+        "internal": [
+          6,
+          6,
+          5,
+          5,
+          4,
+          3,
+          3,
+          2,
+          1
+        ]
+      }
     },
     {
       "ship": "Krait Phantom",
@@ -1996,7 +3114,39 @@
       "baseShieldStrength": 200,
       "hullMass": 270,
       "utility_slots": 4,
-      "highest_internal": 6
+      "highest_internal": 6,
+      "slot_layout": {
+        "standard": [
+          7,
+          6,
+          5,
+          4,
+          7,
+          6,
+          5
+        ],
+        "hardpoints": [
+          3,
+          3,
+          2,
+          2,
+          0,
+          0,
+          0,
+          0
+        ],
+        "internal": [
+          6,
+          5,
+          5,
+          5,
+          3,
+          3,
+          3,
+          2,
+          1
+        ]
+      }
     },
     {
       "ship": "Mamba",
@@ -2070,7 +3220,39 @@
       "baseShieldStrength": 270,
       "hullMass": 250,
       "utility_slots": 6,
-      "highest_internal": 5
+      "highest_internal": 5,
+      "slot_layout": {
+        "standard": [
+          6,
+          5,
+          4,
+          4,
+          6,
+          4,
+          3
+        ],
+        "hardpoints": [
+          4,
+          3,
+          3,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "internal": [
+          5,
+          4,
+          3,
+          2,
+          2,
+          1
+        ]
+      }
     },
     {
       "ship": "Orca",
@@ -2144,7 +3326,38 @@
       "baseShieldStrength": 220,
       "hullMass": 290,
       "utility_slots": 4,
-      "highest_internal": 6
+      "highest_internal": 6,
+      "slot_layout": {
+        "standard": [
+          5,
+          6,
+          5,
+          6,
+          5,
+          4,
+          5
+        ],
+        "hardpoints": [
+          3,
+          2,
+          2,
+          0,
+          0,
+          0,
+          0
+        ],
+        "internal": [
+          6,
+          5,
+          5,
+          5,
+          4,
+          3,
+          2,
+          2,
+          1
+        ]
+      }
     },
     {
       "ship": "Python",
@@ -2218,7 +3431,41 @@
       "baseShieldStrength": 260,
       "hullMass": 350,
       "utility_slots": 4,
-      "highest_internal": 6
+      "highest_internal": 6,
+      "slot_layout": {
+        "standard": [
+          7,
+          6,
+          5,
+          4,
+          7,
+          6,
+          5
+        ],
+        "hardpoints": [
+          3,
+          3,
+          3,
+          2,
+          2,
+          0,
+          0,
+          0,
+          0
+        ],
+        "internal": [
+          6,
+          6,
+          6,
+          5,
+          5,
+          4,
+          3,
+          3,
+          2,
+          1
+        ]
+      }
     },
     {
       "ship": "Sidewinder",
@@ -2292,7 +3539,32 @@
       "baseShieldStrength": 40,
       "hullMass": 25,
       "utility_slots": 2,
-      "highest_internal": 2
+      "highest_internal": 2,
+      "slot_layout": {
+        "standard": [
+          2,
+          2,
+          2,
+          1,
+          1,
+          1,
+          1
+        ],
+        "hardpoints": [
+          1,
+          1,
+          0,
+          0
+        ],
+        "internal": [
+          2,
+          2,
+          1,
+          1,
+          1,
+          1
+        ]
+      }
     },
     {
       "ship": "Type-10 Defender",
@@ -2366,7 +3638,74 @@
       "baseShieldStrength": 320,
       "hullMass": 1200,
       "utility_slots": 8,
-      "highest_internal": 8
+      "highest_internal": 8,
+      "slot_layout": {
+        "standard": [
+          8,
+          7,
+          7,
+          5,
+          7,
+          4,
+          6
+        ],
+        "hardpoints": [
+          3,
+          3,
+          3,
+          3,
+          2,
+          2,
+          2,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "internal": [
+          8,
+          7,
+          6,
+          5,
+          4,
+          4,
+          3,
+          3,
+          2,
+          {
+            "class": 5,
+            "name": "Military",
+            "eligible": {
+              "mahr": 1,
+              "hr": 1,
+              "scb": 1,
+              "mrp": 1,
+              "gsrp": 1,
+              "gmrp": 1,
+              "ghrp": 1
+            }
+          },
+          {
+            "class": 5,
+            "name": "Military",
+            "eligible": {
+              "hr": 1,
+              "scb": 1,
+              "mrp": 1,
+              "gsrp": 1,
+              "gmrp": 1,
+              "ghrp": 1
+            }
+          },
+          1
+        ]
+      }
     },
     {
       "ship": "Type-6 Transporter",
@@ -2440,7 +3779,35 @@
       "baseShieldStrength": 90,
       "hullMass": 155,
       "utility_slots": 3,
-      "highest_internal": 5
+      "highest_internal": 5,
+      "slot_layout": {
+        "standard": [
+          3,
+          4,
+          4,
+          2,
+          3,
+          2,
+          4
+        ],
+        "hardpoints": [
+          1,
+          1,
+          0,
+          0,
+          0
+        ],
+        "internal": [
+          5,
+          5,
+          4,
+          4,
+          3,
+          2,
+          2,
+          1
+        ]
+      }
     },
     {
       "ship": "Type-7 Transporter",
@@ -2514,7 +3881,40 @@
       "baseShieldStrength": 155,
       "hullMass": 350,
       "utility_slots": 4,
-      "highest_internal": 6
+      "highest_internal": 6,
+      "slot_layout": {
+        "standard": [
+          5,
+          5,
+          5,
+          4,
+          4,
+          3,
+          5
+        ],
+        "hardpoints": [
+          1,
+          1,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "internal": [
+          6,
+          6,
+          6,
+          5,
+          5,
+          5,
+          3,
+          3,
+          2,
+          1
+        ]
+      }
     },
     {
       "ship": "Type-9 Heavy",
@@ -2588,17 +3988,52 @@
       "baseShieldStrength": 240,
       "hullMass": 850,
       "utility_slots": 4,
-      "highest_internal": 8
+      "highest_internal": 8,
+      "slot_layout": {
+        "standard": [
+          6,
+          7,
+          6,
+          5,
+          6,
+          4,
+          6
+        ],
+        "hardpoints": [
+          2,
+          2,
+          2,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "internal": [
+          8,
+          8,
+          7,
+          6,
+          5,
+          4,
+          4,
+          3,
+          3,
+          2,
+          1
+        ]
+      }
     },
     {
       "ship": "Viper",
-      "symbol": null,
+      "symbol": "Viper",
       "loadout_template": {
         "event": "Loadout",
-        "Ship": null,
+        "Ship": "Viper",
         "Modules": [
           {
-            "Item": "None_armour_grade1",
+            "Item": "Viper_armour_grade1",
             "Slot": "armour",
             "On": true,
             "Priority": 0
@@ -2662,17 +4097,57 @@
       "baseShieldStrength": 105,
       "hullMass": 50,
       "utility_slots": 2,
-      "highest_internal": 3
+      "highest_internal": 3,
+      "slot_layout": {
+        "standard": [
+          3,
+          3,
+          3,
+          2,
+          3,
+          3,
+          2
+        ],
+        "hardpoints": [
+          2,
+          2,
+          1,
+          1,
+          0,
+          0
+        ],
+        "internal": [
+          3,
+          3,
+          {
+            "class": 3,
+            "name": "Military",
+            "eligible": {
+              "mahr": 1,
+              "hr": 1,
+              "scb": 1,
+              "mrp": 1,
+              "gsrp": 1,
+              "gmrp": 1,
+              "ghrp": 1
+            }
+          },
+          2,
+          1,
+          1,
+          1
+        ]
+      }
     },
     {
       "ship": "Viper Mk IV",
-      "symbol": null,
+      "symbol": "Viper_MkIV",
       "loadout_template": {
         "event": "Loadout",
-        "Ship": null,
+        "Ship": "Viper_MkIV",
         "Modules": [
           {
-            "Item": "None_armour_grade1",
+            "Item": "Viper_MkIV_armour_grade1",
             "Slot": "armour",
             "On": true,
             "Priority": 0
@@ -2736,7 +4211,49 @@
       "baseShieldStrength": 150,
       "hullMass": 190,
       "utility_slots": 2,
-      "highest_internal": 4
+      "highest_internal": 4,
+      "slot_layout": {
+        "standard": [
+          4,
+          4,
+          4,
+          2,
+          3,
+          3,
+          4
+        ],
+        "hardpoints": [
+          2,
+          2,
+          1,
+          1,
+          0,
+          0
+        ],
+        "internal": [
+          4,
+          4,
+          3,
+          {
+            "class": 3,
+            "name": "Military",
+            "eligible": {
+              "mahr": 1,
+              "hr": 1,
+              "scb": 1,
+              "mrp": 1,
+              "gsrp": 1,
+              "gmrp": 1,
+              "ghrp": 1
+            }
+          },
+          2,
+          2,
+          1,
+          1,
+          1
+        ]
+      }
     },
     {
       "ship": "Vulture",
@@ -2810,7 +4327,48 @@
       "baseShieldStrength": 240,
       "hullMass": 230,
       "utility_slots": 4,
-      "highest_internal": 5
+      "highest_internal": 5,
+      "slot_layout": {
+        "standard": [
+          4,
+          5,
+          4,
+          3,
+          5,
+          4,
+          3
+        ],
+        "hardpoints": [
+          3,
+          3,
+          0,
+          0,
+          0,
+          0
+        ],
+        "internal": [
+          5,
+          {
+            "class": 5,
+            "name": "Military",
+            "eligible": {
+              "mahr": 1,
+              "hr": 1,
+              "scb": 1,
+              "mrp": 1,
+              "gsrp": 1,
+              "gmrp": 1,
+              "ghrp": 1
+            }
+          },
+          4,
+          2,
+          1,
+          1,
+          1,
+          1
+        ]
+      }
     }
   ],
   "shield_booster_variants": [
@@ -2858,6 +4416,100 @@
             }
           ],
           "ExperimentalEffect": "special_shieldbooster_explosive"
+        }
+      }
+    },
+    {
+      "engineering": "Heavy duty",
+      "experimental": "Thermo Block",
+      "shield_strength_bonus": 0.6394,
+      "exp_res_bonus": 0,
+      "kin_res_bonus": 0,
+      "therm_res_bonus": 0.02,
+      "can_skip": false,
+      "loadout_template": {
+        "Item": "Hpt_ShieldBooster_Size0_Class5",
+        "Slot": "",
+        "On": true,
+        "Priority": 0,
+        "Engineering": {
+          "BlueprintName": "ShieldBooster_HeavyDuty",
+          "Level": 5,
+          "Quality": 1,
+          "Modifiers": [
+            {
+              "Label": "Integrity",
+              "Value": 55.2,
+              "OriginalValue": 48,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "PowerDraw",
+              "Value": 1.5,
+              "OriginalValue": 1.2,
+              "LessIsGood": 1
+            },
+            {
+              "Label": "DefenceModifierShieldMultiplier",
+              "Value": 63.94,
+              "OriginalValue": 20.0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ThermicResistance",
+              "Value": 2.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            }
+          ],
+          "ExperimentalEffect": "special_shieldbooster_thermic"
+        }
+      }
+    },
+    {
+      "engineering": "Heavy duty",
+      "experimental": "Force Block",
+      "shield_strength_bonus": 0.6394,
+      "exp_res_bonus": 0,
+      "kin_res_bonus": 0.02,
+      "therm_res_bonus": 0,
+      "can_skip": false,
+      "loadout_template": {
+        "Item": "Hpt_ShieldBooster_Size0_Class5",
+        "Slot": "",
+        "On": true,
+        "Priority": 0,
+        "Engineering": {
+          "BlueprintName": "ShieldBooster_HeavyDuty",
+          "Level": 5,
+          "Quality": 1,
+          "Modifiers": [
+            {
+              "Label": "Integrity",
+              "Value": 55.2,
+              "OriginalValue": 48,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "PowerDraw",
+              "Value": 1.5,
+              "OriginalValue": 1.2,
+              "LessIsGood": 1
+            },
+            {
+              "Label": "DefenceModifierShieldMultiplier",
+              "Value": 63.94,
+              "OriginalValue": 20.0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "KineticResistance",
+              "Value": 2.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            }
+          ],
+          "ExperimentalEffect": "special_shieldbooster_kinetic"
         }
       }
     },
@@ -2917,664 +4569,6 @@
             }
           ],
           "ExperimentalEffect": "special_shieldbooster_chunky"
-        }
-      }
-    },
-    {
-      "engineering": "Heavy duty",
-      "experimental": "Force Block",
-      "shield_strength_bonus": 0.6394,
-      "exp_res_bonus": 0,
-      "kin_res_bonus": 0.02,
-      "therm_res_bonus": 0,
-      "can_skip": false,
-      "loadout_template": {
-        "Item": "Hpt_ShieldBooster_Size0_Class5",
-        "Slot": "",
-        "On": true,
-        "Priority": 0,
-        "Engineering": {
-          "BlueprintName": "ShieldBooster_HeavyDuty",
-          "Level": 5,
-          "Quality": 1,
-          "Modifiers": [
-            {
-              "Label": "Integrity",
-              "Value": 55.2,
-              "OriginalValue": 48,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "PowerDraw",
-              "Value": 1.5,
-              "OriginalValue": 1.2,
-              "LessIsGood": 1
-            },
-            {
-              "Label": "DefenceModifierShieldMultiplier",
-              "Value": 63.94,
-              "OriginalValue": 20.0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "KineticResistance",
-              "Value": 2.0,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            }
-          ],
-          "ExperimentalEffect": "special_shieldbooster_kinetic"
-        }
-      }
-    },
-    {
-      "engineering": "Heavy duty",
-      "experimental": "Thermo Block",
-      "shield_strength_bonus": 0.6394,
-      "exp_res_bonus": 0,
-      "kin_res_bonus": 0,
-      "therm_res_bonus": 0.02,
-      "can_skip": false,
-      "loadout_template": {
-        "Item": "Hpt_ShieldBooster_Size0_Class5",
-        "Slot": "",
-        "On": true,
-        "Priority": 0,
-        "Engineering": {
-          "BlueprintName": "ShieldBooster_HeavyDuty",
-          "Level": 5,
-          "Quality": 1,
-          "Modifiers": [
-            {
-              "Label": "Integrity",
-              "Value": 55.2,
-              "OriginalValue": 48,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "PowerDraw",
-              "Value": 1.5,
-              "OriginalValue": 1.2,
-              "LessIsGood": 1
-            },
-            {
-              "Label": "DefenceModifierShieldMultiplier",
-              "Value": 63.94,
-              "OriginalValue": 20.0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "ThermicResistance",
-              "Value": 2.0,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            }
-          ],
-          "ExperimentalEffect": "special_shieldbooster_thermic"
-        }
-      }
-    },
-    {
-      "engineering": "Thermal resistant",
-      "experimental": "Blast Block",
-      "shield_strength_bonus": 0.188,
-      "exp_res_bonus": -0.0192,
-      "kin_res_bonus": -0.04,
-      "therm_res_bonus": 0.27,
-      "can_skip": true,
-      "loadout_template": {
-        "Item": "Hpt_ShieldBooster_Size0_Class5",
-        "Slot": "",
-        "On": true,
-        "Priority": 0,
-        "Engineering": {
-          "BlueprintName": "ShieldBooster_Thermic",
-          "Level": 5,
-          "Quality": 1,
-          "Modifiers": [
-            {
-              "Label": "DefenceModifierShieldMultiplier",
-              "Value": 18.8,
-              "OriginalValue": 20.0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "KineticResistance",
-              "Value": -4.0,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "ThermicResistance",
-              "Value": 27.0,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "ExplosiveResistance",
-              "Value": -1.92,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            }
-          ],
-          "ExperimentalEffect": "special_shieldbooster_explosive"
-        }
-      }
-    },
-    {
-      "engineering": "Thermal resistant",
-      "experimental": "Super Capacitors",
-      "shield_strength_bonus": 0.26,
-      "exp_res_bonus": -0.0608,
-      "kin_res_bonus": -0.0608,
-      "therm_res_bonus": 0.2554,
-      "can_skip": false,
-      "loadout_template": {
-        "Item": "Hpt_ShieldBooster_Size0_Class5",
-        "Slot": "",
-        "On": true,
-        "Priority": 0,
-        "Engineering": {
-          "BlueprintName": "ShieldBooster_Thermic",
-          "Level": 5,
-          "Quality": 1,
-          "Modifiers": [
-            {
-              "Label": "DefenceModifierShieldMultiplier",
-              "Value": 26.0,
-              "OriginalValue": 20.0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "KineticResistance",
-              "Value": -6.08,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "ThermicResistance",
-              "Value": 25.540000000000003,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "ExplosiveResistance",
-              "Value": -6.08,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            }
-          ],
-          "ExperimentalEffect": "special_shieldbooster_chunky"
-        }
-      }
-    },
-    {
-      "engineering": "Thermal resistant",
-      "experimental": "Force Block",
-      "shield_strength_bonus": 0.188,
-      "exp_res_bonus": -0.04,
-      "kin_res_bonus": -0.0192,
-      "therm_res_bonus": 0.27,
-      "can_skip": false,
-      "loadout_template": {
-        "Item": "Hpt_ShieldBooster_Size0_Class5",
-        "Slot": "",
-        "On": true,
-        "Priority": 0,
-        "Engineering": {
-          "BlueprintName": "ShieldBooster_Thermic",
-          "Level": 5,
-          "Quality": 1,
-          "Modifiers": [
-            {
-              "Label": "DefenceModifierShieldMultiplier",
-              "Value": 18.8,
-              "OriginalValue": 20.0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "KineticResistance",
-              "Value": -1.92,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "ThermicResistance",
-              "Value": 27.0,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "ExplosiveResistance",
-              "Value": -4.0,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            }
-          ],
-          "ExperimentalEffect": "special_shieldbooster_kinetic"
-        }
-      }
-    },
-    {
-      "engineering": "Thermal resistant",
-      "experimental": "Thermo Block",
-      "shield_strength_bonus": 0.188,
-      "exp_res_bonus": -0.04,
-      "kin_res_bonus": -0.04,
-      "therm_res_bonus": 0.2846,
-      "can_skip": false,
-      "loadout_template": {
-        "Item": "Hpt_ShieldBooster_Size0_Class5",
-        "Slot": "",
-        "On": true,
-        "Priority": 0,
-        "Engineering": {
-          "BlueprintName": "ShieldBooster_Thermic",
-          "Level": 5,
-          "Quality": 1,
-          "Modifiers": [
-            {
-              "Label": "DefenceModifierShieldMultiplier",
-              "Value": 18.8,
-              "OriginalValue": 20.0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "KineticResistance",
-              "Value": -4.0,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "ThermicResistance",
-              "Value": 28.46,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "ExplosiveResistance",
-              "Value": -4.0,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            }
-          ],
-          "ExperimentalEffect": "special_shieldbooster_thermic"
-        }
-      }
-    },
-    {
-      "engineering": "Blast resistant",
-      "experimental": "Blast Block",
-      "shield_strength_bonus": 0.188,
-      "exp_res_bonus": 0.2846,
-      "kin_res_bonus": -0.04,
-      "therm_res_bonus": -0.04,
-      "can_skip": true,
-      "loadout_template": {
-        "Item": "Hpt_ShieldBooster_Size0_Class5",
-        "Slot": "",
-        "On": true,
-        "Priority": 0,
-        "Engineering": {
-          "BlueprintName": "ShieldBooster_Explosive",
-          "Level": 5,
-          "Quality": 1,
-          "Modifiers": [
-            {
-              "Label": "DefenceModifierShieldMultiplier",
-              "Value": 18.8,
-              "OriginalValue": 20.0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "KineticResistance",
-              "Value": -4.0,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "ThermicResistance",
-              "Value": -4.0,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "ExplosiveResistance",
-              "Value": 28.46,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            }
-          ],
-          "ExperimentalEffect": "special_shieldbooster_explosive"
-        }
-      }
-    },
-    {
-      "engineering": "Blast resistant",
-      "experimental": "Super Capacitors",
-      "shield_strength_bonus": 0.26,
-      "exp_res_bonus": 0.2554,
-      "kin_res_bonus": -0.0608,
-      "therm_res_bonus": -0.0608,
-      "can_skip": true,
-      "loadout_template": {
-        "Item": "Hpt_ShieldBooster_Size0_Class5",
-        "Slot": "",
-        "On": true,
-        "Priority": 0,
-        "Engineering": {
-          "BlueprintName": "ShieldBooster_Explosive",
-          "Level": 5,
-          "Quality": 1,
-          "Modifiers": [
-            {
-              "Label": "DefenceModifierShieldMultiplier",
-              "Value": 26.0,
-              "OriginalValue": 20.0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "KineticResistance",
-              "Value": -6.08,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "ThermicResistance",
-              "Value": -6.08,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "ExplosiveResistance",
-              "Value": 25.540000000000003,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            }
-          ],
-          "ExperimentalEffect": "special_shieldbooster_chunky"
-        }
-      }
-    },
-    {
-      "engineering": "Blast resistant",
-      "experimental": "Force Block",
-      "shield_strength_bonus": 0.188,
-      "exp_res_bonus": 0.27,
-      "kin_res_bonus": -0.0192,
-      "therm_res_bonus": -0.04,
-      "can_skip": true,
-      "loadout_template": {
-        "Item": "Hpt_ShieldBooster_Size0_Class5",
-        "Slot": "",
-        "On": true,
-        "Priority": 0,
-        "Engineering": {
-          "BlueprintName": "ShieldBooster_Explosive",
-          "Level": 5,
-          "Quality": 1,
-          "Modifiers": [
-            {
-              "Label": "DefenceModifierShieldMultiplier",
-              "Value": 18.8,
-              "OriginalValue": 20.0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "KineticResistance",
-              "Value": -1.92,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "ThermicResistance",
-              "Value": -4.0,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "ExplosiveResistance",
-              "Value": 27.0,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            }
-          ],
-          "ExperimentalEffect": "special_shieldbooster_kinetic"
-        }
-      }
-    },
-    {
-      "engineering": "Blast resistant",
-      "experimental": "Thermo Block",
-      "shield_strength_bonus": 0.188,
-      "exp_res_bonus": 0.27,
-      "kin_res_bonus": -0.04,
-      "therm_res_bonus": -0.0192,
-      "can_skip": true,
-      "loadout_template": {
-        "Item": "Hpt_ShieldBooster_Size0_Class5",
-        "Slot": "",
-        "On": true,
-        "Priority": 0,
-        "Engineering": {
-          "BlueprintName": "ShieldBooster_Explosive",
-          "Level": 5,
-          "Quality": 1,
-          "Modifiers": [
-            {
-              "Label": "DefenceModifierShieldMultiplier",
-              "Value": 18.8,
-              "OriginalValue": 20.0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "KineticResistance",
-              "Value": -4.0,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "ThermicResistance",
-              "Value": -1.92,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "ExplosiveResistance",
-              "Value": 27.0,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            }
-          ],
-          "ExperimentalEffect": "special_shieldbooster_thermic"
-        }
-      }
-    },
-    {
-      "engineering": "Kinetic resistant",
-      "experimental": "Blast Block",
-      "shield_strength_bonus": 0.188,
-      "exp_res_bonus": -0.0192,
-      "kin_res_bonus": 0.27,
-      "therm_res_bonus": -0.04,
-      "can_skip": true,
-      "loadout_template": {
-        "Item": "Hpt_ShieldBooster_Size0_Class5",
-        "Slot": "",
-        "On": true,
-        "Priority": 0,
-        "Engineering": {
-          "BlueprintName": "ShieldBooster_Kinetic",
-          "Level": 5,
-          "Quality": 1,
-          "Modifiers": [
-            {
-              "Label": "DefenceModifierShieldMultiplier",
-              "Value": 18.8,
-              "OriginalValue": 20.0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "KineticResistance",
-              "Value": 27.0,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "ThermicResistance",
-              "Value": -4.0,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "ExplosiveResistance",
-              "Value": -1.92,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            }
-          ],
-          "ExperimentalEffect": "special_shieldbooster_explosive"
-        }
-      }
-    },
-    {
-      "engineering": "Kinetic resistant",
-      "experimental": "Super Capacitors",
-      "shield_strength_bonus": 0.26,
-      "exp_res_bonus": -0.0608,
-      "kin_res_bonus": 0.2554,
-      "therm_res_bonus": -0.0608,
-      "can_skip": false,
-      "loadout_template": {
-        "Item": "Hpt_ShieldBooster_Size0_Class5",
-        "Slot": "",
-        "On": true,
-        "Priority": 0,
-        "Engineering": {
-          "BlueprintName": "ShieldBooster_Kinetic",
-          "Level": 5,
-          "Quality": 1,
-          "Modifiers": [
-            {
-              "Label": "DefenceModifierShieldMultiplier",
-              "Value": 26.0,
-              "OriginalValue": 20.0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "KineticResistance",
-              "Value": 25.540000000000003,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "ThermicResistance",
-              "Value": -6.08,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "ExplosiveResistance",
-              "Value": -6.08,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            }
-          ],
-          "ExperimentalEffect": "special_shieldbooster_chunky"
-        }
-      }
-    },
-    {
-      "engineering": "Kinetic resistant",
-      "experimental": "Force Block",
-      "shield_strength_bonus": 0.188,
-      "exp_res_bonus": -0.04,
-      "kin_res_bonus": 0.2846,
-      "therm_res_bonus": -0.04,
-      "can_skip": false,
-      "loadout_template": {
-        "Item": "Hpt_ShieldBooster_Size0_Class5",
-        "Slot": "",
-        "On": true,
-        "Priority": 0,
-        "Engineering": {
-          "BlueprintName": "ShieldBooster_Kinetic",
-          "Level": 5,
-          "Quality": 1,
-          "Modifiers": [
-            {
-              "Label": "DefenceModifierShieldMultiplier",
-              "Value": 18.8,
-              "OriginalValue": 20.0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "KineticResistance",
-              "Value": 28.46,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "ThermicResistance",
-              "Value": -4.0,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "ExplosiveResistance",
-              "Value": -4.0,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            }
-          ],
-          "ExperimentalEffect": "special_shieldbooster_kinetic"
-        }
-      }
-    },
-    {
-      "engineering": "Kinetic resistant",
-      "experimental": "Thermo Block",
-      "shield_strength_bonus": 0.188,
-      "exp_res_bonus": -0.04,
-      "kin_res_bonus": 0.27,
-      "therm_res_bonus": -0.0192,
-      "can_skip": false,
-      "loadout_template": {
-        "Item": "Hpt_ShieldBooster_Size0_Class5",
-        "Slot": "",
-        "On": true,
-        "Priority": 0,
-        "Engineering": {
-          "BlueprintName": "ShieldBooster_Kinetic",
-          "Level": 5,
-          "Quality": 1,
-          "Modifiers": [
-            {
-              "Label": "DefenceModifierShieldMultiplier",
-              "Value": 18.8,
-              "OriginalValue": 20.0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "KineticResistance",
-              "Value": 27.0,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "ThermicResistance",
-              "Value": -1.92,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            },
-            {
-              "Label": "ExplosiveResistance",
-              "Value": -4.0,
-              "OriginalValue": 0,
-              "LessIsGood": 0
-            }
-          ],
-          "ExperimentalEffect": "special_shieldbooster_thermic"
         }
       }
     },
@@ -3639,11 +4633,11 @@
     },
     {
       "engineering": "Resistance augmented",
-      "experimental": "Super Capacitors",
-      "shield_strength_bonus": 0.26,
-      "exp_res_bonus": 0.1534,
-      "kin_res_bonus": 0.1534,
-      "therm_res_bonus": 0.1534,
+      "experimental": "Thermo Block",
+      "shield_strength_bonus": 0.188,
+      "exp_res_bonus": 0.17,
+      "kin_res_bonus": 0.17,
+      "therm_res_bonus": 0.1866,
       "can_skip": false,
       "loadout_template": {
         "Item": "Hpt_ShieldBooster_Size0_Class5",
@@ -3669,30 +4663,30 @@
             },
             {
               "Label": "DefenceModifierShieldMultiplier",
-              "Value": 26.0,
+              "Value": 18.8,
               "OriginalValue": 20.0,
               "LessIsGood": 0
             },
             {
               "Label": "KineticResistance",
-              "Value": 15.340000000000002,
+              "Value": 17.0,
               "OriginalValue": 0,
               "LessIsGood": 0
             },
             {
               "Label": "ThermicResistance",
-              "Value": 15.340000000000002,
+              "Value": 18.66,
               "OriginalValue": 0,
               "LessIsGood": 0
             },
             {
               "Label": "ExplosiveResistance",
-              "Value": 15.340000000000002,
+              "Value": 17.0,
               "OriginalValue": 0,
               "LessIsGood": 0
             }
           ],
-          "ExperimentalEffect": "special_shieldbooster_chunky"
+          "ExperimentalEffect": "special_shieldbooster_thermic"
         }
       }
     },
@@ -3757,11 +4751,11 @@
     },
     {
       "engineering": "Resistance augmented",
-      "experimental": "Thermo Block",
-      "shield_strength_bonus": 0.188,
-      "exp_res_bonus": 0.17,
-      "kin_res_bonus": 0.17,
-      "therm_res_bonus": 0.1866,
+      "experimental": "Super Capacitors",
+      "shield_strength_bonus": 0.26,
+      "exp_res_bonus": 0.1534,
+      "kin_res_bonus": 0.1534,
+      "therm_res_bonus": 0.1534,
       "can_skip": false,
       "loadout_template": {
         "Item": "Hpt_ShieldBooster_Size0_Class5",
@@ -3787,30 +4781,594 @@
             },
             {
               "Label": "DefenceModifierShieldMultiplier",
+              "Value": 26.0,
+              "OriginalValue": 20.0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "KineticResistance",
+              "Value": 15.34,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ThermicResistance",
+              "Value": 15.34,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ExplosiveResistance",
+              "Value": 15.34,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            }
+          ],
+          "ExperimentalEffect": "special_shieldbooster_chunky"
+        }
+      }
+    },
+    {
+      "engineering": "Thermal resistant",
+      "experimental": "Blast Block",
+      "shield_strength_bonus": 0.188,
+      "exp_res_bonus": -0.0192,
+      "kin_res_bonus": -0.04,
+      "therm_res_bonus": 0.27,
+      "can_skip": true,
+      "loadout_template": {
+        "Item": "Hpt_ShieldBooster_Size0_Class5",
+        "Slot": "",
+        "On": true,
+        "Priority": 0,
+        "Engineering": {
+          "BlueprintName": "ShieldBooster_Thermic",
+          "Level": 5,
+          "Quality": 1,
+          "Modifiers": [
+            {
+              "Label": "DefenceModifierShieldMultiplier",
               "Value": 18.8,
               "OriginalValue": 20.0,
               "LessIsGood": 0
             },
             {
               "Label": "KineticResistance",
-              "Value": 17.0,
+              "Value": -4.0,
               "OriginalValue": 0,
               "LessIsGood": 0
             },
             {
               "Label": "ThermicResistance",
-              "Value": 18.66,
+              "Value": 27.0,
               "OriginalValue": 0,
               "LessIsGood": 0
             },
             {
               "Label": "ExplosiveResistance",
-              "Value": 17.0,
+              "Value": -1.92,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            }
+          ],
+          "ExperimentalEffect": "special_shieldbooster_explosive"
+        }
+      }
+    },
+    {
+      "engineering": "Thermal resistant",
+      "experimental": "Thermo Block",
+      "shield_strength_bonus": 0.188,
+      "exp_res_bonus": -0.04,
+      "kin_res_bonus": -0.04,
+      "therm_res_bonus": 0.2846,
+      "can_skip": false,
+      "loadout_template": {
+        "Item": "Hpt_ShieldBooster_Size0_Class5",
+        "Slot": "",
+        "On": true,
+        "Priority": 0,
+        "Engineering": {
+          "BlueprintName": "ShieldBooster_Thermic",
+          "Level": 5,
+          "Quality": 1,
+          "Modifiers": [
+            {
+              "Label": "DefenceModifierShieldMultiplier",
+              "Value": 18.8,
+              "OriginalValue": 20.0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "KineticResistance",
+              "Value": -4.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ThermicResistance",
+              "Value": 28.46,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ExplosiveResistance",
+              "Value": -4.0,
               "OriginalValue": 0,
               "LessIsGood": 0
             }
           ],
           "ExperimentalEffect": "special_shieldbooster_thermic"
+        }
+      }
+    },
+    {
+      "engineering": "Thermal resistant",
+      "experimental": "Force Block",
+      "shield_strength_bonus": 0.188,
+      "exp_res_bonus": -0.04,
+      "kin_res_bonus": -0.0192,
+      "therm_res_bonus": 0.27,
+      "can_skip": false,
+      "loadout_template": {
+        "Item": "Hpt_ShieldBooster_Size0_Class5",
+        "Slot": "",
+        "On": true,
+        "Priority": 0,
+        "Engineering": {
+          "BlueprintName": "ShieldBooster_Thermic",
+          "Level": 5,
+          "Quality": 1,
+          "Modifiers": [
+            {
+              "Label": "DefenceModifierShieldMultiplier",
+              "Value": 18.8,
+              "OriginalValue": 20.0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "KineticResistance",
+              "Value": -1.92,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ThermicResistance",
+              "Value": 27.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ExplosiveResistance",
+              "Value": -4.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            }
+          ],
+          "ExperimentalEffect": "special_shieldbooster_kinetic"
+        }
+      }
+    },
+    {
+      "engineering": "Thermal resistant",
+      "experimental": "Super Capacitors",
+      "shield_strength_bonus": 0.26,
+      "exp_res_bonus": -0.0608,
+      "kin_res_bonus": -0.0608,
+      "therm_res_bonus": 0.2554,
+      "can_skip": false,
+      "loadout_template": {
+        "Item": "Hpt_ShieldBooster_Size0_Class5",
+        "Slot": "",
+        "On": true,
+        "Priority": 0,
+        "Engineering": {
+          "BlueprintName": "ShieldBooster_Thermic",
+          "Level": 5,
+          "Quality": 1,
+          "Modifiers": [
+            {
+              "Label": "DefenceModifierShieldMultiplier",
+              "Value": 26.0,
+              "OriginalValue": 20.0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "KineticResistance",
+              "Value": -6.08,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ThermicResistance",
+              "Value": 25.54,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ExplosiveResistance",
+              "Value": -6.08,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            }
+          ],
+          "ExperimentalEffect": "special_shieldbooster_chunky"
+        }
+      }
+    },
+    {
+      "engineering": "Blast resistant",
+      "experimental": "Blast Block",
+      "shield_strength_bonus": 0.188,
+      "exp_res_bonus": 0.2846,
+      "kin_res_bonus": -0.04,
+      "therm_res_bonus": -0.04,
+      "can_skip": true,
+      "loadout_template": {
+        "Item": "Hpt_ShieldBooster_Size0_Class5",
+        "Slot": "",
+        "On": true,
+        "Priority": 0,
+        "Engineering": {
+          "BlueprintName": "ShieldBooster_Explosive",
+          "Level": 5,
+          "Quality": 1,
+          "Modifiers": [
+            {
+              "Label": "DefenceModifierShieldMultiplier",
+              "Value": 18.8,
+              "OriginalValue": 20.0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "KineticResistance",
+              "Value": -4.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ThermicResistance",
+              "Value": -4.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ExplosiveResistance",
+              "Value": 28.46,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            }
+          ],
+          "ExperimentalEffect": "special_shieldbooster_explosive"
+        }
+      }
+    },
+    {
+      "engineering": "Blast resistant",
+      "experimental": "Thermo Block",
+      "shield_strength_bonus": 0.188,
+      "exp_res_bonus": 0.27,
+      "kin_res_bonus": -0.04,
+      "therm_res_bonus": -0.0192,
+      "can_skip": true,
+      "loadout_template": {
+        "Item": "Hpt_ShieldBooster_Size0_Class5",
+        "Slot": "",
+        "On": true,
+        "Priority": 0,
+        "Engineering": {
+          "BlueprintName": "ShieldBooster_Explosive",
+          "Level": 5,
+          "Quality": 1,
+          "Modifiers": [
+            {
+              "Label": "DefenceModifierShieldMultiplier",
+              "Value": 18.8,
+              "OriginalValue": 20.0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "KineticResistance",
+              "Value": -4.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ThermicResistance",
+              "Value": -1.92,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ExplosiveResistance",
+              "Value": 27.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            }
+          ],
+          "ExperimentalEffect": "special_shieldbooster_thermic"
+        }
+      }
+    },
+    {
+      "engineering": "Blast resistant",
+      "experimental": "Force Block",
+      "shield_strength_bonus": 0.188,
+      "exp_res_bonus": 0.27,
+      "kin_res_bonus": -0.0192,
+      "therm_res_bonus": -0.04,
+      "can_skip": true,
+      "loadout_template": {
+        "Item": "Hpt_ShieldBooster_Size0_Class5",
+        "Slot": "",
+        "On": true,
+        "Priority": 0,
+        "Engineering": {
+          "BlueprintName": "ShieldBooster_Explosive",
+          "Level": 5,
+          "Quality": 1,
+          "Modifiers": [
+            {
+              "Label": "DefenceModifierShieldMultiplier",
+              "Value": 18.8,
+              "OriginalValue": 20.0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "KineticResistance",
+              "Value": -1.92,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ThermicResistance",
+              "Value": -4.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ExplosiveResistance",
+              "Value": 27.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            }
+          ],
+          "ExperimentalEffect": "special_shieldbooster_kinetic"
+        }
+      }
+    },
+    {
+      "engineering": "Blast resistant",
+      "experimental": "Super Capacitors",
+      "shield_strength_bonus": 0.26,
+      "exp_res_bonus": 0.2554,
+      "kin_res_bonus": -0.0608,
+      "therm_res_bonus": -0.0608,
+      "can_skip": true,
+      "loadout_template": {
+        "Item": "Hpt_ShieldBooster_Size0_Class5",
+        "Slot": "",
+        "On": true,
+        "Priority": 0,
+        "Engineering": {
+          "BlueprintName": "ShieldBooster_Explosive",
+          "Level": 5,
+          "Quality": 1,
+          "Modifiers": [
+            {
+              "Label": "DefenceModifierShieldMultiplier",
+              "Value": 26.0,
+              "OriginalValue": 20.0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "KineticResistance",
+              "Value": -6.08,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ThermicResistance",
+              "Value": -6.08,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ExplosiveResistance",
+              "Value": 25.54,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            }
+          ],
+          "ExperimentalEffect": "special_shieldbooster_chunky"
+        }
+      }
+    },
+    {
+      "engineering": "Kinetic resistant",
+      "experimental": "Blast Block",
+      "shield_strength_bonus": 0.188,
+      "exp_res_bonus": -0.0192,
+      "kin_res_bonus": 0.27,
+      "therm_res_bonus": -0.04,
+      "can_skip": true,
+      "loadout_template": {
+        "Item": "Hpt_ShieldBooster_Size0_Class5",
+        "Slot": "",
+        "On": true,
+        "Priority": 0,
+        "Engineering": {
+          "BlueprintName": "ShieldBooster_Kinetic",
+          "Level": 5,
+          "Quality": 1,
+          "Modifiers": [
+            {
+              "Label": "DefenceModifierShieldMultiplier",
+              "Value": 18.8,
+              "OriginalValue": 20.0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "KineticResistance",
+              "Value": 27.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ThermicResistance",
+              "Value": -4.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ExplosiveResistance",
+              "Value": -1.92,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            }
+          ],
+          "ExperimentalEffect": "special_shieldbooster_explosive"
+        }
+      }
+    },
+    {
+      "engineering": "Kinetic resistant",
+      "experimental": "Thermo Block",
+      "shield_strength_bonus": 0.188,
+      "exp_res_bonus": -0.04,
+      "kin_res_bonus": 0.27,
+      "therm_res_bonus": -0.0192,
+      "can_skip": false,
+      "loadout_template": {
+        "Item": "Hpt_ShieldBooster_Size0_Class5",
+        "Slot": "",
+        "On": true,
+        "Priority": 0,
+        "Engineering": {
+          "BlueprintName": "ShieldBooster_Kinetic",
+          "Level": 5,
+          "Quality": 1,
+          "Modifiers": [
+            {
+              "Label": "DefenceModifierShieldMultiplier",
+              "Value": 18.8,
+              "OriginalValue": 20.0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "KineticResistance",
+              "Value": 27.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ThermicResistance",
+              "Value": -1.92,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ExplosiveResistance",
+              "Value": -4.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            }
+          ],
+          "ExperimentalEffect": "special_shieldbooster_thermic"
+        }
+      }
+    },
+    {
+      "engineering": "Kinetic resistant",
+      "experimental": "Force Block",
+      "shield_strength_bonus": 0.188,
+      "exp_res_bonus": -0.04,
+      "kin_res_bonus": 0.2846,
+      "therm_res_bonus": -0.04,
+      "can_skip": false,
+      "loadout_template": {
+        "Item": "Hpt_ShieldBooster_Size0_Class5",
+        "Slot": "",
+        "On": true,
+        "Priority": 0,
+        "Engineering": {
+          "BlueprintName": "ShieldBooster_Kinetic",
+          "Level": 5,
+          "Quality": 1,
+          "Modifiers": [
+            {
+              "Label": "DefenceModifierShieldMultiplier",
+              "Value": 18.8,
+              "OriginalValue": 20.0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "KineticResistance",
+              "Value": 28.46,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ThermicResistance",
+              "Value": -4.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ExplosiveResistance",
+              "Value": -4.0,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            }
+          ],
+          "ExperimentalEffect": "special_shieldbooster_kinetic"
+        }
+      }
+    },
+    {
+      "engineering": "Kinetic resistant",
+      "experimental": "Super Capacitors",
+      "shield_strength_bonus": 0.26,
+      "exp_res_bonus": -0.0608,
+      "kin_res_bonus": 0.2554,
+      "therm_res_bonus": -0.0608,
+      "can_skip": false,
+      "loadout_template": {
+        "Item": "Hpt_ShieldBooster_Size0_Class5",
+        "Slot": "",
+        "On": true,
+        "Priority": 0,
+        "Engineering": {
+          "BlueprintName": "ShieldBooster_Kinetic",
+          "Level": 5,
+          "Quality": 1,
+          "Modifiers": [
+            {
+              "Label": "DefenceModifierShieldMultiplier",
+              "Value": 26.0,
+              "OriginalValue": 20.0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "KineticResistance",
+              "Value": 25.54,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ThermicResistance",
+              "Value": -6.08,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            },
+            {
+              "Label": "ExplosiveResistance",
+              "Value": -6.08,
+              "OriginalValue": 0,
+              "LessIsGood": 0
+            }
+          ],
+          "ExperimentalEffect": "special_shieldbooster_chunky"
         }
       }
     }
@@ -4315,6 +5873,34 @@
       ],
       "experimental_effects": [
         {
+          "symbol": "special_shield_resistive",
+          "name": "Multi-weave",
+          "features": {
+            "thermres": 3,
+            "kinres": 3,
+            "explres": 3,
+            "power": 0.1,
+            "distdraw": 0.25
+          }
+        },
+        {
+          "symbol": "special_shield_thermic",
+          "name": "Thermo Block",
+          "features": {
+            "optmul": -0.03,
+            "thermres": 8
+          }
+        },
+        {
+          "symbol": "special_shield_health",
+          "name": "Hi-Cap",
+          "features": {
+            "power": 0.1,
+            "optmul": 0.06,
+            "distdraw": 0.25
+          }
+        },
+        {
           "symbol": "special_shield_regenerative",
           "name": "Fast Charge",
           "features": {
@@ -4331,34 +5917,6 @@
           "features": {
             "optmul": -0.03,
             "kinres": 8
-          }
-        },
-        {
-          "symbol": "special_shield_health",
-          "name": "Hi-Cap",
-          "features": {
-            "power": 0.1,
-            "optmul": 0.06,
-            "distdraw": 0.25
-          }
-        },
-        {
-          "symbol": "special_shield_thermic",
-          "name": "Thermo Block",
-          "features": {
-            "optmul": -0.03,
-            "thermres": 8
-          }
-        },
-        {
-          "symbol": "special_shield_resistive",
-          "name": "Multi-weave",
-          "features": {
-            "thermres": 3,
-            "kinres": 3,
-            "explres": 3,
-            "power": 0.1,
-            "distdraw": 0.25
           }
         }
       ]
