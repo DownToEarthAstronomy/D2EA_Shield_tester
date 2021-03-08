@@ -86,8 +86,8 @@ func main() {
 	config = loadConfig()
 
 	processFlags()
-
-	var generators = loadGenerators()
+	var baseShieldStrength, hullMass = loadShipStats(config.shipName)
+	var generators = loadGenerators(baseShieldStrength, hullMass)
 	var boosterVariants = loadboosterVariants()
 	fmt.Printf("Loaded %d shields and %d boosters\n", len(generators), len(boosterVariants))
 
