@@ -49,14 +49,21 @@ func loadboosterVariants() []boosterT {
 		if err != nil {
 			log.Fatal(err)
 		}
-		if config.explosiveDPS == 0 && record[1] == "Blast Resistance" {
-			continue
+		// naive booster filtering (if 0 dps of type, eliminate booster combination)
+		if config.explosiveDPS == 0 {
+			if record[2] == "Blast Block" || record[1] == "Blast Resistance" {
+				continue
+			}
 		}
-		if config.thermalDPS == 0 && record[1] == "Thermal Resistance" {
-			continue
+		if config.thermalDPS == 0 {
+			if record[2] == "Thermo Block" || record[1] == "Thermal Resistance" {
+				continue
+			}
 		}
-		if config.kineticDPS == 0 && record[1] == "Kinetic Resistance" {
-			continue
+		if config.kineticDPS == 0 {
+			if record[2] == "Force Block" || record[1] == "Kinetic Resistance" {
+				continue
+			}
 		}
 		booster.ID, err = strconv.Atoi(record[0])
 		booster.engineering = record[1]
