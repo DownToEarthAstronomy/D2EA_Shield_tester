@@ -31,6 +31,10 @@ func processFlags() {
 	shortboost := flag.Bool("shortboost", false, "Load the short booster list")
 
 	flag.Parse()
+	flgs := make(map[string]int)
+	flag.Visit(func(f *flag.Flag) {
+		flgs[f.Name] = 0
+	})
 	config.damageEffectiveness = config.damageEffectiveness / 100 // convert from integer to percentage
 
 	if config.shieldBoosterCount < 0 {
@@ -60,21 +64,45 @@ func processFlags() {
 
 	if *cucumber {
 		fmt.Println("Loading Cucumber defenses")
-		config.explosiveDPS = 0
-		config.kineticDPS = 83
-		config.thermalDPS = 47
-		config.absoluteDPS = 0
-		config.damageEffectiveness = 0.25
-		config.shieldBoosterCount = 7
+		if _, ok := flgs["edps"]; !ok {
+			config.explosiveDPS = 0
+		}
+		if _, ok := flgs["kdps"]; !ok {
+			config.kineticDPS = 83
+		}
+		if _, ok := flgs["tdps"]; !ok {
+			config.thermalDPS = 47
+		}
+		if _, ok := flgs["adps"]; !ok {
+			config.absoluteDPS = 0
+		}
+		if _, ok := flgs["dmg"]; !ok {
+			config.damageEffectiveness = 0.25
+		}
+		if _, ok := flgs["boosters"]; !ok {
+			config.shieldBoosterCount = 7
+		}
 	}
 	if *thargoid {
 		fmt.Println("Loading Thargoid defenses")
-		config.explosiveDPS = 0
-		config.kineticDPS = 0
-		config.thermalDPS = 0
-		config.absoluteDPS = 200
-		config.damageEffectiveness = 0.10
-		config.shieldBoosterCount = 7
+		if _, ok := flgs["edps"]; !ok {
+			config.explosiveDPS = 0
+		}
+		if _, ok := flgs["kdps"]; !ok {
+			config.kineticDPS = 0
+		}
+		if _, ok := flgs["tdps"]; !ok {
+			config.thermalDPS = 0
+		}
+		if _, ok := flgs["adps"]; !ok {
+			config.absoluteDPS = 200
+		}
+		if _, ok := flgs["dmg"]; !ok {
+			config.damageEffectiveness = 0.10
+		}
+		if _, ok := flgs["boosters"]; !ok {
+			config.shieldBoosterCount = 7
+		}
 	}
 }
 
