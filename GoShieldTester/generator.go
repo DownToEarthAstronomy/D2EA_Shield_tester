@@ -110,7 +110,17 @@ func loadGenerators(baseShieldStrength, hullMass float64) []generatorT {
 		if !config.prismatics && strings.Contains(record[1], "Prismatic") {
 			continue
 		}
-
+		// naive filtering for shield generator resistances
+		if config.thermalDPS == 0 {
+			if record[2] == "Thermo Block" || record[1] == "Thermal Resistance" {
+				continue
+			}
+		}
+		if config.kineticDPS == 0 {
+			if record[2] == "Force Block" || record[1] == "Kinetic Resistance" {
+				continue
+			}
+		}
 		// 0ID,1Type,2Engineering,3Experimental,4RegenRateBobus,5ExpRes,6KinRes,7ThermRes,8OptimalMultiplierBonus
 		regenBonus, _ := strconv.ParseFloat(record[4], 64)
 		generator.ID, err = strconv.Atoi(record[0])

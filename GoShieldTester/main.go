@@ -116,7 +116,7 @@ func main() {
 	processFlags()
 	var baseShieldStrength, hullMass = loadShipStats(config.shipName)
 	var generators = loadGenerators(baseShieldStrength, hullMass)
-	var boosterVariants = loadboosterVariants()
+	var boosterVariants = loadboosterVariants(&config)
 	fmt.Printf("Loaded %d shields and %d boosters\n", len(generators), len(boosterVariants))
 
 	var shieldBoosterLoadoutList = getBoosterLoadoutList(len(boosterVariants))

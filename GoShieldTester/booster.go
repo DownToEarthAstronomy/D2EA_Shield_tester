@@ -17,7 +17,7 @@ type boosterT struct {
 /*
  *
  */
-func loadboosterVariants() []boosterT {
+func loadboosterVariants(config *configT) []boosterT {
 
 	var boosterVariants []boosterT
 	var record []string
