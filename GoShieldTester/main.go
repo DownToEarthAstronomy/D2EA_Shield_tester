@@ -24,6 +24,8 @@ func processFlags() {
 	flag.Float64Var(&config.damageEffectiveness, "dmg", config.damageEffectiveness, "Damage effectiveness (25 for fixed weapons, 65 for hazrez PvP, 100 constant attack)")
 	flag.Float64Var(&config.scbHitPoint, "scb", config.scbHitPoint, "SCB HitPoints (default 0)")
 	flag.Float64Var(&config.guardianShieldHitPoint, "gshp", config.guardianShieldHitPoint, "Guardian HitPoints (default 0)")
+	flag.StringVar(&config.shipName, "ship", config.shipName, "Ship Type (default Federal Corvette)")
+	flag.Float64Var(&config.shieldGeneratorSize, "size", config.shieldGeneratorSize, "Shield Generator Size (default 7)")
 
 	prismatics := flag.Bool("noprismatics", false, "Disable Prismatic shields")
 	thargoid := flag.Bool("thargoid", false, "Useful Thargoid defaults")
